@@ -1,0 +1,20 @@
+.form-error{color: #de815c}
+
+.form-control.valid{color :#454e59 !important; padding:6px 8px}
+.table thead > tr > td,
+.table thead > tr > th{
+    font-size: 15px;
+    font-weight: bold;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+.table tbody > tr > td{
+    padding-top:2px;
+    padding-bottom:2px;
+}
+.grid-view .btn-sm{
+    padding: 3px 8px;
+}
+.filters .input-sm{
+    /*height: 25px;*/
+}

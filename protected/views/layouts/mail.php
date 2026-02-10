@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type">
+</head>
+<body>
+<table cellspacing="0" cellpadding="10" style="color:#666;font:13px Arial;line-height:1.4em;width:100%;">
+
+	<?php
+	    $appsetting = $this->getsettings();
+	?>
+	<tbody>
+		<tr>
+            <td style="color:#4D90FE;font-size:22px;border-bottom: 2px solid #4D90FE;">
+				<?php echo CHtml::encode($appsetting['APP_NAME']); ?>
+            </td>
+		</tr>
+		<tr>
+            <td style="color:#777;font-size:16px;padding-top:5px;">
+            	<?php if(isset($data['description'])) echo $data['description'];  ?>
+            </td>
+		</tr>
+		<tr>
+            <td>
+				<?php echo $content ?>
+            </td>
+		</tr>
+		
+	</tbody>
+</table>
+</body>
+</html>
