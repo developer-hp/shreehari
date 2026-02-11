@@ -423,26 +423,8 @@
                                     <?php  echo CHtml::link('<i class="fa fa-money sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Manage Cash</span>', array("cashevent/admin"), array('class' => $cash)) ?>
                                     </li>
 
-                                     <li class="<?php  echo $ledger_tab;?>">
-                                        <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-book sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Ledger</span></a>
-                                        <ul>
-                                            <li>
-                                                <?php echo CHtml::link('<i class="fa fa-circle-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Accounts</span>', array("ledgerAccount/admin"), array('class' => $ledgerAcc)) ?>
-                                            </li>
-                                            <li>
-                                                <?php echo CHtml::link('<i class="fa fa-circle-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Txn</span>', array("supplierTxn/admin"), array('class' => $ledgerSup)) ?>
-                                            </li>
-                                            <li>
-                                                <?php echo CHtml::link('<i class="fa fa-circle-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Karigar Voucher</span>', array("karigarVoucher/admin"), array('class' => $ledgerKar)) ?>
-                                            </li>
-                                            <li>
-                                                <?php echo CHtml::link('<i class="fa fa-circle-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Issue Entry</span>', array("issueEntry/admin"), array('class' => $ledgerIss)) ?>
-                                            </li>
-                                            <li>
-                                                <?php echo CHtml::link('<i class="fa fa-circle-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Maintenance</span>', array("ledgerMaintenance/index"), array('class' => $ledgerMaint)) ?>
-                                            </li>
-                                        </ul>
-                                    </li>
+                                     
+                                    <li>
                                     <?php  echo CHtml::link('<i class="fa fa-list sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Manage Repairing</span>', array("repair/index"), array('class' => $repair)) ?>
                                     </li>
 
