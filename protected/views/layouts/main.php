@@ -156,7 +156,7 @@
                             <?php
 
 
-                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair='';
+                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType='';
                             $ledger_tab = $ledgerAcc = $ledgerSup = $ledgerKar = $ledgerIss = $ledgerMaint = '';
                             $action = strtolower(Yii::app()->controller->id);
                             $action1 = strtolower(Yii::app()->controller->action->id);
@@ -357,7 +357,19 @@
                                 //$custome_tab='active';
                             }
                             else if($action=="repair")
-                                $repair  = 'active';                            
+                                $repair  = 'active';
+                            else if($action=="accountopeningbalance")
+                                $openingBalance = 'active';
+                            else if($action=="issueentry")
+                                $issueEntry = 'active';
+                            else if($action=="ledgerreport")
+                                $ledgerReport = 'active';
+                            else if($action=="supplierledger")
+                                $supplierLedger = 'active';
+                            else if($action=="karigarjama")
+                                $karigarJama = 'active';
+                            else if($action=="subitemtype")
+                                $subitemType = 'active';
                             ?>
 
 
@@ -430,6 +442,27 @@
 
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-file sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Report</span>', array("cashevent/report"), array('class' => $report)) ?>
+                                    </li>
+
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-balance-scale sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Opening Balance</span>', array("accountOpeningBalance/index"), array('class' => $openingBalance)) ?>
+                                    </li>
+
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-arrow-circle-right sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Issue Entry</span>', array("issueEntry/index"), array('class' => $issueEntry)) ?>
+                                    </li>
+
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Report</span>', array("ledgerReport/index"), array('class' => $ledgerReport)) ?>
+                                    </li>
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Ledger</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>
+                                    </li>
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-file-text-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Karigar Jama</span>', array("karigarJama/index"), array('class' => $karigarJama)) ?>
+                                    </li>
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-tags sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Subitem Types</span>', array("subitemType/index"), array('class' => $subitemType)) ?>
                                     </li>
 
                                 </ul>

@@ -201,10 +201,16 @@
                         ),*/
 					   array(
                         'class' => 'ButtonColumn',
-                        'htmlOptions' => array('style' => 'width: 160px;text-align: center;'),
-                        'template' => '{bill} {update} {delete}',
+                        'htmlOptions' => array('style' => 'width: 190px;text-align: center;'),
+                        'template' => '{ledger} {bill} {update} {delete}',
                         'buttons' => array(
-
+                            'ledger' => array(
+                                'label' => '<i class="fa fa-book"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-info', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => Yii::t('app', 'Ledger Report')),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("ledgerReport/report", array("customer_id"=>$data->id))'
+                            ),
                              'bill' => array(
                                 'label' => '<i class="fa fa-eye"></i>',
                                 'imageUrl' => false,

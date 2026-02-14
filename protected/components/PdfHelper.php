@@ -38,7 +38,8 @@ class PdfHelper
         $orientation = 'P',
         $font = 'gothic',
         $save = false,
-        $savepathname = ""
+        $savepathname = "",
+        $loadCss = true
     ) {
 
         // unpack margins safely
@@ -69,11 +70,13 @@ class PdfHelper
         // $mpdf->showImageErrors = true;
         
 
-        // ✅ Load CSS using filesystem path
-        $cssPath = Yii::getPathOfAlias('webroot') . '/css/pdf.css';
-        if (file_exists($cssPath)) {
-            $stylesheet = file_get_contents($cssPath);
-            $mpdf->WriteHTML($stylesheet, 1);
+        // ✅ Load CSS using filesystem path (optional; set $loadCss = false to skip)
+        if ($loadCss) {
+            $cssPath = Yii::getPathOfAlias('webroot') . '/css/pdf.css';
+            if (file_exists($cssPath)) {
+                $stylesheet = file_get_contents($cssPath);
+                $mpdf->WriteHTML($stylesheet, 1);
+            }
         }
 
         if($save)

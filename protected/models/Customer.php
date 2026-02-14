@@ -10,6 +10,8 @@
  * @property string $address
  * @property integer $type
  * @property integer $is_deleted
+ * @property string $closing_wt Net closing fine wt (DR−CR), updated from Opening + Issue
+ * @property string $closing_amount Net closing amount (DR−CR), updated from Opening + Issue
  */
 class Customer extends CActiveRecord
 {
@@ -36,6 +38,8 @@ class Customer extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, name, mobile, address, type, is_deleted', 'safe', 'on'=>'search'),
+			array('closing_wt, closing_amount', 'numerical'),
+			array('closing_wt, closing_amount', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,6 +66,8 @@ class Customer extends CActiveRecord
 			'address' => 'Address',
 			'type' => 'Type',
 			'is_deleted' => 'Id Deleted',
+			'closing_wt' => 'Closing Wt',
+			'closing_amount' => 'Closing Amount',
 		);
 	}
 
@@ -259,6 +265,63 @@ class Customer extends CActiveRecord
         
 	}
 
+	/**
+	 * Closing balance from Opening Balance + Issue Entry (net: DR - CR).
+	 * @param int $customerId
+	 * @return array ['wt' => float, 'amount' => float] net closing (positive = DR, negative = CR)
+	 */
+	public static function getClosingBalance($customerId)
+	{
+		$totalFineDr = $totalFineCr = $totalAmtDr = $totalAmtCr = 0.0;
+		$opening = AccountOpeningBalance::model()->findByAttributes(
+			array('customer_id' => (int)$customerId, 'is_deleted' => 0)
+		);
+		if ($opening) {
+			$fw = (float)$opening->opening_fine_wt;
+			$am = (float)$opening->opening_amount;
+			if ($opening->opening_fine_wt_drcr == 1) $totalFineDr += $fw; else $totalFineCr += $fw;
+			if ($opening->opening_amount_drcr == 1) $totalAmtDr += $am; else $totalAmtCr += $am;
+		}
+		$issues = IssueEntry::model()->findAllByAttributes(
+			array('customer_id' => (int)$customerId, 'is_deleted' => 0)
+		);
+		foreach ($issues as $iss) {
+			$fw = (float)$iss->fine_wt;
+			$am = (float)$iss->amount;
+			if ($iss->drcr == 1) {
+				$totalFineDr += $fw;
+				$totalAmtDr += $am;
+			} else {
+				$totalFineCr += $fw;
+				$totalAmtCr += $am;
+			}
+		}
+		return array(
+			'wt' => $totalFineDr - $totalFineCr,
+			'amount' => $totalAmtDr - $totalAmtCr,
+		);
+	}
+
+	/**
+	 * Recalculate closing from Opening Balance + Issue Entry and update customer row.
+	 * Call this when opening balance or issue entry is saved/deleted.
+	 * @param int $customerId
+	 */
+	public static function updateClosingBalance($customerId)
+	{
+		$customerId = (int) $customerId;
+		if ($customerId <= 0) return;
+		$bal = self::getClosingBalance($customerId);
+		Yii::app()->db->createCommand()->update(
+			'cp_customer',
+			array(
+				'closing_wt' => $bal['wt'],
+				'closing_amount' => $bal['amount'],
+			),
+			'id = :id',
+			array(':id' => $customerId)
+		);
+	}
 
 	/**
 	 * Returns the static model of the specified AR class.

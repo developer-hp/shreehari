@@ -11,6 +11,9 @@ class DocumentNumberService
 	const DOC_SUPPLIER = 'SUP';
 	const DOC_KARIGAR = 'KAR';
 	const DOC_ISSUE = 'ISS';
+	const DOC_SUPPLIER_LEDGER = 'SLT';
+	const DOC_SUPPLIER_LEDGER_VOUCHER = 'SLV';
+	const DOC_KARIGAR_JAMA_VOUCHER = 'JMV';
 
 	/**
 	 * @param string $docType One of SUP/KAR/ISS

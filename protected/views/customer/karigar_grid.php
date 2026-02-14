@@ -88,6 +88,28 @@
                 echo $data->address;
             }
           ),
+          array(
+               'header'=>'Closing Wt',
+               'headerHtmlOptions'=>array('style'=>'text-align: right;', 'class'=>'text_upper'),
+               'htmlOptions'=>array('style'=>'text-align: right;'),
+               'value'=>function($data){
+                $wt = $data->closing_wt !== null && $data->closing_wt !== '' ? (float)$data->closing_wt : null;
+                if ($wt === null) { echo '—'; return; }
+                if ($wt >= 0) echo number_format($wt, 3, '.', '') . ' DR';
+                else echo number_format(-$wt, 3, '.', '') . ' CR';
+               }
+          ),
+          array(
+               'header'=>'Closing Amount',
+               'headerHtmlOptions'=>array('style'=>'text-align: right;', 'class'=>'text_upper'),
+               'htmlOptions'=>array('style'=>'text-align: right;'),
+               'value'=>function($data){
+                $amt = $data->closing_amount !== null && $data->closing_amount !== '' ? (float)$data->closing_amount : null;
+                if ($amt === null) { echo '—'; return; }
+                if ($amt >= 0) echo number_format($amt, 2, '.', '') . ' DR';
+                else echo number_format(-$amt, 2, '.', '') . ' CR';
+               }
+          ),
             array(
                // 'name'=>'Amount',
                'header'=>'Amount',
@@ -195,10 +217,16 @@
                         ),*/
 						  array(
                         'class' => 'ButtonColumn',
-                        'htmlOptions' => array('style' => 'width: 160px;text-align: center;'),
-                        'template' => '{bill} {update} {delete}',
+                        'htmlOptions' => array('style' => 'width: 190px;text-align: center;'),
+                        'template' => '{ledger} {bill} {update} {delete}',
                         'buttons' => array(
-
+                            'ledger' => array(
+                                'label' => '<i class="fa fa-book"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-info', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => Yii::t('app', 'Ledger Report')),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("ledgerReport/report", array("customer_id"=>$data->id))'
+                            ),
                              'bill' => array(
                                 'label' => '<i class="fa fa-eye"></i>',
                                 'imageUrl' => false,
