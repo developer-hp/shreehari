@@ -59,6 +59,7 @@ class LedgerReportController extends Controller
         $this->redirect(array(
             'ledgerReport/report',
             'customer_id' => $customerId,
+            'customer_type' => isset($_GET['customer_type']) ? $_GET['customer_type'] : '',
             'from_date' => isset($_GET['from_date']) ? $_GET['from_date'] : '',
             'to_date' => isset($_GET['to_date']) ? $_GET['to_date'] : '',
         ));
@@ -76,11 +77,12 @@ class LedgerReportController extends Controller
 
     /**
      * Build ledger data: opening balance + issue entries per customer.
-     * @return array ['customers' => [...], 'from_date' => ..., 'to_date' => ..., 'filter_customer_id' => ...]
+     * @return array ['customers' => [...], 'from_date' => ..., 'to_date' => ..., 'filter_customer_id' => ..., 'filter_customer_type' => ...]
      */
     protected function buildReportData()
     {
         $customerId = isset($_GET['customer_id']) ? (int) $_GET['customer_id'] : null;
+        $customerType = isset($_GET['customer_type']) ? (int) $_GET['customer_type'] : null;
         $fromDate = isset($_GET['from_date']) ? trim($_GET['from_date']) : null;
         $toDate = isset($_GET['to_date']) ? trim($_GET['to_date']) : null;
 
@@ -94,6 +96,13 @@ class LedgerReportController extends Controller
             $issueCondition .= ' AND t.customer_id = :cid';
             $openingParams[':cid'] = $customerId;
             $issueParams[':cid'] = $customerId;
+        }
+
+        if ($customerType > 0 && $customerType <= 3) {
+            $openingCondition .= ' AND customer.type = :ctype';
+            $issueCondition .= ' AND customer.type = :ctype';
+            $openingParams[':ctype'] = $customerType;
+            $issueParams[':ctype'] = $customerType;
         }
 
         $openings = AccountOpeningBalance::model()->with('customer')->findAll(array(
@@ -144,6 +153,7 @@ class LedgerReportController extends Controller
                 'from_date' => $fromDate,
                 'to_date' => $toDate,
                 'filter_customer_id' => $customerId,
+                'filter_customer_type' => $customerType,
             );
         }
 
@@ -173,6 +183,7 @@ class LedgerReportController extends Controller
             'from_date' => $fromDate,
             'to_date' => $toDate,
             'filter_customer_id' => $customerId,
+            'filter_customer_type' => $customerType,
             'supplier_ledger_by_issue_id' => $supplierLedgerByIssueId,
             'karigar_jama_by_issue_id' => $karigarJamaByIssueId,
         );

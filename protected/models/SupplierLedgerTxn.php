@@ -15,7 +15,7 @@ class SupplierLedgerTxn extends CActiveRecord
 	public function rules()
 	{
 		return array(
-			array('txn_date, supplier_id', 'required'),
+			array('txn_date, supplier_id,sr_no', 'required'),
 			array('supplier_id, issue_entry_id, created_by, is_deleted', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),
@@ -60,15 +60,16 @@ class SupplierLedgerTxn extends CActiveRecord
 						$this->sr_no = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_SUPPLIER_LEDGER);
 					} catch (Exception $e) { }
 				}
-				if (empty($this->voucher_number)) {
-					try {
-						$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
-					} catch (Exception $e) {
-						Yii::log('SupplierLedgerTxn voucher_number: ' . $e->getMessage(), 'error', 'application');
-					}
-				}
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
+			}
+			if ($this->voucher_number === null || $this->voucher_number === '') {
+				try {
+					$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
+				} catch (Exception $e) {
+					Yii::log('SupplierLedgerTxn voucher_number: ' . $e->getMessage(), 'error', 'application');
+					$this->voucher_number = 'SLV' . ($this->id ?: date('YmdHis'));
+				}
 			}
 			if (!empty($this->txn_date)) {
 				$ts = strtotime($this->txn_date);

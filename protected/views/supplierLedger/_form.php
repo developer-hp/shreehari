@@ -42,7 +42,7 @@ if (!$txnDate) $txnDate = date('d-m-Y');
 <div class="form-group">
     <?php echo $form->labelEx($model, 'sr_no', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
-        <?php echo $form->textField($model, 'sr_no', array('class' => 'form-control', 'placeholder' => $model->isNewRecord ? 'Auto-generated on save' : '', 'readonly' => !$model->isNewRecord)); ?>
+        <?php echo $form->textField($model, 'sr_no', array('class' => 'form-control')); ?>
         <?php echo $form->error($model, 'sr_no'); ?>
     </div>
 </div>
@@ -60,10 +60,10 @@ if (empty($charges)) $charges = array(array('charge_type'=>1,'charge_name'=>'','
     <div class="panel-body">
         <div class="row item-main-row">
             <div class="col-sm-2"><?php echo CHtml::textField("items[{$i}][item_name]", is_object($it) ? $it->item_name : (isset($item['item_name'])?$item['item_name']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Item name')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][ct]", is_object($it) ? $it->ct : (isset($item['ct'])?$item['ct']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Ct')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][gross_wt]", is_object($it) ? $it->gross_wt : (isset($item['gross_wt'])?$item['gross_wt']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Gross')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][net_wt]", is_object($it) ? $it->net_wt : (isset($item['net_wt'])?$item['net_wt']:''), array('class' => 'form-control input-sm net-wt', 'placeholder' => 'Net wt')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][touch_pct]", is_object($it) ? $it->touch_pct : (isset($item['touch_pct'])?$item['touch_pct']:''), array('class' => 'form-control input-sm touch-pct', 'placeholder' => 'Touch %')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][ct]", is_object($it) ? $it->ct : (isset($item['ct'])?$item['ct']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Ct')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][gross_wt]", is_object($it) ? $it->gross_wt : (isset($item['gross_wt'])?$item['gross_wt']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Gross')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][net_wt]", is_object($it) ? $it->net_wt : (isset($item['net_wt'])?$item['net_wt']:''), array('class' => 'form-control input-sm net-wt sl-numeric', 'placeholder' => 'Net wt')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][touch_pct]", is_object($it) ? $it->touch_pct : (isset($item['touch_pct'])?$item['touch_pct']:''), array('class' => 'form-control input-sm touch-pct sl-numeric', 'placeholder' => 'Touch %')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField('', (isset($it->fine_wt) && $it->fine_wt !== null && $it->fine_wt !== '') ? number_format((float)$it->fine_wt, 3) : '', array('class' => 'form-control input-sm item-fine-wt', 'readonly' => 'readonly', 'placeholder' => 'Fine wt', 'style' => 'background:#eee;')); ?></div>
             <div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-item">Remove</button></div>
         </div>
@@ -92,8 +92,8 @@ if (empty($charges)) $charges = array(array('charge_type'=>1,'charge_name'=>'','
                 <div class="col-sm-2">
                     <?php echo CHtml::textField("items[{$i}][charges][{$j}][charge_name]", is_object($c) ? $c->charge_name : (isset($c['charge_name'])?$c['charge_name']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Name (other)')); ?>
                 </div>
-                <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][charges][{$j}][quantity]", $qty, array('class' => 'form-control input-sm charge-qty', 'placeholder' => 'Qty')); ?></div>
-                <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][charges][{$j}][rate]", $rate, array('class' => 'form-control input-sm charge-rate', 'placeholder' => 'Rate')); ?></div>
+                <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][charges][{$j}][quantity]", $qty, array('class' => 'form-control input-sm charge-qty sl-numeric', 'placeholder' => 'Qty')); ?></div>
+                <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][charges][{$j}][rate]", $rate, array('class' => 'form-control input-sm charge-rate sl-numeric', 'placeholder' => 'Rate')); ?></div>
                 <div class="col-sm-1"><?php echo CHtml::textField('', $chargeAmt, array('class' => 'form-control input-sm charge-row-amount', 'readonly' => 'readonly', 'placeholder' => '0.00', 'style' => 'background:#eee;')); ?></div>
                 <div class="col-sm-1"><button type="button" class="btn btn-xs btn-danger btn-remove-charge">Remove</button></div>
             </div>
@@ -126,6 +126,32 @@ $(function() {
     if ($supplierSelect.length && (!$supplierSelect.data('select2'))) {
         $supplierSelect.select2({ placeholder: '----Select Supplier----', allowClear: true, width: '100%' });
     }
+
+    // Allow only numbers (digits, one decimal point, optional minus) in numeric fields — no alphabets
+    function sanitizeNumericInput(el) {
+        var v = el.value;
+        var start = el.selectionStart, end = el.selectionEnd;
+        v = v.replace(/[^0-9.\-]/g, '');
+        var firstMinus = v.indexOf('-');
+        if (firstMinus > 0) v = v.replace(/-/g, '');
+        else if (firstMinus === 0 && v.indexOf('-', 1) >= 0) v = v.substring(0, 1) + v.substring(1).replace(/-/g, '');
+        var dotCount = (v.match(/\./g) || []).length;
+        if (dotCount > 1) {
+            var idx = v.indexOf('.');
+            v = v.substring(0, idx + 1) + v.substring(idx + 1).replace(/\./g, '');
+        }
+        el.value = v;
+        el.setSelectionRange(Math.min(start, v.length), Math.min(end, v.length));
+    }
+    $(document).on('keypress', '#supplier-ledger-txn-form .sl-numeric', function(ev) {
+        var k = ev.which || ev.keyCode;
+        if (k <= 0 || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+        if (k === 8 || k === 9 || k === 46) return;
+        if (k === 45) { if (this.value.length > 0 || this.selectionStart > 0) ev.preventDefault(); return; }
+        if (k === 46) { if (this.value.indexOf('.') >= 0) ev.preventDefault(); return; }
+        if (k < 48 || k > 57) ev.preventDefault();
+    });
+    $(document).on('input paste', '#supplier-ledger-txn-form .sl-numeric', function() { sanitizeNumericInput(this); });
 });
 </script>
 <script>
@@ -142,8 +168,8 @@ $(function() {
         var html = '<div class="row charge-row mt-1">';
         html += '<div class="col-sm-2"><select name="items['+idx+'][charges]['+chargeIdx+'][charge_type]" class="form-control input-sm">'+chargeOpts+'</select></div>';
         html += '<div class="col-sm-2"><input type="text" name="items['+idx+'][charges]['+chargeIdx+'][charge_name]" class="form-control input-sm" placeholder="Name (other)" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+idx+'][charges]['+chargeIdx+'][quantity]" class="form-control input-sm charge-qty" placeholder="Qty" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+idx+'][charges]['+chargeIdx+'][rate]" class="form-control input-sm charge-rate" placeholder="Rate" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+idx+'][charges]['+chargeIdx+'][quantity]" class="form-control input-sm charge-qty sl-numeric" placeholder="Qty" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+idx+'][charges]['+chargeIdx+'][rate]" class="form-control input-sm charge-rate sl-numeric" placeholder="Rate" /></div>';
         html += '<div class="col-sm-1"><input type="text" class="form-control input-sm charge-row-amount" readonly placeholder="0.00" style="background:#eee;" /></div>';
         html += '<div class="col-sm-1"><button type="button" class="btn btn-xs btn-danger btn-remove-charge">Remove</button></div></div>';
         $rows.append(html);
@@ -199,18 +225,18 @@ $(function() {
     $('#add-item-btn').on('click', function(){
         var html = '<div class="item-block panel panel-default" data-index="'+itemIndex+'"><div class="panel-body">';
         html += '<div class="row item-main-row"><div class="col-sm-2"><input type="text" name="items['+itemIndex+'][item_name]" class="form-control input-sm" placeholder="Item name" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][ct]" class="form-control input-sm" placeholder="Ct" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][gross_wt]" class="form-control input-sm" placeholder="Gross" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][net_wt]" class="form-control input-sm net-wt" placeholder="Net wt" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][touch_pct]" class="form-control input-sm touch-pct" placeholder="Touch %" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][ct]" class="form-control input-sm sl-numeric" placeholder="Ct" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][gross_wt]" class="form-control input-sm sl-numeric" placeholder="Gross" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][net_wt]" class="form-control input-sm net-wt sl-numeric" placeholder="Net wt" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][touch_pct]" class="form-control input-sm touch-pct sl-numeric" placeholder="Touch %" /></div>';
         html += '<div class="col-sm-1"><input type="text" class="form-control input-sm item-fine-wt" readonly placeholder="Fine wt" style="background:#eee;" /></div>';
         html += '<div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-item">Remove</button></div></div>';
         html += '<div class="charges-wrap mt-3 mb-2"><div class="row charge-header-row mb-2"><div class="col-sm-2"><strong>Other details (charges):</strong></div><div class="col-sm-2"></div><div class="col-sm-1"></div><div class="col-sm-1"></div><div class="col-sm-1"><strong>Amount</strong></div><div class="col-sm-1 text-right"><button type="button" class="btn btn-xs btn-primary btn-add-charge"><i class="fa fa-plus"></i> Add charge</button></div></div>';
         html += '<div class="charge-rows"><div class="row charge-row mt-1">';
         html += '<div class="col-sm-2"><select name="items['+itemIndex+'][charges][0][charge_type]" class="form-control input-sm">'+chargeOpts+'</select></div>';
         html += '<div class="col-sm-2"><input type="text" name="items['+itemIndex+'][charges][0][charge_name]" class="form-control input-sm" placeholder="Name (other)" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][charges][0][quantity]" class="form-control input-sm charge-qty" placeholder="Qty" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][charges][0][rate]" class="form-control input-sm charge-rate" placeholder="Rate" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][charges][0][quantity]" class="form-control input-sm charge-qty sl-numeric" placeholder="Qty" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][charges][0][rate]" class="form-control input-sm charge-rate sl-numeric" placeholder="Rate" /></div>';
         html += '<div class="col-sm-1"><input type="text" class="form-control input-sm charge-row-amount" readonly placeholder="0.00" style="background:#eee;" /></div>';
         html += '<div class="col-sm-1"><button type="button" class="btn btn-xs btn-danger btn-remove-charge">Remove</button></div></div></div></div></div></div>';
         $('#items-container').append(html);

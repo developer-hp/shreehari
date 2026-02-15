@@ -58,6 +58,18 @@
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/themes.css">
 
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/custom.css">
+
+        <style type="text/css">
+            body {
+              margin: 0;
+              height: 100vh;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: linear-gradient(135deg, #0F3F3A, #17A497, #0B1F2A);
+              font-family: Arial, sans-serif;
+            }
+        </style>
         <!-- END Stylesheets -->
 
         <!-- Modernizr (browser feature detection library) -->
@@ -69,11 +81,11 @@
 
 <?php
 $img = "img/placeholders/layout/login2_full_bg.jpg";
-if(isset($appsetting['LOGIN_BACKGROUND']) && $appsetting['LOGIN_BACKGROUND'])
-    $img = $appsetting['LOGIN_BACKGROUND'];
+// if(isset($appsetting['LOGIN_BACKGROUND']) && $appsetting['LOGIN_BACKGROUND'])
+    // $img = $appsetting['LOGIN_BACKGROUND'];
 
 ?>
-<img src="<?php echo Yii::app()->request->baseUrl.'/'.$img; ?>" alt="Full Background" class="full-bg animation-pulseSlow">
+<!-- <img src="<?php echo Yii::app()->request->baseUrl.'/'.$img; ?>" alt="Full Background" class="full-bg animation-pulseSlow"> -->
 
 <div id="login-container">
 

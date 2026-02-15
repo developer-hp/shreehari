@@ -31,9 +31,6 @@
         <?php if (!empty($model->voucher_number)): ?><p><strong>Voucher No:</strong> <?php echo CHtml::encode($model->voucher_number); ?></p><?php endif; ?>
         <p><strong>Total Fine Wt:</strong> <?php echo number_format($totalFineWt, 3); ?></p>
         <p><strong>Total Amount:</strong> <?php echo number_format($totalAmount, 2); ?></p>
-        <?php if ($model->issue_entry_id): ?>
-        <p><?php echo CHtml::link('View Issue Entry', array('issueEntry/view', 'id' => $model->issue_entry_id), array('class' => 'btn btn-info')); ?></p>
-        <?php endif; ?>
         </div>
         <div class="col-sm-6 text-right">
         <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>

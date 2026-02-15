@@ -21,16 +21,18 @@
                 <h2>Ledger Report (Opening Balance + Issue Entry)</h2>
             </div>
             <p>
-                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary')); ?>
+                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary')); ?>
                 <?php if (!empty($filter_customer_id) && count($customers) === 1): ?>
-                <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
+                <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
                 <?php endif; ?>
             </p>
-            <?php if (!empty($from_date) || !empty($to_date)): ?>
-            <p class="text-muted">
-                Issue entries from: <strong><?php echo $from_date ? CHtml::encode($from_date) : '—'; ?></strong>
-                to <strong><?php echo $to_date ? CHtml::encode($to_date) : '—'; ?></strong>
-            </p>
+            <?php
+            $typeLabels = array(1 => 'Supplier', 2 => 'Customer', 3 => 'Karigar');
+            $filterParts = array();
+            if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $filterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
+            if (!empty($from_date) || !empty($to_date)) $filterParts[] = 'Issue entries from: <strong>' . ($from_date ? CHtml::encode($from_date) : '—') . '</strong> to <strong>' . ($to_date ? CHtml::encode($to_date) : '—') . '</strong>';
+            if (!empty($filterParts)): ?>
+            <p class="text-muted"><?php echo implode(' &nbsp;|&nbsp; ', $filterParts); ?></p>
             <?php endif; ?>
 
 <?php if (empty($customers)): ?>

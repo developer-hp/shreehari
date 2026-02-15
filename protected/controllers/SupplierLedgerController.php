@@ -94,27 +94,28 @@ class SupplierLedgerController extends Controller
 	{
 		$totalFineWt = (float) $model->total_fine_wt;
 		$totalAmount = (float) $model->total_amount;
+		$voucherNo = ($model->voucher_number !== null && $model->voucher_number !== '') ? $model->voucher_number : ('SLV' . $model->id);
 		if ($model->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($model->issue_entry_id);
 			if ($entry) {
 				$entry->issue_date = $model->txn_date;
 				$entry->fine_wt = $totalFineWt;
 				$entry->amount = $totalAmount;
-				$entry->sr_no = $voucher->voucher_number;
+				$entry->sr_no = $voucherNo;
 				$entry->drcr = IssueEntry::DRCR_DEBIT;
-				$entry->remarks = $model->voucher_number ? ('Supplier Ledger ' . $model->voucher_number) : ('Supplier ledger txn #' . $model->id);
+				$entry->remarks = 'Supplier Ledger ' . $voucherNo;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
 		} else {
 			$entry = new IssueEntry;
 			$entry->issue_date = $model->txn_date;
-			$entry->sr_no = $model->voucher_number;
+			$entry->sr_no = $voucherNo;
 			$entry->customer_id = $model->supplier_id;
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
 			$entry->drcr = IssueEntry::DRCR_DEBIT;
-			$entry->remarks = $model->voucher_number ? ('Supplier Ledger ' . $model->voucher_number) : ('Supplier ledger txn #' . $model->id);
+			$entry->remarks = 'Supplier Ledger ' . $voucherNo;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {
 				$model->issue_entry_id = $entry->id;

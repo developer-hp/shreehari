@@ -94,6 +94,7 @@ class KarigarJamaController extends Controller
 	{
 		$voucher = KarigarJamaVoucher::model()->with(array('lines' => array('with' => 'stones')))->findByPk($voucher->id);
 		if (!$voucher) return;
+		$voucherNo = ($voucher->voucher_number !== null && $voucher->voucher_number !== '') ? $voucher->voucher_number : ('JMV' . $voucher->id);
 		$totalFineWt = 0;
 		$totalAmount = 0;
 		foreach ($voucher->lines as $line) {
@@ -105,22 +106,22 @@ class KarigarJamaController extends Controller
 			if ($entry) {
 				$entry->issue_date = $voucher->voucher_date;
 				$entry->fine_wt = $totalFineWt;
-				$entry->sr_no = $voucher->voucher_number;
+				$entry->sr_no = $voucherNo;
 				$entry->amount = $totalAmount;
 				$entry->drcr = IssueEntry::DRCR_CREDIT;
-				$entry->remarks = $voucher->voucher_number ? ('Jama ' . $voucher->voucher_number) : ('Jama voucher #' . $voucher->id);
+				$entry->remarks = 'Jama ' . $voucherNo;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
 		} else {
 			$entry = new IssueEntry;
 			$entry->issue_date = $voucher->voucher_date;
-			$entry->sr_no = $voucher->voucher_number;
+			$entry->sr_no = $voucherNo;
 			$entry->customer_id = $voucher->karigar_id;
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
 			$entry->drcr = IssueEntry::DRCR_CREDIT;
-			$entry->remarks = $voucher->voucher_number ? ('Jama ' . $voucher->voucher_number) : ('Jama voucher #' . $voucher->id);
+			$entry->remarks = 'Jama ' . $voucherNo;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {
 				$voucher->issue_entry_id = $entry->id;

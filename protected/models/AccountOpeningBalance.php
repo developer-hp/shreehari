@@ -36,6 +36,7 @@ class AccountOpeningBalance extends CActiveRecord
 	{
 		return array(
 			array('customer_id', 'required'),
+			array('customer_id', 'uniqueCustomer'),
 			array('customer_id, opening_fine_wt_drcr, opening_amount_drcr, is_deleted, created_by', 'numerical', 'integerOnly'=>true),
 			array('opening_fine_wt, opening_amount', 'numerical'),
 			array('opening_fine_wt_drcr', 'in', 'range'=>array(self::DRCR_DEBIT, self::DRCR_CREDIT)),
@@ -43,6 +44,24 @@ class AccountOpeningBalance extends CActiveRecord
 			array('created_at', 'safe'),
 			array('id, customer_id, customer_name, opening_fine_wt, opening_fine_wt_drcr, opening_amount, opening_amount_drcr, is_deleted, created_at, created_by', 'safe', 'on'=>'search'),
 		);
+	}
+
+	/**
+	 * Validates that customer_id is unique among non-deleted opening balances.
+	 * On update, the current record is excluded from the check.
+	 */
+	public function uniqueCustomer($attribute, $params)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'customer_id = :cid AND is_deleted = 0';
+		$criteria->params = array(':cid' => (int) $this->customer_id);
+		if (!$this->isNewRecord) {
+			$criteria->addCondition('id != :id');
+			$criteria->params[':id'] = $this->id;
+		}
+		if (self::model()->find($criteria) !== null) {
+			$this->addError($attribute, 'Opening balance for this account already exists.');
+		}
 	}
 
 	/**
@@ -62,10 +81,10 @@ class AccountOpeningBalance extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'customer_id' => 'Customer',
-			'customer_name' => 'Customer',
+			'customer_id' => 'Account',
+			'customer_name' => 'Account',
 			'opening_fine_wt' => 'Opening Fine Wt',
-			'opening_fine_wt_drcr' => 'Fine Wt (DR/CR)',
+			'opening_fine_wt_drcr' => 'Fine (DR/CR)',
 			'opening_amount' => 'Opening Amount',
 			'opening_amount_drcr' => 'Amount (DR/CR)',
 			'is_deleted' => 'Deleted',

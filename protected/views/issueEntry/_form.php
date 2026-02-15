@@ -47,12 +47,11 @@
     </div>
 
     <div class="form-group">
-        <label class="col-sm-2 control-label">Customer Type</label>
+        <label class="col-sm-2 control-label">Account Type</label>
         <div class="col-sm-4">
             <select name="customer_type" class="form-control customer_type">
-                <option value="">---Select Customer Type---</option>
+                <option value="">---Select Account Type---</option>
                 <option value="1" <?php if ($c_type == 1) echo 'selected'; ?>>Supplier</option>
-                <option value="2" <?php if ($c_type == 2) echo 'selected'; ?>>Customer</option>
                 <option value="3" <?php if ($c_type == 3) echo 'selected'; ?>>Karigar</option>
             </select>
         </div>
@@ -68,12 +67,12 @@
                 );
             } else {
                 $customerList = CHtml::listData(
-                    Customer::model()->findAll(array('condition' => 'is_deleted = 0', 'order' => 'name')),
+                    Customer::model()->findAll(array('condition' => 'is_deleted = 0 and type in(1,3)', 'order' => 'name')),
                     'id', 'name'
                 );
             }
             echo $form->dropDownList($model, 'customer_id', $customerList,
-                array('class' => 'form-control customer_list select2-issue-customer', 'prompt' => '----Select Customer----'));
+                array('class' => 'form-control customer_list select2-issue-customer', 'prompt' => '----Select Account----'));
             ?>
             <?php echo $form->error($model, 'customer_id'); ?>
         </div>

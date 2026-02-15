@@ -47,14 +47,14 @@ if (empty($stones)) $stones = array(array());
 <div class="line-block panel panel-default" data-idx="<?php echo $idx; ?>">
     <div class="panel-body">
         <div class="row form-group">
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][sr_no]", is_object($ln) ? (isset($ln->sr_no) ? $ln->sr_no : '') : (isset($ln['sr_no']) ? $ln['sr_no'] : ''), array('class' => 'form-control input-sm', 'placeholder' => 'Sr')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][order_no]", is_object($ln)?$ln->order_no:'', array('class' => 'form-control input-sm', 'placeholder' => 'Order No')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][sr_no]", is_object($ln) ? (isset($ln->sr_no) ? $ln->sr_no : '') : (isset($ln['sr_no']) ? $ln['sr_no'] : ''), array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Sr')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][order_no]", is_object($ln)?$ln->order_no:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Order No')); ?></div>
             <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][customer_name]", is_object($ln)?$ln->customer_name:'', array('class' => 'form-control input-sm', 'placeholder' => 'Customer')); ?></div>
             <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][item_name]", is_object($ln)?$ln->item_name:'', array('class' => 'form-control input-sm', 'placeholder' => 'Item')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][psc]", is_object($ln)?$ln->psc:'', array('class' => 'form-control input-sm', 'placeholder' => 'Psc')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][gross_wt]", is_object($ln)?$ln->gross_wt:'', array('class' => 'form-control input-sm', 'placeholder' => 'Gross')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][net_wt]", is_object($ln)?$ln->net_wt:'', array('class' => 'form-control input-sm', 'placeholder' => 'Net')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][touch_pct]", is_object($ln)?$ln->touch_pct:'', array('class' => 'form-control input-sm', 'placeholder' => 'Touch%')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][psc]", is_object($ln)?$ln->psc:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Psc')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][gross_wt]", is_object($ln)?$ln->gross_wt:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Gross')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][net_wt]", is_object($ln)?$ln->net_wt:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Net')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][touch_pct]", is_object($ln)?$ln->touch_pct:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Touch%')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][remark]", is_object($ln)?$ln->remark:'', array('class' => 'form-control input-sm', 'placeholder' => 'Remark')); ?></div>
             <div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-line">Remove</button></div>
         </div>
@@ -76,8 +76,8 @@ if (empty($stones)) $stones = array(array());
             <div class="row stone-row margin-bottom-5">
                 <div class="col-sm-2"></div>
                 <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][stones][{$sj}][item]", $sItem, array('class'=>'form-control input-sm','placeholder'=>'Item')); ?></div>
-                <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][stones][{$sj}][stone_wt]", $sWt, array('class'=>'form-control input-sm','placeholder'=>'Wt')); ?></div>
-                <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][stones][{$sj}][stone_amount]", $sAmt, array('class'=>'form-control input-sm','placeholder'=>'Amt')); ?></div>
+                <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][stones][{$sj}][stone_wt]", $sWt, array('class'=>'form-control input-sm kj-numeric','placeholder'=>'Wt')); ?></div>
+                <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][stones][{$sj}][stone_amount]", $sAmt, array('class'=>'form-control input-sm kj-numeric','placeholder'=>'Amt')); ?></div>
                 <div class="col-sm-2"><button type="button" class="btn btn-xs btn-danger btn-remove-stone">Remove</button></div>
             </div>
             <?php endforeach; ?>
@@ -109,6 +109,31 @@ $(function() {
     if ($karigarSelect.length && (!$karigarSelect.data('select2'))) {
         $karigarSelect.select2({ placeholder: '----Select Karigar----', allowClear: true, width: '100%' });
     }
+
+    function sanitizeNumericInput(el) {
+        var v = el.value;
+        var start = el.selectionStart, end = el.selectionEnd;
+        v = v.replace(/[^0-9.\-]/g, '');
+        var firstMinus = v.indexOf('-');
+        if (firstMinus > 0) v = v.replace(/-/g, '');
+        else if (firstMinus === 0 && v.indexOf('-', 1) >= 0) v = v.substring(0, 1) + v.substring(1).replace(/-/g, '');
+        var dotCount = (v.match(/\./g) || []).length;
+        if (dotCount > 1) {
+            var idx = v.indexOf('.');
+            v = v.substring(0, idx + 1) + v.substring(idx + 1).replace(/\./g, '');
+        }
+        el.value = v;
+        el.setSelectionRange(Math.min(start, v.length), Math.min(end, v.length));
+    }
+    $(document).on('keypress', '#karigar-jama-form .kj-numeric', function(ev) {
+        var k = ev.which || ev.keyCode;
+        if (k <= 0 || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+        if (k === 8 || k === 9 || k === 46) return;
+        if (k === 45) { if (this.value.length > 0 || this.selectionStart > 0) ev.preventDefault(); return; }
+        if (k === 46) { if (this.value.indexOf('.') >= 0) ev.preventDefault(); return; }
+        if (k < 48 || k > 57) ev.preventDefault();
+    });
+    $(document).on('input paste', '#karigar-jama-form .kj-numeric', function() { sanitizeNumericInput(this); });
 });
 </script>
 <script>
@@ -132,18 +157,18 @@ $(function() {
     var lineIdx = <?php echo count($lines); ?>;
     $('#add-line-btn').on('click', function(){
         var html = '<div class="line-block panel panel-default" data-idx="'+lineIdx+'"><div class="panel-body">';
-        html += '<div class="row form-group"><div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][sr_no]" class="form-control input-sm" placeholder="Sr" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][order_no]" class="form-control input-sm" placeholder="Order No" /></div>';
+        html += '<div class="row form-group"><div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][sr_no]" class="form-control input-sm kj-numeric" placeholder="Sr" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][order_no]" class="form-control input-sm kj-numeric" placeholder="Order No" /></div>';
         html += '<div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][customer_name]" class="form-control input-sm" placeholder="Customer" /></div>';
         html += '<div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][item_name]" class="form-control input-sm" placeholder="Item" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][psc]" class="form-control input-sm" placeholder="Psc" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][gross_wt]" class="form-control input-sm" placeholder="Gross" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][net_wt]" class="form-control input-sm" placeholder="Net" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][touch_pct]" class="form-control input-sm" placeholder="Touch%" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][psc]" class="form-control input-sm kj-numeric" placeholder="Psc" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][gross_wt]" class="form-control input-sm kj-numeric" placeholder="Gross" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][net_wt]" class="form-control input-sm kj-numeric" placeholder="Net" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][touch_pct]" class="form-control input-sm kj-numeric" placeholder="Touch%" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][remark]" class="form-control input-sm" placeholder="Remark" /></div>';
         html += '<div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-line">Remove</button></div></div>';
         html += '<div class="small mt-2"><div class="row margin-bottom-5"><div class="col-sm-2"><strong>Stone/Diamond/Other:</strong></div><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-2"><strong>Weight</strong></div><div class="col-sm-2"><strong>Amount</strong></div><div class="col-sm-2"><button type="button" class="btn btn-xs btn-primary btn-add-stone">+ Add stone</button></div></div>';
-        html += '<div class="stone-rows" data-line-idx="'+lineIdx+'"><div class="row stone-row margin-bottom-5"><div class="col-sm-2"></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][item]" class="form-control input-sm" placeholder="Item" /></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][stone_wt]" class="form-control input-sm" placeholder="Wt" /></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][stone_amount]" class="form-control input-sm" placeholder="Amt" /></div><div class="col-sm-2"><button type="button" class="btn btn-xs btn-danger btn-remove-stone">Remove</button></div></div></div></div></div></div></div></div></div></div>';
+        html += '<div class="stone-rows" data-line-idx="'+lineIdx+'"><div class="row stone-row margin-bottom-5"><div class="col-sm-2"></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][item]" class="form-control input-sm" placeholder="Item" /></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][stone_wt]" class="form-control input-sm kj-numeric" placeholder="Wt" /></div><div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][stones][0][stone_amount]" class="form-control input-sm kj-numeric" placeholder="Amt" /></div><div class="col-sm-2"><button type="button" class="btn btn-xs btn-danger btn-remove-stone">Remove</button></div></div></div></div></div></div></div></div></div></div></div>';
         $('#lines-container').append(html);
         lineIdx++;
         updateJamaTotals();
@@ -155,8 +180,8 @@ $(function() {
         var stoneIdx = $wrap.find('.stone-row').length;
         var row = '<div class="row stone-row margin-bottom-5"><div class="col-sm-2"></div>';
         row += '<div class="col-sm-2"><input type="text" name="lines['+idx+'][stones]['+stoneIdx+'][item]" class="form-control input-sm" placeholder="Item" /></div>';
-        row += '<div class="col-sm-2"><input type="text" name="lines['+idx+'][stones]['+stoneIdx+'][stone_wt]" class="form-control input-sm" placeholder="Wt" /></div>';
-        row += '<div class="col-sm-2"><input type="text" name="lines['+idx+'][stones]['+stoneIdx+'][stone_amount]" class="form-control input-sm" placeholder="Amt" /></div>';
+        row += '<div class="col-sm-2"><input type="text" name="lines['+idx+'][stones]['+stoneIdx+'][stone_wt]" class="form-control input-sm kj-numeric" placeholder="Wt" /></div>';
+        row += '<div class="col-sm-2"><input type="text" name="lines['+idx+'][stones]['+stoneIdx+'][stone_amount]" class="form-control input-sm kj-numeric" placeholder="Amt" /></div>';
         row += '<div class="col-sm-2"><button type="button" class="btn btn-xs btn-danger btn-remove-stone">Remove</button></div></div>';
         $wrap.append(row);
         updateJamaTotals();

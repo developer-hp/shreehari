@@ -4,8 +4,13 @@ $thStyle = 'border:1px solid #333; padding:6px 8px; background:#f0f0f0; font-wei
 $numStyle = 'text-align:right;';
 ?>
 <div style="margin-bottom:10px;"><strong>Ledger Report (Opening Balance + Issue Entry)</strong></div>
-<?php if (!empty($from_date) || !empty($to_date)): ?>
-<div style="margin-bottom:8px;">Issue entries from: <?php echo $from_date ? CHtml::encode($from_date) : '—'; ?> to <?php echo $to_date ? CHtml::encode($to_date) : '—'; ?></div>
+<?php
+$typeLabels = array(1 => 'Supplier', 2 => 'Customer', 3 => 'Karigar');
+$pdfFilterParts = array();
+if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $pdfFilterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
+if (!empty($from_date) || !empty($to_date)) $pdfFilterParts[] = 'Issue entries from: ' . ($from_date ? CHtml::encode($from_date) : '—') . ' to ' . ($to_date ? CHtml::encode($to_date) : '—');
+if (!empty($pdfFilterParts)): ?>
+<div style="margin-bottom:8px;"><?php echo implode(' | ', $pdfFilterParts); ?></div>
 <?php endif; ?>
 
 <?php if (empty($customers)): ?>

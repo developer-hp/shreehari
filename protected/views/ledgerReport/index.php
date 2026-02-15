@@ -21,31 +21,51 @@
             <div class="block-title">
                 <h2><?php echo $title; ?> (Opening Balance + Issue Entry)</h2>
             </div>
+            <?php
+            $filterCustomerType = isset($_GET['customer_type']) ? (int)$_GET['customer_type'] : 0;
+            $customerTypeCondition = 'is_deleted = 0';
+            if ($filterCustomerType > 0 && $filterCustomerType <= 3) {
+                $customerTypeCondition .= ' AND type = ' . $filterCustomerType;
+            } else {
+                $customerTypeCondition .= ' AND type IN (1, 2, 3)';
+            }
+            $customers = Customer::model()->findAll(array('condition' => $customerTypeCondition, 'order' => 'name'));
+            $selectedCustomerId = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : 0;
+            ?>
             <form method="get" action="<?php echo Yii::app()->createUrl('ledgerReport/report'); ?>" id="ledger-report-form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Customer type</label>
+                    <div class="col-sm-6">
+                        <select name="customer_type" class="form-control" id="ledger-customer-type">
+                            <option value="">-- All --</option>
+                            <option value="1" <?php echo $filterCustomerType === 1 ? 'selected="selected"' : ''; ?>>Supplier</option>
+                            <option value="2" <?php echo $filterCustomerType === 2 ? 'selected="selected"' : ''; ?>>Customer</option>
+                            <option value="3" <?php echo $filterCustomerType === 3 ? 'selected="selected"' : ''; ?>>Karigar</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Customer</label>
                     <div class="col-sm-6">
                         <select name="customer_id" class="form-control select2-ledger-customer">
                             <option value="">-- All customers --</option>
-                            <?php
-                            $customers = Customer::model()->findAll(array('condition' => 'is_deleted = 0 AND type IN (1, 3)', 'order' => 'name'));
-                            foreach ($customers as $c) {
-                                echo '<option value="' . (int)$c->id . '">' . CHtml::encode($c->name) . '</option>';
-                            }
-                            ?>
+                            <?php foreach ($customers as $c) {
+                                $sel = ($selectedCustomerId === (int)$c->id) ? ' selected="selected"' : '';
+                                echo '<option value="' . (int)$c->id . '"' . $sel . '>' . CHtml::encode($c->name) . '</option>';
+                            } ?>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Issue Date From</label>
                     <div class="col-sm-6">
-                        <input type="text" name="from_date" class="form-control input-datepicker" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" autocomplete="off">
+                        <input type="text" name="from_date" value="<?php echo isset($_GET['from_date']) ? CHtml::encode($_GET['from_date']) : ''; ?>" class="form-control input-datepicker" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Issue Date To</label>
                     <div class="col-sm-6">
-                        <input type="text" name="to_date" class="form-control input-datepicker" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" autocomplete="off">
+                        <input type="text" name="to_date" value="<?php echo isset($_GET['to_date']) ? CHtml::encode($_GET['to_date']) : ''; ?>" class="form-control input-datepicker" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group">
@@ -62,9 +82,13 @@
 <script type="text/javascript">
 $(function() {
     $('.select2-ledger-customer').select2({ placeholder: '-- All customers --', allowClear: true, width: '100%' });
+    $('#ledger-customer-type').on('change', function() {
+        var val = $(this).val();
+        var url = '<?php echo Yii::app()->createUrl("ledgerReport/index"); ?>?' + $('#ledger-report-form').serialize();
+        window.location.href = url;
+    });
     $('#ledger-download-pdf').on('click', function() {
         var form = $('#ledger-report-form');
-        var action = form.attr('action');
         var pdfUrl = '<?php echo Yii::app()->createUrl("ledgerReport/pdf"); ?>?' + form.serialize();
         window.location.href = pdfUrl;
     });

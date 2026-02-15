@@ -52,15 +52,16 @@ class KarigarJamaVoucher extends CActiveRecord
 	{
 		if (parent::beforeSave()) {
 			if ($this->isNewRecord) {
-				if (empty($this->voucher_number)) {
-					try {
-						$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
-					} catch (Exception $e) {
-						Yii::log('KarigarJamaVoucher voucher_number: ' . $e->getMessage(), 'error', 'application');
-					}
-				}
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
+			}
+			if ($this->voucher_number === null || $this->voucher_number === '') {
+				try {
+					$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
+				} catch (Exception $e) {
+					Yii::log('KarigarJamaVoucher voucher_number: ' . $e->getMessage(), 'error', 'application');
+					$this->voucher_number = 'JMV' . ($this->id ?: date('YmdHis'));
+				}
 			}
 			if (!empty($this->voucher_date)) {
 				$ts = strtotime($this->voucher_date);

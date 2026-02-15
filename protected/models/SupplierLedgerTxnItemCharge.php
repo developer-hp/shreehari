@@ -31,8 +31,11 @@ class SupplierLedgerTxnItemCharge extends CActiveRecord
 	public function beforeSave()
 	{
 		if (parent::beforeSave()) {
-			$q = (float) $this->quantity;
-			$r = (float) $this->rate;
+			$q = $this->quantity === null || $this->quantity === '' ? 0 : (float) $this->quantity;
+			$r = $this->rate === null || $this->rate === '' ? 0 : (float) $this->rate;
+			if ($q == 0 && $r == 0) {
+				return false;
+			}
 			$this->amount = round($q * $r, 2);
 			return true;
 		}

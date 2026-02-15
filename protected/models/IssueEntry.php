@@ -57,8 +57,8 @@ class IssueEntry extends CActiveRecord
 			'id' => 'ID',
 			'sr_no' => 'SR No',
 			'issue_date' => 'Issue Date',
-			'customer_id' => 'Customer',
-			'customer_name' => 'Customer',
+			'customer_id' => 'Account',
+			'customer_name' => 'Account',
 			'fine_wt' => 'Fine Wt',
 			'amount' => 'Amount',
 			'drcr' => 'DR/CR',
@@ -77,18 +77,6 @@ class IssueEntry extends CActiveRecord
 			self::DRCR_DEBIT => 'DR (Debit)',
 			self::DRCR_CREDIT => 'CR (Credit)',
 		);
-	}
-
-	protected function beforeValidate()
-	{
-		if ($this->isNewRecord && empty($this->sr_no)) {
-			try {
-				$this->sr_no = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_ISSUE);
-			} catch (Exception $e) {
-				// cp_document_sequence may not exist; user must enter sr_no
-			}
-		}
-		return parent::beforeValidate();
 	}
 
 	/** @var int|null customer_id before save (for afterSave to update old customer closing) */
@@ -116,6 +104,8 @@ class IssueEntry extends CActiveRecord
 				}
 				if (empty($this->created_at)) $this->created_at = $now;
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
+
+
 			}
 			$this->updated_at = $now;
 			return true;
