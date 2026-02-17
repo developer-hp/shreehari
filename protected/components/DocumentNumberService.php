@@ -28,7 +28,11 @@ class DocumentNumberService
 		}
 
 		$db = Yii::app()->db;
-		$tx = $db->beginTransaction();
+		$existingTx = $db->getCurrentTransaction();
+		$tx = null;
+		if ($existingTx === null) {
+			$tx = $db->beginTransaction();
+		}
 		try {
 			// Ensure row exists
 			$exists = (int)$db->createCommand('SELECT COUNT(*) FROM cp_document_sequence WHERE doc_type = :t')
@@ -50,11 +54,15 @@ class DocumentNumberService
 			$db->createCommand('UPDATE cp_document_sequence SET next_no = :n WHERE doc_type = :t')
 				->execute(array(':n' => $nextNo + 1, ':t' => $docType));
 
-			$tx->commit();
+			if ($tx !== null) {
+				$tx->commit();
+			}
 
 			return $docType . str_pad((string)$nextNo, 6, '0', STR_PAD_LEFT);
 		} catch (Exception $e) {
-			if ($tx->active) $tx->rollback();
+			if ($tx !== null && $tx->getActive()) {
+				$tx->rollback();
+			}
 			throw $e;
 		}
 	}

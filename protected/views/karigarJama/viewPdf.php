@@ -25,6 +25,12 @@ foreach ($model->lines as $line) {
         <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($model->sr_no); ?></td>
     </tr>
     <?php endif; ?>
+    <?php if (!empty($model->voucher_number)): ?>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>"><strong>Voucher No</strong></td>
+        <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($model->voucher_number); ?></td>
+    </tr>
+    <?php endif; ?>
     <tr>
         <td style="<?php echo $cellStyle; ?>"><strong>Total Fine Wt</strong></td>
         <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($totalFineWt, 3); ?></td>

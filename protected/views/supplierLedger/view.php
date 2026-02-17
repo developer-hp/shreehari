@@ -43,6 +43,7 @@
                 <th>Net Wt</th>
                 <th>Touch %</th>
                 <th>Fine Wt</th>
+                <th>Other Items</th>
                 <th>Item Total</th>
             </tr>
         </thead>
@@ -56,42 +57,38 @@
                 <td><?php echo number_format((float)$item->net_wt, 3); ?></td>
                 <td><?php echo CHtml::encode($item->touch_pct); ?></td>
                 <td><?php echo number_format((float)$item->fine_wt, 3); ?></td>
+                <td class="small">
+                    <?php if (!empty($item->charges)): ?>
+                            <table class="table table-bordered margin-bottom-0" style="margin:0;">
+                                <thead>
+                                    <tr class="active">
+                                        <td>Charge Type</td>
+                                        <td>Name</td>
+                                        <td class="text-right">Qty</td>
+                                        <td class="text-right">Rate</td>
+                                        <td class="text-right">Amount</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $chSr = 0; foreach ($item->charges as $ch): $chSr++; ?>
+                                    <?php
+                                    $typeName = isset($ch->subitemType) ? CHtml::encode($ch->subitemType->name) : CHtml::encode($ch->charge_type);
+                                    $chargeName = $ch->charge_name ? CHtml::encode($ch->charge_name) : '—';
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $typeName; ?></td>
+                                        <td><?php echo $chargeName; ?></td>
+                                        <td class="text-right"><?php echo number_format((float)$ch->quantity, 3); ?></td>
+                                        <td class="text-right"><?php echo number_format((float)$ch->rate, 2); ?></td>
+                                        <td class="text-right"><?php echo number_format((float)$ch->amount, 2); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                    <?php endif; ?>
+                </td>
                 <td><?php echo number_format((float)$item->item_total, 2); ?></td>
             </tr>
-            <?php if (!empty($item->charges)): ?>
-            <tr>
-                <td colspan="8" style="padding: 0; vertical-align: top;">
-                    <table class="table table-condensed table-bordered" style="margin: 0; max-width: 100%;">
-                        <thead>
-                            <tr class="active">
-                                <th>Sr</th>
-                                <th>Charge Type</th>
-                                <th>Name</th>
-                                <th class="text-right">Qty</th>
-                                <th class="text-right">Rate</th>
-                                <th class="text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $chSr = 0; foreach ($item->charges as $ch): $chSr++; ?>
-                            <?php
-                            $typeName = isset($ch->subitemType) ? CHtml::encode($ch->subitemType->name) : CHtml::encode($ch->charge_type);
-                            $chargeName = $ch->charge_name ? CHtml::encode($ch->charge_name) : '—';
-                            ?>
-                            <tr>
-                                <td><?php echo $chSr; ?></td>
-                                <td><?php echo $typeName; ?></td>
-                                <td><?php echo $chargeName; ?></td>
-                                <td class="text-right"><?php echo number_format((float)$ch->quantity, 3); ?></td>
-                                <td class="text-right"><?php echo number_format((float)$ch->rate, 2); ?></td>
-                                <td class="text-right"><?php echo number_format((float)$ch->amount, 2); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            <?php endif; ?>
             <?php endforeach; ?>
         </tbody>
     </table>

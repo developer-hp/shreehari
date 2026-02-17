@@ -5584,3 +5584,7 @@ in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php
 in C:\laragon\www\demo\shreehari\protected\models\KarigarJamaVoucher.php (62)
 in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (150)
 in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (64)
+2026/02/16 06:59:03 [error] [application] SupplierLedgerTxn voucher_number: There is already an active transaction
+in C:\laragon\www\demo\shreehari\protected\models\SupplierLedgerTxn.php (70)
+in C:\laragon\www\demo\shreehari\protected\controllers\SupplierLedgerController.php (146)
+in C:\laragon\www\demo\shreehari\protected\controllers\SupplierLedgerController.php (48)

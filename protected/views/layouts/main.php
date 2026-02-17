@@ -156,7 +156,7 @@
                             <?php
 
 
-                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType='';
+                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$ledgerDashboard=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType='';
                             $ledger_tab = $ledgerAcc = $ledgerSup = $ledgerKar = $ledgerIss = $ledgerMaint = '';
                             $action = strtolower(Yii::app()->controller->id);
                             $action1 = strtolower(Yii::app()->controller->action->id);
@@ -171,6 +171,10 @@
                             else if ($action == 'site')
                             {
                                 $li2 = 'active';
+                            }
+                            else if ($action == 'ledgerdashboard')
+                            {
+                                $ledgerDashboard = 'active';
                             }
                             else if($action1 == 'today_cash' || $action1 == 'today_gold' || $action1 == 'today_bank' || $action1 == 'today_card' || $action1 == 'today_discount' || $action1 == 'today_item')
                             {
@@ -377,6 +381,9 @@
 
                                     <li>
                                     <?php echo CHtml::link('<i class="gi gi-compass sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Dashboard</span>', array("site/index"), array('class' => $li2)) ?>
+                                    </li>
+                                    <li>
+                                    <?php echo CHtml::link('<i class="fa fa-bar-chart sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Dashboard</span>', array("ledgerDashboard/index"), array('class' => $ledgerDashboard)) ?>
                                     </li>
                                     <li class="sidebar-separator">
                                         <i class="fa fa-ellipsis-h"></i>
