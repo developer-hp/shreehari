@@ -25,8 +25,6 @@ class KarigarJamaVoucherLine extends CActiveRecord
 		return array(
 			'voucher' => array(self::BELONGS_TO, 'KarigarJamaVoucher', 'voucher_id'),
 			'stones' => array(self::HAS_MANY, 'KarigarJamaLineStone', 'line_id'),
-			'diamonds' => array(self::HAS_MANY, 'KarigarJamaLineDiamond', 'line_id'),
-			'others' => array(self::HAS_MANY, 'KarigarJamaLineOther', 'line_id'),
 		);
 	}
 
