@@ -14,6 +14,57 @@
         </div>
     </div>
 </div>
+
+<?php
+$ledgerTotals = isset($ledger_totals) ? $ledger_totals : array('total_closing_fine' => 0, 'total_closing_amount' => 0, 'ledger_count' => 0);
+$fineBalanceBg = ($ledgerTotals['total_closing_fine'] >= 0) ? 'background-color: #5cb85c;' : 'background-color: #d9534f;';
+$amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-color: #5cb85c;' : 'background-color: #d9534f;';
+?>
+<?php if (!empty($customers) && !empty($ledgerTotals)): ?>
+<!-- Ledger totals widget block -->
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-sm-6 col-lg-4">
+        <div class="widget" style="<?php echo $fineBalanceBg; ?>">
+            <div class="widget-content widget-content-mini text-right clearfix" style="color: #fff;">
+                <div class="widget-icon pull-left" style="background-color: rgba(255,255,255,0.2);">
+                    <i class="fa fa-balance-scale" style="color: #fff;"></i>
+                </div>
+                <h2 class="widget-heading h3" style="color: #fff;">
+                    <strong><?php echo number_format($ledgerTotals['total_closing_fine'], 3); ?></strong>
+                </h2>
+                <span style="color: rgba(255,255,255,0.9);">Total Fine Balance (all ledgers)</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="widget" style="<?php echo $amountBalanceBg; ?>">
+            <div class="widget-content widget-content-mini text-right clearfix" style="color: #fff;">
+                <div class="widget-icon pull-left" style="background-color: rgba(255,255,255,0.2);">
+                    <i class="fa fa-money" style="color: #fff;"></i>
+                </div>
+                <h2 class="widget-heading h3" style="color: #fff;">
+                    <strong><?php echo number_format($ledgerTotals['total_closing_amount'], 2); ?></strong>
+                </h2>
+                <span style="color: rgba(255,255,255,0.9);">Total Amount Balance (all ledgers)</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="widget">
+            <div class="widget-content widget-content-mini text-right clearfix">
+                <div class="widget-icon pull-left themed-background">
+                    <i class="fa fa-book text-light-op"></i>
+                </div>
+                <h2 class="widget-heading h3 text">
+                    <strong><?php echo (int) $ledgerTotals['ledger_count']; ?></strong>
+                </h2>
+                <span class="text-muted">No. of Ledgers</span>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="block">

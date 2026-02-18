@@ -178,6 +178,8 @@ class LedgerReportController extends Controller
             return strcasecmp($a['customer']->name, $b['customer']->name);
         });
 
+        $ledgerTotals = $this->computeLedgerTotals($reportCustomers);
+
         return array(
             'customers' => $reportCustomers,
             'from_date' => $fromDate,
@@ -186,6 +188,43 @@ class LedgerReportController extends Controller
             'filter_customer_type' => $customerType,
             'supplier_ledger_by_issue_id' => $supplierLedgerByIssueId,
             'karigar_jama_by_issue_id' => $karigarJamaByIssueId,
+            'ledger_totals' => $ledgerTotals,
+        );
+    }
+
+    /**
+     * Compute totals across all ledgers: sum of closing fine balance and closing amount balance.
+     * @param array $reportCustomers same structure as buildReportData['customers']
+     * @return array ['total_closing_fine' => float, 'total_closing_amount' => float, 'ledger_count' => int]
+     */
+    protected function computeLedgerTotals($reportCustomers)
+    {
+        $totalClosingFine = 0;
+        $totalClosingAmount = 0;
+        foreach ($reportCustomers as $row) {
+            $opening = $row['opening'];
+            $issues = $row['issues'];
+            $runningFine = 0;
+            $runningAmount = 0;
+            if ($opening) {
+                $fw = (float) $opening->opening_fine_wt;
+                $am = (float) $opening->opening_amount;
+                $runningFine += ($opening->opening_fine_wt_drcr == 1) ? $fw : -$fw;
+                $runningAmount += ($opening->opening_amount_drcr == 1) ? $am : -$am;
+            }
+            foreach ($issues as $iss) {
+                $fw = (float) $iss->fine_wt;
+                $am = (float) $iss->amount;
+                $runningFine += ($iss->drcr == 1) ? $fw : -$fw;
+                $runningAmount += ($iss->drcr == 1) ? $am : -$am;
+            }
+            $totalClosingFine += $runningFine;
+            $totalClosingAmount += $runningAmount;
+        }
+        return array(
+            'total_closing_fine' => $totalClosingFine,
+            'total_closing_amount' => $totalClosingAmount,
+            'ledger_count' => count($reportCustomers),
         );
     }
 }
