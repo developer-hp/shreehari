@@ -29,12 +29,18 @@
             'opening_fine_wt',
             array(
                 'name' => 'opening_fine_wt_drcr',
-                'value' => $model->opening_fine_wt_drcr == 1 ? 'DR (Debit)' : 'CR (Credit)',
+                'value' => function($model) {
+                    $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+                    return isset($drcrOptions[$model->opening_fine_wt_drcr]) ? $drcrOptions[$model->opening_fine_wt_drcr] : '';
+                },
             ),
             'opening_amount',
             array(
                 'name' => 'opening_amount_drcr',
-                'value' => $model->opening_amount_drcr == 1 ? 'DR (Debit)' : 'CR (Credit)',
+                'value' => function($model) {
+                    $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+                    return isset($drcrOptions[$model->opening_amount_drcr]) ? $drcrOptions[$model->opening_amount_drcr] : '';
+                },
             ),
             array(
                 'name' => 'is_deleted',

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Supplier Ledger Book: transaction entry (date, supplier, items with charges).
+ * Supplier Voucher: transaction entry (date, supplier, items with charges).
  */
 class SupplierLedgerController extends Controller
 {
@@ -56,6 +56,11 @@ class SupplierLedgerController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
+		if ($model->is_locked == 1) {
+			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be edited. It was locked after opening balance was updated from closing.');
+			$this->redirect(array('view', 'id' => $model->id));
+			return;
+		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['SupplierLedgerTxn'])) {
 			$model->attributes = $_POST['SupplierLedgerTxn'];
@@ -70,7 +75,13 @@ class SupplierLedgerController extends Controller
 
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		$model = $this->loadModel($id);
+		if ($model->is_locked == 1) {
+			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be deleted. It was locked after opening balance was updated from closing.');
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			return;
+		}
+		$model->delete();
 		Yii::app()->user->setFlash('success', 'Transaction deleted.');
 		$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
@@ -94,7 +105,10 @@ class SupplierLedgerController extends Controller
 	{
 		$totalFineWt = (float) $model->total_fine_wt;
 		$totalAmount = (float) $model->total_amount;
-		$voucherNo = ($model->voucher_number !== null && $model->voucher_number !== '') ? $model->voucher_number : ('SLV' . $model->id);
+		$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
+		$voucherNo = ($model->voucher_number !== null && $model->voucher_number !== '') ? $model->voucher_number : ($prefix . $model->id);
+		// Use the selected drcr value, default to DR if not set
+		$drcr = isset($model->drcr) && $model->drcr ? $model->drcr : IssueEntry::DRCR_DEBIT;
 		if ($model->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($model->issue_entry_id);
 			if ($entry) {
@@ -102,8 +116,8 @@ class SupplierLedgerController extends Controller
 				$entry->fine_wt = $totalFineWt;
 				$entry->amount = $totalAmount;
 				$entry->sr_no = $voucherNo;
-				$entry->drcr = IssueEntry::DRCR_DEBIT;
-				$entry->remarks = 'Supplier Ledger ' . $voucherNo;
+				$entry->drcr = $drcr;
+				$entry->remarks = 'Supplier Voucher ' . $voucherNo;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
@@ -114,7 +128,7 @@ class SupplierLedgerController extends Controller
 			$entry->customer_id = $model->supplier_id;
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
-			$entry->drcr = IssueEntry::DRCR_DEBIT;
+			$entry->drcr = $drcr;
 			$entry->remarks = 'Supplier Ledger ' . $voucherNo;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {

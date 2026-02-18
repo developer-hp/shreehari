@@ -95,9 +95,15 @@
     </div>
 
     <div class="form-group">
-        <?php echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
+        <?php 
+        $drcrOptions = IssueEntry::getDrcrOptions();
+        $drcrLabel = implode('/', $drcrOptions);
+        echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
         <div class="col-sm-4">
-            <?php echo $form->dropDownList($model, 'drcr', IssueEntry::getDrcrOptions(), array('class' => 'form-control', 'prompt' => '-- Select --')); ?>
+            <?php 
+            $drcrOptions = IssueEntry::getDrcrOptions();
+            $drcrLabel = implode('/', $drcrOptions);
+            echo $form->dropDownList($model, 'drcr', $drcrOptions, array('class' => 'form-control', 'prompt' => '-- Select ' . $drcrLabel . ' --')); ?>
             <?php echo $form->error($model, 'drcr'); ?>
         </div>
     </div>

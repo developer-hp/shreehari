@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Supplier Ledger Transaction Item (one product line).
+ * Supplier Voucher Item (one product line).
  * fine_wt = (touch_pct/100) * net_wt
  * Charge type comes from cp_subitem_types (SubitemType).
  */

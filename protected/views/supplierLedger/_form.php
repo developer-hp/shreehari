@@ -46,6 +46,27 @@ if (!$txnDate) $txnDate = date('d-m-Y');
         <?php echo $form->error($model, 'sr_no'); ?>
     </div>
 </div>
+<div class="form-group">
+    <?php echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
+    <div class="col-sm-4">
+        <?php 
+        $drcrOptions = IssueEntry::getDrcrOptions();
+        $drcrLabel = implode('/', $drcrOptions);
+        if ($model->isNewRecord && empty($model->drcr)) {
+            $model->drcr = IssueEntry::DRCR_DEBIT;
+        }
+        echo $form->dropDownList($model, 'drcr', $drcrOptions, array('class' => 'form-control'));
+        ?>
+        <?php echo $form->error($model, 'drcr'); ?>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model, 'remark', array('class' => 'col-sm-2 control-label')); ?>
+    <div class="col-sm-8">
+        <?php echo $form->textArea($model, 'remark', array('class' => 'form-control', 'rows' => 3, 'placeholder' => 'Enter remarks...')); ?>
+        <?php echo $form->error($model, 'remark'); ?>
+    </div>
+</div>
 
 <h4>Items</h4>
 <div id="items-container">

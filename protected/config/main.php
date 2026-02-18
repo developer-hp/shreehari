@@ -118,5 +118,15 @@ return array(
         // this is used in contact page
         'pageSize'=>100,
         'adminEmail' => 'info@makler.fcr-immobilien.de',
+        // DR/CR options - can be changed anytime here
+        'drcrOptions' => array(
+            1 => 'Jama',  // DR (Debit)
+            2 => 'Baki', // CR (Credit)
+        ),
+        // Voucher number prefixes - can be changed anytime here
+        'voucherPrefixes' => array(
+            'supplier_voucher' => 'SV',  // Supplier Voucher prefix (was SLV)
+            'karigar_voucher' => 'KV',   // Karigar Voucher prefix (was JMV)
+        ),
     ),
 );

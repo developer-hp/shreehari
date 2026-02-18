@@ -2,12 +2,12 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="header-section">
-                <h1>Add Supplier Ledger Transaction</h1>
+                <h1>Add Supplier Voucher</h1>
             </div>
         </div>
         <div class="col-sm-6 hidden-xs">
             <ul class="breadcrumb breadcrumb-top">
-                <li><?php echo CHtml::link('Supplier Ledger', array('supplierLedger/index')); ?></li>
+                <li><?php echo CHtml::link('Supplier Voucher', array('supplierLedger/index')); ?></li>
                 <li>Create</li>
             </ul>
         </div>

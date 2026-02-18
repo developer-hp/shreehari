@@ -48,8 +48,11 @@
                     'amount',
                     array(
                         'name' => 'drcr',
-                        'value' => '$data->drcr == 1 ? "DR" : "CR"',
-                        'filter' => array(1 => 'DR', 2 => 'CR'),
+                        'value' => function($data) {
+                            $drcrOptions = IssueEntry::getDrcrOptions();
+                            return isset($drcrOptions[$data->drcr]) ? $drcrOptions[$data->drcr] : '';
+                        },
+                        'filter' => IssueEntry::getDrcrOptions(),
                     ),
                     array(
                         'name' => 'created_at',

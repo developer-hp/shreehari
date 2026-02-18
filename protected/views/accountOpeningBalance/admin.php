@@ -42,14 +42,20 @@
                     'opening_fine_wt',
                     array(
                         'name' => 'opening_fine_wt_drcr',
-                        'value' => '$data->opening_fine_wt_drcr == 1 ? "DR" : "CR"',
-                        'filter' => array(1 => 'DR', 2 => 'CR'),
+                        'value' => function($data) {
+                            $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+                            return isset($drcrOptions[$data->opening_fine_wt_drcr]) ? $drcrOptions[$data->opening_fine_wt_drcr] : '';
+                        },
+                        'filter' => AccountOpeningBalance::getDrcrOptions(),
                     ),
                     'opening_amount',
                     array(
                         'name' => 'opening_amount_drcr',
-                        'value' => '$data->opening_amount_drcr == 1 ? "DR" : "CR"',
-                        'filter' => array(1 => 'DR', 2 => 'CR'),
+                        'value' => function($data) {
+                            $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+                            return isset($drcrOptions[$data->opening_amount_drcr]) ? $drcrOptions[$data->opening_amount_drcr] : '';
+                        },
+                        'filter' => AccountOpeningBalance::getDrcrOptions(),
                     ),
                     array(
                         'name' => 'created_at',

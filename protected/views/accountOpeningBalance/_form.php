@@ -66,7 +66,10 @@
     <div class="form-group">
         <?php echo $form->labelEx($model, 'opening_fine_wt_drcr', array('class' => 'col-sm-2 control-label')); ?>
         <div class="col-sm-4">
-            <?php echo $form->dropDownList($model, 'opening_fine_wt_drcr', AccountOpeningBalance::getDrcrOptions(), array('class' => 'form-control', 'prompt' => '-- Select --')); ?>
+            <?php 
+            $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+            $drcrLabel = implode('/', $drcrOptions);
+            echo $form->dropDownList($model, 'opening_fine_wt_drcr', $drcrOptions, array('class' => 'form-control', 'prompt' => '-- Select ' . $drcrLabel . ' --')); ?>
             <?php echo $form->error($model, 'opening_fine_wt_drcr'); ?>
         </div>
     </div>
@@ -82,7 +85,12 @@
     <div class="form-group">
         <?php echo $form->labelEx($model, 'opening_amount_drcr', array('class' => 'col-sm-2 control-label')); ?>
         <div class="col-sm-4">
-            <?php echo $form->dropDownList($model, 'opening_amount_drcr', AccountOpeningBalance::getDrcrOptions(), array('class' => 'form-control', 'prompt' => '-- Select --')); ?>
+            <?php 
+            if (!isset($drcrOptions)) {
+                $drcrOptions = AccountOpeningBalance::getDrcrOptions();
+                $drcrLabel = implode('/', $drcrOptions);
+            }
+            echo $form->dropDownList($model, 'opening_amount_drcr', $drcrOptions, array('class' => 'form-control', 'prompt' => '-- Select ' . $drcrLabel . ' --')); ?>
             <?php echo $form->error($model, 'opening_amount_drcr'); ?>
         </div>
     </div>

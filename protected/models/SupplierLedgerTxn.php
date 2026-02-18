@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Supplier Ledger Transaction (header).
+ * Supplier Voucher (header).
  */
 class SupplierLedgerTxn extends CActiveRecord
 {
@@ -16,11 +16,12 @@ class SupplierLedgerTxn extends CActiveRecord
 	{
 		return array(
 			array('txn_date, supplier_id,sr_no', 'required'),
-			array('supplier_id, issue_entry_id, created_by, is_deleted', 'numerical', 'integerOnly' => true),
+			array('supplier_id, issue_entry_id, created_by, is_deleted, is_locked, drcr', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),
-			array('created_at, supplier_name', 'safe'),
-			array('id, txn_date, supplier_id, sr_no, voucher_number, issue_entry_id, total_fine_wt, total_amount, created_at, created_by, is_deleted, supplier_name', 'safe', 'on' => 'search'),
+			array('drcr', 'in', 'range' => array(IssueEntry::DRCR_DEBIT, IssueEntry::DRCR_CREDIT)),
+			array('remark, created_at, supplier_name', 'safe'),
+			array('id, txn_date, supplier_id, sr_no, voucher_number, issue_entry_id, drcr, remark, total_fine_wt, total_amount, created_at, created_by, is_deleted, is_locked, supplier_name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -43,11 +44,14 @@ class SupplierLedgerTxn extends CActiveRecord
 			'sr_no' => 'SR No',
 			'voucher_number' => 'Voucher No',
 			'issue_entry_id' => 'Issue Entry',
+			'drcr' => 'DR/CR',
+			'remark' => 'Remark',
 			'total_fine_wt' => 'Total Fine Wt',
 			'total_amount' => 'Total Amount',
 			'created_at' => 'Created At',
 			'created_by' => 'Created By',
 			'is_deleted' => 'Deleted',
+			'is_locked' => 'Locked',
 		);
 	}
 
@@ -62,13 +66,18 @@ class SupplierLedgerTxn extends CActiveRecord
 				}
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
+				// Default to DR if not set
+				if (empty($this->drcr)) {
+					$this->drcr = IssueEntry::DRCR_DEBIT;
+				}
 			}
 			if ($this->voucher_number === null || $this->voucher_number === '') {
 				try {
 					$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
 				} catch (Exception $e) {
 					Yii::log('SupplierLedgerTxn voucher_number: ' . $e->getMessage(), 'error', 'application');
-					$this->voucher_number = 'SLV' . ($this->id ?: date('YmdHis'));
+					$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
+					$this->voucher_number = $prefix . ($this->id ?: date('YmdHis'));
 				}
 			}
 			if (!empty($this->txn_date)) {
@@ -101,6 +110,7 @@ class SupplierLedgerTxn extends CActiveRecord
 		$criteria->compare('t.sr_no', $this->sr_no, true);
 		$criteria->compare('t.voucher_number', $this->voucher_number, true);
 		$criteria->compare('t.txn_date', $this->txn_date, true);
+		$criteria->compare('t.is_locked', $this->is_locked);
 		if (!empty($this->supplier_name))
 			$criteria->compare('supplier.name', $this->supplier_name, true);
 		return new CActiveDataProvider($this, array(

@@ -6,9 +6,9 @@
  * @property integer $id
  * @property integer $customer_id
  * @property string $opening_fine_wt
- * @property integer $opening_fine_wt_drcr 1=DR, 2=CR
+ * @property integer $opening_fine_wt_drcr 1=Jama, 2=Baki
  * @property string $opening_amount
- * @property integer $opening_amount_drcr 1=DR, 2=CR
+ * @property integer $opening_amount_drcr 1=Jama, 2=Baki
  * @property integer $is_deleted
  * @property string $created_at
  * @property integer $created_by
@@ -79,14 +79,22 @@ class AccountOpeningBalance extends CActiveRecord
 	 */
 	public function attributeLabels()
 	{
+		$drcrLabel = 'Jama/Baki';
+		try {
+			if (isset(Yii::app()->params['drcrOptions']) && is_array(Yii::app()->params['drcrOptions'])) {
+				$drcrLabel = implode('/', Yii::app()->params['drcrOptions']);
+			}
+		} catch (Exception $e) {
+			// Fallback to default
+		}
 		return array(
 			'id' => 'ID',
 			'customer_id' => 'Account',
 			'customer_name' => 'Account',
 			'opening_fine_wt' => 'Opening Fine Wt',
-			'opening_fine_wt_drcr' => 'Fine (DR/CR)',
+			'opening_fine_wt_drcr' => 'Fine (' . $drcrLabel . ')',
 			'opening_amount' => 'Opening Amount',
-			'opening_amount_drcr' => 'Amount (DR/CR)',
+			'opening_amount_drcr' => 'Amount (' . $drcrLabel . ')',
 			'is_deleted' => 'Deleted',
 			'created_at' => 'Created At',
 			'created_by' => 'Created By',
@@ -94,14 +102,11 @@ class AccountOpeningBalance extends CActiveRecord
 	}
 
 	/**
-	 * @return array options for DR/CR dropdown
+	 * @return array options for DR/CR dropdown (Jama/Baki)
 	 */
 	public static function getDrcrOptions()
 	{
-		return array(
-			self::DRCR_DEBIT => 'DR (Debit)',
-			self::DRCR_CREDIT => 'CR (Credit)',
-		);
+		return isset(Yii::app()->params['drcrOptions']) ? Yii::app()->params['drcrOptions'] : array(1 => 'Jama', 2 => 'Baki');
 	}
 
 	/**

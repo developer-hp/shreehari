@@ -43,12 +43,38 @@ class OpeningBalanceService
 		if (!$opening->save(false))
 			return null;
 
+		// Get all issue entry IDs for this customer before soft-deleting
+		$issueEntries = IssueEntry::model()->findAllByAttributes(
+			array('customer_id' => $customerId, 'is_deleted' => 0)
+		);
+		$issueEntryIds = array();
+		foreach ($issueEntries as $entry) {
+			$issueEntryIds[] = (int)$entry->id;
+		}
+
 		// Soft-delete all issue entries for this customer
 		IssueEntry::model()->updateAll(
 			array('is_deleted' => 1),
 			'customer_id = :cid AND is_deleted = 0',
 			array(':cid' => $customerId)
 		);
+
+		// Lock all vouchers linked to these issue entries
+		if (!empty($issueEntryIds)) {
+			$placeholders = implode(',', $issueEntryIds);
+			// Lock supplier vouchers
+			SupplierLedgerTxn::model()->updateAll(
+				array('is_locked' => 1),
+				'issue_entry_id IN (' . $placeholders . ') AND is_deleted = 0',
+				array()
+			);
+			// Lock karigar vouchers
+			KarigarJamaVoucher::model()->updateAll(
+				array('is_locked' => 1),
+				'issue_entry_id IN (' . $placeholders . ') AND is_deleted = 0',
+				array()
+			);
+		}
 
 		// Recompute customer closing (now equals opening only)
 		Customer::updateClosingBalance($customerId);

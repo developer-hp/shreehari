@@ -463,10 +463,10 @@
                                         <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Report</span>', array("ledgerReport/index"), array('class' => $ledgerReport)) ?>
                                     </li>
                                     <li>
-                                        <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Ledger</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>
+                                        <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Voucher</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>
                                     </li>
                                     <li>
-                                        <?php echo CHtml::link('<i class="fa fa-file-text-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Karigar Jama</span>', array("karigarJama/index"), array('class' => $karigarJama)) ?>
+                                        <?php echo CHtml::link('<i class="fa fa-file-text-o sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Karigar Voucher</span>', array("karigarJama/index"), array('class' => $karigarJama)) ?>
                                     </li>
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-tags sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Subitem Types</span>', array("subitemType/index"), array('class' => $subitemType)) ?>

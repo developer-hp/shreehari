@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Karigar Jama Voucher - connected to Issue Entry.
+ * Karigar Voucher - connected to Issue Entry.
  */
 class KarigarJamaController extends Controller
 {
@@ -57,6 +57,11 @@ class KarigarJamaController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
+		if ($model->is_locked == 1) {
+			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be edited. It was locked after opening balance was updated from closing.');
+			$this->redirect(array('view', 'id' => $model->id));
+			return;
+		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['KarigarJamaVoucher'])) {
 			$model->attributes = $_POST['KarigarJamaVoucher'];
@@ -71,7 +76,13 @@ class KarigarJamaController extends Controller
 
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		$model = $this->loadModel($id);
+		if ($model->is_locked == 1) {
+			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be deleted. It was locked after opening balance was updated from closing.');
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			return;
+		}
+		$model->delete();
 		Yii::app()->user->setFlash('success', 'Jama voucher deleted.');
 		$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
@@ -94,13 +105,16 @@ class KarigarJamaController extends Controller
 	{
 		$voucher = KarigarJamaVoucher::model()->with(array('lines' => array('with' => 'stones')))->findByPk($voucher->id);
 		if (!$voucher) return;
-		$voucherNo = ($voucher->voucher_number !== null && $voucher->voucher_number !== '') ? $voucher->voucher_number : ('JMV' . $voucher->id);
+		$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
+		$voucherNo = ($voucher->voucher_number !== null && $voucher->voucher_number !== '') ? $voucher->voucher_number : ($prefix . $voucher->id);
 		$totalFineWt = 0;
 		$totalAmount = 0;
 		foreach ($voucher->lines as $line) {
 			$totalFineWt += (float) $line->fine_wt;
 			foreach ($line->stones as $s) $totalAmount += (float) $s->stone_amount;
 		}
+		// Use the selected drcr value, default to CR if not set
+		$drcr = isset($voucher->drcr) && $voucher->drcr ? $voucher->drcr : IssueEntry::DRCR_CREDIT;
 		if ($voucher->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($voucher->issue_entry_id);
 			if ($entry) {
@@ -108,8 +122,8 @@ class KarigarJamaController extends Controller
 				$entry->fine_wt = $totalFineWt;
 				$entry->sr_no = $voucherNo;
 				$entry->amount = $totalAmount;
-				$entry->drcr = IssueEntry::DRCR_CREDIT;
-				$entry->remarks = 'Jama ' . $voucherNo;
+				$entry->drcr = $drcr;
+				$entry->remarks = 'Karigar Voucher ' . $voucherNo;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
@@ -120,7 +134,7 @@ class KarigarJamaController extends Controller
 			$entry->customer_id = $voucher->karigar_id;
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
-			$entry->drcr = IssueEntry::DRCR_CREDIT;
+			$entry->drcr = $drcr;
 			$entry->remarks = 'Jama ' . $voucherNo;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {

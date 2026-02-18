@@ -13,11 +13,12 @@ class KarigarJamaVoucher extends CActiveRecord
 	{
 		return array(
 			array('voucher_date, karigar_id', 'required'),
-			array('karigar_id, issue_entry_id, created_by, is_deleted', 'numerical', 'integerOnly' => true),
+			array('karigar_id, issue_entry_id, created_by, is_deleted, is_locked, drcr', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),
-			array('created_at, karigar_name', 'safe'),
-			array('id, voucher_date, karigar_id, issue_entry_id, sr_no, voucher_number, total_fine_wt, total_amount, created_at, created_by, is_deleted, karigar_name', 'safe', 'on' => 'search'),
+			array('drcr', 'in', 'range' => array(IssueEntry::DRCR_DEBIT, IssueEntry::DRCR_CREDIT)),
+			array('remark, created_at, karigar_name', 'safe'),
+			array('id, voucher_date, karigar_id, issue_entry_id, drcr, remark, sr_no, voucher_number, total_fine_wt, total_amount, created_at, created_by, is_deleted, is_locked, karigar_name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -38,6 +39,8 @@ class KarigarJamaVoucher extends CActiveRecord
 			'karigar_id' => 'Karigar',
 			'karigar_name' => 'Karigar',
 			'issue_entry_id' => 'Issue Entry',
+			'drcr' => 'DR/CR',
+			'remark' => 'Remark',
 			'sr_no' => 'SR No',
 			'voucher_number' => 'Voucher No',
 			'total_fine_wt' => 'Total Fine Wt',
@@ -45,6 +48,7 @@ class KarigarJamaVoucher extends CActiveRecord
 			'created_at' => 'Created At',
 			'created_by' => 'Created By',
 			'is_deleted' => 'Deleted',
+			'is_locked' => 'Locked',
 		);
 	}
 
@@ -54,13 +58,18 @@ class KarigarJamaVoucher extends CActiveRecord
 			if ($this->isNewRecord) {
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
+				// Default to CR if not set
+				if (empty($this->drcr)) {
+					$this->drcr = IssueEntry::DRCR_CREDIT;
+				}
 			}
 			if ($this->voucher_number === null || $this->voucher_number === '') {
 				try {
 					$this->voucher_number = DocumentNumberService::nextSrNo(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
 				} catch (Exception $e) {
 					Yii::log('KarigarJamaVoucher voucher_number: ' . $e->getMessage(), 'error', 'application');
-					$this->voucher_number = 'JMV' . ($this->id ?: date('YmdHis'));
+					$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
+					$this->voucher_number = $prefix . ($this->id ?: date('YmdHis'));
 				}
 			}
 			if (!empty($this->voucher_date)) {
@@ -94,6 +103,7 @@ class KarigarJamaVoucher extends CActiveRecord
 		$criteria->compare('t.voucher_number', $this->voucher_number, true);
 		$criteria->compare('t.total_fine_wt', $this->total_fine_wt);
 		$criteria->compare('t.total_amount', $this->total_amount);
+		$criteria->compare('t.is_locked', $this->is_locked);
 		if (!empty($this->karigar_name))
 			$criteria->compare('karigar.name', $this->karigar_name, true);
 		return new CActiveDataProvider($this, array(

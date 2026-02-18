@@ -2,31 +2,39 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="header-section">
-                <h1>Supplier Ledger Transaction</h1>
+                <h1>Supplier Voucher</h1>
             </div>
         </div>
         <div class="col-sm-6 hidden-xs">
             <ul class="breadcrumb breadcrumb-top">
-                <li><?php echo CHtml::link('Supplier Ledger', array('supplierLedger/index')); ?></li>
+                <li><?php echo CHtml::link('Supplier Voucher', array('supplierLedger/index')); ?></li>
                 <li>View</li>
             </ul>
         </div>
     </div>
 </div>
 <div class="block">
-    <div class="block-title"><h2>Transaction #<?php echo CHtml::encode($model->id); ?></h2></div>
+    <div class="block-title"><h2>Voucher #<?php echo CHtml::encode($model->id); ?></h2></div>
     <div class="row">
         <div class="col-sm-6">
             <p><strong>Date:</strong> <?php echo $model->txn_date ? date('d-m-Y', strtotime($model->txn_date)) : '—'; ?></p>
             <p><strong>Supplier:</strong> <?php echo isset($model->supplier) ? CHtml::encode($model->supplier->name) : '—'; ?></p>
             <?php if (!empty($model->sr_no)): ?><p><strong>SR No:</strong> <?php echo CHtml::encode($model->sr_no); ?></p><?php endif; ?>
             <?php if (!empty($model->voucher_number)): ?><p><strong>Voucher No:</strong> <?php echo CHtml::encode($model->voucher_number); ?></p><?php endif; ?>
+            <?php if (isset($model->drcr)): 
+                $drcrOptions = IssueEntry::getDrcrOptions();
+                $drcrLabel = implode('/', $drcrOptions);
+            ?><p><strong><?php echo $drcrLabel; ?>:</strong> <?php echo isset($model->drcr) && isset($drcrOptions[$model->drcr]) ? $drcrOptions[$model->drcr] : '—'; ?></p><?php endif; ?>
+            <?php if (!empty($model->remark)): ?><p><strong>Remark:</strong> <?php echo nl2br(CHtml::encode($model->remark)); ?></p><?php endif; ?>
+            <?php if ($model->is_locked == 1): ?><p><strong>Status:</strong> <span class="label label-warning"><i class="fa fa-lock"></i> Locked</span> <small class="text-muted">(Cannot be edited after opening balance update)</small></p><?php endif; ?>
             <p><strong>Total Fine Wt:</strong> <?php echo number_format((float)$model->total_fine_wt, 3); ?></p>
             <p><strong>Total Amount:</strong> <?php echo number_format((float)$model->total_amount, 2); ?></p>
         </div>
         <div class="col-sm-6 text-right">
             <p>
-                <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
+                <?php if ($model->is_locked != 1): ?>
+                    <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
+                <?php endif; ?>
                 <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('supplierLedger/pdf', 'id' => $model->id), array('class' => 'btn btn-primary')); ?>
             </p>
         </div>

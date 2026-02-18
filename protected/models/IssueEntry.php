@@ -61,7 +61,7 @@ class IssueEntry extends CActiveRecord
 			'customer_name' => 'Account',
 			'fine_wt' => 'Fine Wt',
 			'amount' => 'Amount',
-			'drcr' => 'DR/CR',
+			'drcr' => implode('/', Yii::app()->params['drcrOptions']),
 			'remarks' => 'Remarks',
 			'created_by' => 'Created By',
 			'created_at' => 'Created At',
@@ -73,10 +73,7 @@ class IssueEntry extends CActiveRecord
 
 	public static function getDrcrOptions()
 	{
-		return array(
-			self::DRCR_DEBIT => 'DR (Debit)',
-			self::DRCR_CREDIT => 'CR (Credit)',
-		);
+		return Yii::app()->params['drcrOptions'];
 	}
 
 	/** @var int|null customer_id before save (for afterSave to update old customer closing) */

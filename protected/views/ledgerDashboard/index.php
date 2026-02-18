@@ -63,17 +63,22 @@
                         <h4 class="sub-header"><?php echo isset($filterDateDisplay) ? 'Selected date (' . CHtml::encode($filterDateDisplay) . ')' : 'Today'; ?></h4>
                         <table class="table table-condensed table-borderless">
                             <tbody>
+                                <?php 
+                                $drcrOptions = IssueEntry::getDrcrOptions();
+                                $crLabel = $drcrOptions[IssueEntry::DRCR_CREDIT];
+                                $drLabel = $drcrOptions[IssueEntry::DRCR_DEBIT];
+                                ?>
                                 <tr>
-                                    <td class="text-muted" style="width: 120px;">Amount In (CR)</td>
+                                    <td class="text-muted" style="width: 120px;">Amount In (<?php echo $crLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-success">₹ <?php echo number_format((float) $todayInAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Amount Out (DR)</td>
+                                    <td class="text-muted">Amount Out (<?php echo $drLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-danger">₹ <?php echo number_format((float) $todayOutAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Balance (In − Out)</td>
-                                    <td class="text-right"><strong><?php echo number_format((float) $todayBalanceAmount, 2); ?> <?php echo $todayBalanceAmount >= 0 ? '<span class="text-success">(CR)</span>' : '<span class="text-danger">(DR)</span>'; ?></strong></td>
+                                    <td class="text-right"><strong><?php echo number_format((float) $todayBalanceAmount, 2); ?> <?php echo $todayBalanceAmount >= 0 ? '<span class="text-success">(' . $crLabel . ')</span>' : '<span class="text-danger">(' . $drLabel . ')</span>'; ?></strong></td>
                                 </tr>
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
@@ -95,17 +100,24 @@
                         <h4 class="sub-header">Overall (all time)</h4>
                         <table class="table table-condensed table-borderless">
                             <tbody>
+                                <?php 
+                                if (!isset($drcrOptions)) {
+                                    $drcrOptions = IssueEntry::getDrcrOptions();
+                                    $crLabel = $drcrOptions[IssueEntry::DRCR_CREDIT];
+                                    $drLabel = $drcrOptions[IssueEntry::DRCR_DEBIT];
+                                }
+                                ?>
                                 <tr>
-                                    <td class="text-muted" style="width: 120px;">Amount In (CR)</td>
+                                    <td class="text-muted" style="width: 120px;">Amount In (<?php echo $crLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-success">₹ <?php echo number_format((float) $totalInAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Amount Out (DR)</td>
+                                    <td class="text-muted">Amount Out (<?php echo $drLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-danger">₹ <?php echo number_format((float) $totalOutAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Ledger Balance</td>
-                                    <td class="text-right"><strong>₹ <?php echo number_format((float) $ledgerBalanceAmount, 2); ?> <?php echo $ledgerBalanceAmount >= 0 ? '<span class="text-success">(CR)</span>' : '<span class="text-danger">(DR)</span>'; ?></strong></td>
+                                    <td class="text-right"><strong>₹ <?php echo number_format((float) $ledgerBalanceAmount, 2); ?> <?php echo $ledgerBalanceAmount >= 0 ? '<span class="text-success">(' . $crLabel . ')</span>' : '<span class="text-danger">(' . $drLabel . ')</span>'; ?></strong></td>
                                 </tr>
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
@@ -155,7 +167,7 @@
                 <h2 class="widget-heading h3 text">
                     <strong><?php echo (int) $supplierLedgerCount; ?></strong>
                 </h2>
-                <span class="text-muted">Supplier Ledger (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <span class="text-muted">Supplier Voucher (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $supplierLedgerTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $supplierLedgerTotalFineWt, 3); ?></div>
             </div>
@@ -170,7 +182,7 @@
                 <h2 class="widget-heading h3 text">
                     <strong><?php echo (int) $karigarJamaCount; ?></strong>
                 </h2>
-                <span class="text-muted">Karigar Jama (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <span class="text-muted">Karigar Voucher (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $karigarJamaTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $karigarJamaTotalFineWt, 3); ?></div>
             </div>
@@ -230,7 +242,7 @@
                     <tr>
                         <th>Date</th>
                         <th>Account</th>
-                        <th class="text-right">DR/CR</th>
+                        <th class="text-right"><?php $drcrOptions = IssueEntry::getDrcrOptions(); echo implode('/', $drcrOptions); ?></th>
                         <th class="text-right">Fine Wt</th>
                         <th class="text-right">Amount</th>
                     </tr>
@@ -243,7 +255,10 @@
                             <tr>
                                 <td><?php echo !empty($entry->issue_date) ? date('d-m-Y', strtotime($entry->issue_date)) : '-'; ?></td>
                                 <td><?php echo isset($entry->customer) ? CHtml::encode($entry->customer->name) : '-'; ?></td>
-                                <td class="text-right"><?php echo $entry->drcr == IssueEntry::DRCR_DEBIT ? 'DR' : 'CR'; ?></td>
+                                <td class="text-right"><?php 
+                                    $drcrOptions = IssueEntry::getDrcrOptions();
+                                    echo isset($drcrOptions[$entry->drcr]) ? $drcrOptions[$entry->drcr] : ($entry->drcr == IssueEntry::DRCR_DEBIT ? 'Jama' : 'Baki');
+                                ?></td>
                                 <td class="text-right"><?php echo number_format((float) $entry->fine_wt, 3); ?></td>
                                 <td class="text-right">₹ <?php echo number_format((float) $entry->amount, 2); ?></td>
                             </tr>
@@ -256,7 +271,7 @@
     <div class="col-lg-4">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
-                <h2>Recent Supplier Ledger</h2>
+                <h2>Recent Supplier Voucher</h2>
                 <div class="block-options">
                     <?php echo CHtml::link('View all', array('supplierLedger/admin'), array('class' => 'btn btn-xs btn-default')); ?>
                 </div>
@@ -290,7 +305,7 @@
     <div class="col-lg-4">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
-                <h2>Recent Karigar Jama</h2>
+                <h2>Recent Karigar Voucher</h2>
                 <div class="block-options">
                     <?php echo CHtml::link('View all', array('karigarJama/admin'), array('class' => 'btn btn-xs btn-default')); ?>
                 </div>
@@ -363,8 +378,8 @@
             $.plot($bars,
                 [
                     { label: 'Issue Entry', data: dataIssue, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Supplier Ledger', data: dataSup, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Karigar Jama', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Supplier Voucher', data: dataSup, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Karigar Voucher', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
                     colors: ['#5ccdde', '#454e59', '#9b59b6'],
@@ -414,8 +429,8 @@
             $.plot($fineWt,
                 [
                     { label: 'Issue Entry', data: dataIssueFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Supplier Ledger', data: dataSupFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Karigar Jama', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Supplier Voucher', data: dataSupFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Karigar Voucher', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
                     colors: ['#5ccdde', '#454e59', '#9b59b6'],

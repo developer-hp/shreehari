@@ -9,7 +9,7 @@ foreach ($model->lines as $line) {
     foreach ($line->stones as $s) $totalAmount += (float) $s->stone_amount;
 }
 ?>
-<div style="margin-bottom:8px; font-size:11px;"><strong>Jama Voucher #<?php echo CHtml::encode($model->id); ?></strong></div>
+<div style="margin-bottom:8px; font-size:11px;"><strong>Karigar Voucher #<?php echo CHtml::encode($model->id); ?></strong></div>
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:8px; font-size:9px;">
     <tr>
         <td style="<?php echo $cellStyle; ?> width:22%;"><strong>Date</strong></td>
@@ -29,6 +29,21 @@ foreach ($model->lines as $line) {
     <tr>
         <td style="<?php echo $cellStyle; ?>"><strong>Voucher No</strong></td>
         <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($model->voucher_number); ?></td>
+    </tr>
+    <?php endif; ?>
+    <?php if (isset($model->drcr)): 
+        $drcrOptions = IssueEntry::getDrcrOptions();
+        $drcrLabel = implode('/', $drcrOptions);
+    ?>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>"><strong><?php echo $drcrLabel; ?></strong></td>
+        <td style="<?php echo $cellStyle; ?>"><?php echo isset($model->drcr) && isset($drcrOptions[$model->drcr]) ? $drcrOptions[$model->drcr] : '—'; ?></td>
+    </tr>
+    <?php endif; ?>
+    <?php if (!empty($model->remark)): ?>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>"><strong>Remark</strong></td>
+        <td style="<?php echo $cellStyle; ?>"><?php echo nl2br(CHtml::encode($model->remark)); ?></td>
     </tr>
     <?php endif; ?>
     <tr>

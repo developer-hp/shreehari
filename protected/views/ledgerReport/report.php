@@ -46,24 +46,33 @@
         ?>
         <h4 style="margin-top:18px; margin-bottom:8px;"><?php echo CHtml::encode($customer->name); ?> (<?php echo CHtml::encode($customer->mobile); ?>)</h4>
         <table class="table table-striped table-bordered table-vcenter">
+            <?php 
+            $drcrOptions = IssueEntry::getDrcrOptions();
+            $drLabel = $drcrOptions[IssueEntry::DRCR_DEBIT];
+            $crLabel = $drcrOptions[IssueEntry::DRCR_CREDIT];
+            ?>
             <thead>
                 <tr>
-                    <th width="12%">Date</th>
-                    <th width="15%">Particulars</th>
-                    <th width="12%" class="text-right">Fine Wt (DR)</th>
-                    <th width="12%" class="text-right">Fine Wt (CR)</th>
-                    <th width="15%" class="text-right">Amount (DR)</th>
-                    <th width="15%" class="text-right">Amount (CR)</th>
+                    <th width="10%">Date</th>
+                    <th width="13%">Particulars</th>
+                    <th width="10%" class="text-right">Fine Wt (<?php echo $drLabel; ?>)</th>
+                    <th width="10%" class="text-right">Fine Wt (<?php echo $crLabel; ?>)</th>
+                    <th width="12%" class="text-right">Amount (<?php echo $drLabel; ?>)</th>
+                    <th width="12%" class="text-right">Amount (<?php echo $crLabel; ?>)</th>
+                    <th width="11%" class="text-right">Fine Balance</th>
+                    <th width="12%" class="text-right">Amount Balance</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $totalFineDr = $totalFineCr = $totalAmtDr = $totalAmtCr = 0;
+                $runningFineBalance = 0;
+                $runningAmountBalance = 0;
                 if ($opening):
                     $fw = (float)$opening->opening_fine_wt;
                     $am = (float)$opening->opening_amount;
-                    if ($opening->opening_fine_wt_drcr == 1) { $totalFineDr += $fw; } else { $totalFineCr += $fw; }
-                    if ($opening->opening_amount_drcr == 1) { $totalAmtDr += $am; } else { $totalAmtCr += $am; }
+                    if ($opening->opening_fine_wt_drcr == 1) { $totalFineDr += $fw; $runningFineBalance += $fw; } else { $totalFineCr += $fw; $runningFineBalance -= $fw; }
+                    if ($opening->opening_amount_drcr == 1) { $totalAmtDr += $am; $runningAmountBalance += $am; } else { $totalAmtCr += $am; $runningAmountBalance -= $am; }
                 ?>
                 <tr>
                     <td>—</td>
@@ -72,12 +81,24 @@
                     <td class="text-right"><?php echo $opening->opening_fine_wt_drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 2 ? number_format($am, 2) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endif; ?>
                 <?php foreach ($issues as $iss):
                     $fw = (float)$iss->fine_wt;
                     $am = (float)$iss->amount;
-                    if ($iss->drcr == 1) { $totalFineDr += $fw; $totalAmtDr += $am; } else { $totalFineCr += $fw; $totalAmtCr += $am; }
+                    if ($iss->drcr == 1) { 
+                        $totalFineDr += $fw; 
+                        $totalAmtDr += $am;
+                        $runningFineBalance += $fw;
+                        $runningAmountBalance += $am;
+                    } else { 
+                        $totalFineCr += $fw; 
+                        $totalAmtCr += $am;
+                        $runningFineBalance -= $fw;
+                        $runningAmountBalance -= $am;
+                    }
                     $dateStr = !empty($iss->issue_date) ? date('d-m-Y', strtotime($iss->issue_date)) : '—';
                     $particularsText = $iss->sr_no . ' - ' . (string)$iss->remarks;
                     $sl = isset($supplier_ledger_by_issue_id[$iss->id]) ? $supplier_ledger_by_issue_id[$iss->id] : null;
@@ -97,6 +118,8 @@
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($am, 2) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endforeach;
                 $netFine = $totalFineDr - $totalFineCr;
@@ -112,6 +135,8 @@
                     <td class="text-right"><?php echo $closingFineCr > 0 ? number_format($closingFineCr, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingAmtDr > 0 ? number_format($closingAmtDr, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingAmtCr > 0 ? number_format($closingAmtCr, 2) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
                 </tr>
             </tbody>
         </table>

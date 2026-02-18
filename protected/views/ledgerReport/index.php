@@ -27,7 +27,7 @@
             if ($filterCustomerType > 0 && $filterCustomerType <= 3) {
                 $customerTypeCondition .= ' AND type = ' . $filterCustomerType;
             } else {
-                $customerTypeCondition .= ' AND type IN (1, 2, 3)';
+                $customerTypeCondition .= ' AND type IN (1, 3)';
             }
             $customers = Customer::model()->findAll(array('condition' => $customerTypeCondition, 'order' => 'name'));
             $selectedCustomerId = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : 0;
@@ -39,7 +39,6 @@
                         <select name="customer_type" class="form-control" id="ledger-customer-type">
                             <option value="">-- All --</option>
                             <option value="1" <?php echo $filterCustomerType === 1 ? 'selected="selected"' : ''; ?>>Supplier</option>
-                            <option value="2" <?php echo $filterCustomerType === 2 ? 'selected="selected"' : ''; ?>>Customer</option>
                             <option value="3" <?php echo $filterCustomerType === 3 ? 'selected="selected"' : ''; ?>>Karigar</option>
                         </select>
                     </div>

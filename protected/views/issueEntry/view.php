@@ -27,7 +27,10 @@
             array('name' => 'customer_id', 'value' => isset($model->customer) ? $model->customer->name : $model->customer_id),
             'fine_wt',
             'amount',
-            array('name' => 'drcr', 'value' => $model->drcr == 1 ? 'DR (Debit)' : 'CR (Credit)'),
+            array('name' => 'drcr', 'value' => function($model) {
+                $drcrOptions = IssueEntry::getDrcrOptions();
+                return isset($drcrOptions[$model->drcr]) ? $drcrOptions[$model->drcr] : '';
+            }),
             'remarks',
             array('name' => 'created_at', 'value' => !empty($model->created_at) ? date('d-m-Y H:i', strtotime($model->created_at)) : ''),
             'created_by',

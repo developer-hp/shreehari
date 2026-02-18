@@ -1,4 +1,4 @@
--- Document number sequences for DocumentNumberService (SLT, SLV, JMV, etc.)
+-- Document number sequences for DocumentNumberService (SLT, SV, KV, etc.)
 -- Run this if voucher_number or sr_no is not auto-generating (e.g. table missing).
 
 SET NAMES utf8;
@@ -15,6 +15,6 @@ INSERT INTO `cp_document_sequence` (`doc_type`, `next_no`) VALUES
   ('KAR', 1),
   ('ISS', 1),
   ('SLT', 1),
-  ('SLV', 1),
-  ('JMV', 1)
+  ('SV', 1),
+  ('KV', 1)
 ON DUPLICATE KEY UPDATE `doc_type` = VALUES(`doc_type`);

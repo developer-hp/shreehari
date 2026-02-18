@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Separate dashboard for Issue Entry, Supplier Ledger, and Karigar Jama Voucher.
+ * Separate dashboard for Issue Entry, Supplier Voucher, and Karigar Voucher.
  */
 class LedgerDashboardController extends Controller
 {
@@ -48,7 +48,7 @@ class LedgerDashboardController extends Controller
 			$issueEntryTotalFineWt += (float) $e->fine_wt;
 		}
 
-		// --- Supplier Ledger: selected date's count & total amount & fine wt ---
+		// --- Supplier Voucher: selected date's count & total amount & fine wt ---
 		$supplierLedgerToday = SupplierLedgerTxn::model()->findAll(
 			't.is_deleted = 0 AND t.txn_date = :d',
 			array(':d' => $filterDate)
@@ -131,11 +131,11 @@ class LedgerDashboardController extends Controller
 			$chartKarigarJamaFineWt[] = (float) $dayJamaFw;
 		}
 
-		// --- Chart: today's pie (Issue Entry / Supplier Ledger / Karigar Jama amounts) ---
+		// --- Chart: today's pie (Issue Entry / Supplier Voucher / Karigar Voucher amounts) ---
 		$chartTodayPie = array(
 			array('label' => 'Issue Entry', 'amount' => $issueEntryTotalAmount),
-			array('label' => 'Supplier Ledger', 'amount' => $supplierLedgerTotalAmount),
-			array('label' => 'Karigar Jama', 'amount' => $karigarJamaTotalAmount),
+			array('label' => 'Supplier Voucher', 'amount' => $supplierLedgerTotalAmount),
+			array('label' => 'Karigar Voucher', 'amount' => $karigarJamaTotalAmount),
 		);
 
 		// --- Ledger In / Out / Balance (from Issue Entry: CR = In, DR = Out) ---
