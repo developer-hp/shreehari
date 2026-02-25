@@ -5718,3 +5718,27 @@ Stack trace:
 #21 {main}
 REQUEST_URI=/shreehari/site/login
 ---
+2026/02/25 11:13:11 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'psc' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)
+2026/02/25 11:13:58 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'psc' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)
+2026/02/25 11:15:08 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'psc' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)
+2026/02/25 11:17:23 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'gross_wt' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)
+2026/02/25 11:18:11 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'gross_wt' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)
+2026/02/25 11:19:52 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1366 Incorrect decimal value: '' for column 'gross_wt' at row 1. The SQL statement executed was: INSERT INTO `cp_karigar_jama_voucher_line` (`sort_order`, `voucher_id`, `sr_no`, `order_no`, `customer_name`, `item_name`, `psc`, `gross_wt`, `net_wt`, `touch_pct`, `remark`, `fine_wt`) VALUES (:yp0, :yp1, :yp2, :yp3, :yp4, :yp5, :yp6, :yp7, :yp8, :yp9, :yp10, :yp11).
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (187)
+in C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php (49)
+in C:\laragon\www\demo\shreehari\index.php (13)

@@ -171,32 +171,32 @@ class KarigarJamaController extends Controller
 			$totalFineWt = 0;
 			$totalAmount = 0;
 			foreach ($linesData as $row) {
-				if (empty($row['item_name']) && empty($row['net_wt'])) continue;
 				$line = new KarigarJamaVoucherLine;
 				$line->voucher_id = $voucherId;
-				$line->sr_no = isset($row['sr_no']) ? $row['sr_no'] : '';
-				$line->order_no = isset($row['order_no']) ? $row['order_no'] : '';
-				$line->customer_name = isset($row['customer_name']) ? $row['customer_name'] : '';
-				$line->item_name = isset($row['item_name']) ? $row['item_name'] : '';
-				$line->psc = isset($row['psc']) ? $row['psc'] : null;
-				$line->gross_wt = isset($row['gross_wt']) ? $row['gross_wt'] : null;
-				$line->net_wt = isset($row['net_wt']) ? $row['net_wt'] : null;
-				$line->touch_pct = isset($row['touch_pct']) ? $row['touch_pct'] : null;
-				$line->remark = isset($row['remark']) ? $row['remark'] : '';
+				$line->sr_no = $this->getTypedFieldValue($row, 'sr_no', 'string', '');
+				$line->order_no = $this->getTypedFieldValue($row, 'order_no', 'string', '');
+				$line->customer_name = $this->getTypedFieldValue($row, 'customer_name', 'string', '');
+				$line->item_name = $this->getTypedFieldValue($row, 'item_name', 'string', '');
+				$line->psc = $this->getTypedFieldValue($row, 'psc', 'float', null);
+				$line->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
+				$line->net_wt = $this->getTypedFieldValue($row, 'net_wt', 'float', null);
+				$line->touch_pct = $this->getTypedFieldValue($row, 'touch_pct', 'float', null);
+				$line->remark = $this->getTypedFieldValue($row, 'remark', 'string', '');
 				$line->sort_order = $sortOrder++;
 				$line->save(false);
+				if($line->fine_wt && is_numeric($line->fine_wt))
 				$totalFineWt += (float) $line->fine_wt;
-				$stones = isset($row['stones']) ? $row['stones'] : array();
+				$stones = $this->getTypedFieldValue($row, 'stones', 'array', array());
 				foreach ($stones as $s) {
-					$item = isset($s['item']) ? trim($s['item']) : '';
-					$wt = isset($s['stone_wt']) ? $s['stone_wt'] : 0;
-					$amt = isset($s['stone_amount']) ? $s['stone_amount'] : 0;
-					if ($item === '' && $wt === '' && $amt === '') continue;
+					$item = $this->getTypedFieldValue($s, 'item', 'trimmed_string', '');
+					$wt = $this->getTypedFieldValue($s, 'stone_wt', 'float', 0);
+					$amt = $this->getTypedFieldValue($s, 'stone_amount', 'float', 0);
+					if ($item === '' && (float) $wt == 0 && (float) $amt == 0) continue;
 					$st = new KarigarJamaLineStone;
 					$st->line_id = $line->id;
 					$st->item = $item !== '' ? $item : null;
-					$st->stone_wt = $wt !== '' ? $wt : 0;
-					$st->stone_amount = $amt !== '' ? $amt : 0;
+					$st->stone_wt = $wt;
+					$st->stone_amount = $amt;
 					$st->save(false);
 					$totalAmount += (float) $amt;
 				}
@@ -215,6 +215,8 @@ class KarigarJamaController extends Controller
 			return false;
 		}
 	}
+
+	
 
 	public function loadModel($id)
 	{

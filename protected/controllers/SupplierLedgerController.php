@@ -168,27 +168,34 @@ class SupplierLedgerController extends Controller
 			$totalAmount = 0;
 			$sortOrder = 0;
 			foreach ($itemsData as $row) {
-				if (empty($row['item_name']) && empty($row['net_wt'])) continue;
+				$itemName = $this->getTypedFieldValue($row, 'item_name', 'trimmed_string', '');
+				$netWt = $this->getTypedFieldValue($row, 'net_wt', 'float', null);
+				if ($itemName === '') continue;
 				$item = new SupplierLedgerTxnItem;
 				$item->txn_id = $txnId;
-				$item->item_name = isset($row['item_name']) ? $row['item_name'] : '';
-				$item->ct = isset($row['ct']) ? $row['ct'] : null;
-				$item->gross_wt = isset($row['gross_wt']) ? $row['gross_wt'] : null;
-				$item->net_wt = isset($row['net_wt']) ? $row['net_wt'] : null;
-				$item->touch_pct = isset($row['touch_pct']) ? $row['touch_pct'] : null;
+				$item->item_name = $itemName;
+				$item->ct = $this->getTypedFieldValue($row, 'ct', 'float', null);
+				$item->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
+				$item->net_wt = $netWt;
+				$item->touch_pct = $this->getTypedFieldValue($row, 'touch_pct', 'float', null);
 				$item->sort_order = $sortOrder++;
 				$item->save(false);
 				$itemTotal = 0;
-				$charges = isset($row['charges']) ? $row['charges'] : array();
+				$charges = $this->getTypedFieldValue($row, 'charges', 'array', array());
 				foreach ($charges as $c) {
-					if (!isset($c['charge_type']) || ($c['charge_type'] == 5 && empty($c['charge_name']) && empty($c['quantity']))) continue;
+					$chargeType = $this->getTypedFieldValue($c, 'charge_type', 'int', null);
+					$chargeName = $this->getTypedFieldValue($c, 'charge_name', 'trimmed_string', null);
+					$quantity = $this->getTypedFieldValue($c, 'quantity', 'float', 0);
+					$rate = $this->getTypedFieldValue($c, 'rate', 'float', 0);
+					if ($chargeType === null || ($chargeType == 5 && empty($chargeName) && (float) $quantity == 0)) continue;
 					$ch = new SupplierLedgerTxnItemCharge;
 					$ch->txn_item_id = $item->id;
-					$ch->charge_type = (int) $c['charge_type'];
-					$ch->charge_name = isset($c['charge_name']) ? $c['charge_name'] : null;
-					$ch->quantity = isset($c['quantity']) ? $c['quantity'] : 0;
-					$ch->rate = isset($c['rate']) ? $c['rate'] : 0;
+					$ch->charge_type = $chargeType;
+					$ch->charge_name = $chargeName;
+					$ch->quantity = $quantity;
+					$ch->rate = $rate;
 					$ch->save(false);
+					if($ch->amount && is_numeric($ch->amount))
 					$itemTotal += (float) $ch->amount;
 				}
 				$item->item_total = $itemTotal;

@@ -41,4 +41,50 @@ class Controller extends CController {
         return CHtml::listData(Setting::model()->findAll(),'title','content');
     }
 
+    /**
+     * Read field value with basic datatype normalization and fallback default.
+     */
+    public function getTypedFieldValue(array $source, $key, $type = 'string', $default = null)
+    {
+        if (!array_key_exists($key, $source)) {
+            return $default;
+        }
+
+        $value = $source[$key];
+        $type = strtolower((string) $type);
+
+        switch ($type) {
+            case 'array':
+                return is_array($value) ? $value : $default;
+
+            case 'int':
+            case 'integer':
+                if ($value === '' || $value === null) {
+                    return $default;
+                }
+                return is_numeric($value) ? (int) $value : $default;
+
+            case 'float':
+            case 'double':
+            case 'numeric':
+                if ($value === '' || $value === null) {
+                    return $default;
+                }
+                return is_numeric($value) ? (float) $value : $default;
+
+            case 'trimmed_string':
+                if ($value === null) {
+                    return $default;
+                }
+                return trim((string) $value);
+
+            case 'string':
+            default:
+                if ($value === null) {
+                    return $default;
+                }
+                return (string) $value;
+        }
+    }
+
 }
