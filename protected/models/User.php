@@ -14,6 +14,26 @@
  */
 class User extends CActiveRecord
 {
+	const TYPE_ADMIN = 1;
+	const TYPE_HEAD = 2;
+	const TYPE_STAFF = 3;
+
+	public static function getUserTypeOptions()
+	{
+		return array(
+			self::TYPE_ADMIN => 'Admin',
+			self::TYPE_HEAD => 'Head',
+			self::TYPE_STAFF => 'Staff',
+		);
+	}
+
+	public static function getUserTypeLabel($type)
+	{
+		$options = self::getUserTypeOptions();
+		$type = (int) $type;
+		return isset($options[$type]) ? $options[$type] : 'Unknown';
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,8 +54,9 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name,email', 'required'),
+			array('name,email,user_type', 'required'),
 			array('user_type, deleted', 'numerical', 'integerOnly'=>true),
+			array('user_type', 'in', 'range' => array(self::TYPE_ADMIN, self::TYPE_HEAD, self::TYPE_STAFF)),
 			array('name', 'length', 'max'=>100),
 			array('email, password', 'length', 'max'=>255),
 			array('created_at', 'safe'),
@@ -107,7 +128,7 @@ class User extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('password',$this->password,true);
-		$criteria->compare('user_type',2);
+		$criteria->compare('user_type',$this->user_type);
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('deleted',0);
 

@@ -72,6 +72,7 @@
                                 'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-success', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => Yii::t('app', 'Edit')),
                                 'type' => 'raw',
                                 'url' => 'Yii::app()->createUrl("issueEntry/update", array("id" => $data->id))',
+                                'visible' => 'LedgerAccess::canEditIssueEntry($data)',
                             ),
                             'delete' => array(
                                 'label' => '<i class="fa fa-trash"></i>',

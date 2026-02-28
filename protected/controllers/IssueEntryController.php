@@ -50,6 +50,11 @@ class IssueEntryController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
+		if (!LedgerAccess::canEditIssueEntry($model)) {
+			Yii::app()->user->setFlash('error', 'You do not have permission to edit this entry. Staff can edit same-day entries only.');
+			$this->redirect(array('index'));
+			return;
+		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
 			$model->attributes = $_POST['IssueEntry'];

@@ -41,6 +41,13 @@
 		<?php echo $form->error($model,'email'); ?>
 		</div>
 	</div>
+	<div class="form-group">
+		<?php echo $form->labelEx($model, 'user_type', array('class' => 'col-md-3  control-label')); ?>
+		<div class="col-md-6">
+		<?php echo $form->dropDownList($model,'user_type',User::getUserTypeOptions(),array('class'=>'form-control','prompt'=>'Select User Type')); ?>
+		<?php echo $form->error($model,'user_type'); ?>
+		</div>
+	</div>
 	<?php
 	if(!$model->isNewRecord):
 	?>

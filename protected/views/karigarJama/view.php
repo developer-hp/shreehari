@@ -39,7 +39,7 @@
         <p><strong>Total Amount:</strong> <?php echo number_format($totalAmount, 2); ?></p>
         </div>
         <div class="col-sm-6 text-right">
-        <?php if ($model->is_locked != 1): ?>
+        <?php if (LedgerAccess::canEditVoucher($model, 'voucher_date')): ?>
             <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
         <?php endif; ?>
         <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('karigarJama/pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>

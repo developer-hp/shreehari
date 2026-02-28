@@ -9,13 +9,13 @@ class KarigarJamaController extends Controller
 
 	public function filters()
 	{
-		return array('accessControl', 'postOnly + delete');
+		return array('accessControl', 'postOnly + delete, deleteLockedSelected, deleteAllLocked');
 	}
 
 	public function accessRules()
 	{
 		return array(
-			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'linkIssueEntry', 'pdf'), 'users' => array('@')),
+			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'deleteLockedSelected', 'deleteAllLocked', 'linkIssueEntry', 'pdf'), 'users' => array('@')),
 			array('deny', 'users' => array('*')),
 		);
 	}
@@ -57,8 +57,8 @@ class KarigarJamaController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
-		if ($model->is_locked == 1) {
-			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be edited. It was locked after opening balance was updated from closing.');
+		if (!LedgerAccess::canEditVoucher($model, 'voucher_date')) {
+			Yii::app()->user->setFlash('error', 'You do not have permission to edit this voucher. Staff can edit same-day unlocked vouchers, and Head can edit until voucher is locked.');
 			$this->redirect(array('view', 'id' => $model->id));
 			return;
 		}
@@ -77,14 +77,58 @@ class KarigarJamaController extends Controller
 	public function actionDelete($id)
 	{
 		$model = $this->loadModel($id);
-		if ($model->is_locked == 1) {
-			Yii::app()->user->setFlash('error', 'This voucher is locked and cannot be deleted. It was locked after opening balance was updated from closing.');
+		if (!LedgerAccess::canDeleteVoucher($model, 'voucher_date')) {
+			Yii::app()->user->setFlash('error', 'You do not have permission to delete this voucher. Staff can delete same-day vouchers only, Head can delete unlocked vouchers, and locked vouchers are Admin only.');
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			return;
 		}
 		$model->delete();
 		Yii::app()->user->setFlash('success', 'Jama voucher deleted.');
 		$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+
+	public function actionDeleteLockedSelected()
+	{
+		if (!LedgerAccess::isAdmin()) {
+			throw new CHttpException(403, 'Only Admin can delete locked vouchers.');
+		}
+		$ids = isset($_POST['ids']) ? $_POST['ids'] : array();
+		if (!is_array($ids)) {
+			$ids = array($ids);
+		}
+		$deletedCount = 0;
+		foreach ($ids as $id) {
+			$id = (int) $id;
+			if ($id <= 0) continue;
+			$model = KarigarJamaVoucher::model()->findByPk($id, 't.is_deleted = 0');
+			if ($model && (int)$model->is_locked === 1) {
+				if ($model->delete()) {
+					$deletedCount++;
+				}
+			}
+		}
+		if ($deletedCount > 0) {
+			Yii::app()->user->setFlash('success', $deletedCount . ' locked voucher(s) deleted successfully.');
+		} else {
+			Yii::app()->user->setFlash('info', 'No locked vouchers were deleted.');
+		}
+		$this->redirect(array('admin'));
+	}
+
+	public function actionDeleteAllLocked()
+	{
+		if (!LedgerAccess::isAdmin()) {
+			throw new CHttpException(403, 'Only Admin can delete locked vouchers.');
+		}
+		$lockedRows = KarigarJamaVoucher::model()->findAll('t.is_deleted = 0 AND t.is_locked = 1');
+		$deletedCount = 0;
+		foreach ($lockedRows as $row) {
+			if ($row->delete()) {
+				$deletedCount++;
+			}
+		}
+		Yii::app()->user->setFlash('success', $deletedCount . ' locked voucher(s) deleted successfully.');
+		$this->redirect(array('admin'));
 	}
 
 	/**

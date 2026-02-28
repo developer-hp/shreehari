@@ -47,8 +47,11 @@
 		// 'id',
 		'name',
 		'email',
-		// 'password',
-		// 'user_type',
+        array(
+            'name' => 'user_type',
+            'value' => 'User::getUserTypeLabel($data->user_type)',
+            'filter' => User::getUserTypeOptions(),
+        ),
 		'created_at',
 		/*
 		'deleted',

@@ -32,7 +32,7 @@
         </div>
         <div class="col-sm-6 text-right">
             <p>
-                <?php if ($model->is_locked != 1): ?>
+                <?php if (LedgerAccess::canEditVoucher($model, 'txn_date')): ?>
                     <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
                 <?php endif; ?>
                 <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('supplierLedger/pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
