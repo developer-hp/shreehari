@@ -10,6 +10,7 @@ if (!empty($voucherDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $voucherDate)) $v
 if (!$voucherDate) $voucherDate = date('d-m-Y');
 $lines = $model->isNewRecord ? array(array()) : $model->lines;
 if (empty($lines)) $lines = array(array());
+$caratOptions = KarigarJamaVoucherLine::getCaratOptions();
 ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'voucher_date', array('class' => 'col-sm-2 control-label')); ?>
@@ -70,8 +71,9 @@ if (empty($stones)) $stones = array(array());
         <div class="row form-group">
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][sr_no]", is_object($ln) ? (isset($ln->sr_no) ? $ln->sr_no : '') : (isset($ln['sr_no']) ? $ln['sr_no'] : ''), array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Sr')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][order_no]", is_object($ln)?$ln->order_no:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Order No')); ?></div>
-            <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][customer_name]", is_object($ln)?$ln->customer_name:'', array('class' => 'form-control input-sm', 'placeholder' => 'Customer')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][customer_name]", is_object($ln)?$ln->customer_name:'', array('class' => 'form-control input-sm', 'placeholder' => 'Customer')); ?></div>
             <div class="col-sm-2"><?php echo CHtml::textField("lines[{$idx}][item_name]", is_object($ln)?$ln->item_name:'', array('class' => 'form-control input-sm', 'placeholder' => 'Item')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::dropDownList("lines[{$idx}][carat]", is_object($ln) ? (isset($ln->carat) ? $ln->carat : '') : (isset($ln['carat']) ? $ln['carat'] : ''), $caratOptions, array('class' => 'form-control input-sm', 'prompt' => 'Carat')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][psc]", is_object($ln)?$ln->psc:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Psc')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][gross_wt]", is_object($ln)?$ln->gross_wt:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Gross')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][net_wt]", is_object($ln)?$ln->net_wt:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Net')); ?></div>
@@ -180,8 +182,9 @@ $(function() {
         var html = '<div class="line-block panel panel-default" data-idx="'+lineIdx+'"><div class="panel-body">';
         html += '<div class="row form-group"><div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][sr_no]" class="form-control input-sm kj-numeric" placeholder="Sr" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][order_no]" class="form-control input-sm kj-numeric" placeholder="Order No" /></div>';
-        html += '<div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][customer_name]" class="form-control input-sm" placeholder="Customer" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][customer_name]" class="form-control input-sm" placeholder="Customer" /></div>';
         html += '<div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][item_name]" class="form-control input-sm" placeholder="Item" /></div>';
+        html += '<div class="col-sm-1"><select name="lines['+lineIdx+'][carat]" class="form-control input-sm"><option value="">Carat</option><option value="22K">22K</option><option value="18K">18K</option><option value="14K">14K</option></select></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][psc]" class="form-control input-sm kj-numeric" placeholder="Psc" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][gross_wt]" class="form-control input-sm kj-numeric" placeholder="Gross" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][net_wt]" class="form-control input-sm kj-numeric" placeholder="Net" /></div>';

@@ -54,6 +54,7 @@
                 <th>Order No</th>
                 <th>Customer</th>
                 <th>Item</th>
+                <th>Carat</th>
                 <th>Psc</th>
                 <th>Gross</th>
                 <th>Net</th>
@@ -70,6 +71,7 @@
                 <td><?php echo CHtml::encode($line->order_no); ?></td>
                 <td><?php echo CHtml::encode($line->customer_name); ?></td>
                 <td><?php echo CHtml::encode($line->item_name); ?></td>
+                <td><?php echo CHtml::encode($line->carat); ?></td>
                 <td><?php echo CHtml::encode($line->psc); ?></td>
                 <td><?php echo number_format((float)$line->gross_wt, 3); ?></td>
                 <td><?php echo number_format((float)$line->net_wt, 3); ?></td>

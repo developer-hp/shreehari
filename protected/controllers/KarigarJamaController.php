@@ -135,7 +135,7 @@ class KarigarJamaController extends Controller
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
 			$entry->drcr = $drcr;
-			$entry->remarks = 'Jama ' . $voucherNo;
+			$entry->remarks = 'Karigar Voucher ' . $voucherNo;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {
 				$voucher->issue_entry_id = $entry->id;
@@ -150,9 +150,9 @@ class KarigarJamaController extends Controller
 	public function actionPdf($id)
 	{
 		$model = $this->loadModel($id);
-		$filename = 'Jama-Voucher-' . $model->id . '-' . date('Y-m-d') . '.pdf';
-		// A5, portrait (vertical) layout
-		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'D', 'A5', array(8, 8, 10, 8, 0, 0), 'P', 'gothic', false, '', false);
+		$filename = 'Karigar-Voucher-' . $model->voucher_number. '.pdf';
+		// A4, landscape layout to fit full voucher grid
+		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'D', 'A4', array(6, 6, 8, 6, 0, 0), 'L', 'gothic', false, '', false);
 	}
 
 	protected function saveVoucherWithLines(KarigarJamaVoucher $model, array $linesData)
@@ -172,11 +172,17 @@ class KarigarJamaController extends Controller
 			$totalAmount = 0;
 			foreach ($linesData as $row) {
 				$line = new KarigarJamaVoucherLine;
+				$caratOptions = KarigarJamaVoucherLine::getCaratOptions();
+				$carat = $this->getTypedFieldValue($row, 'carat', 'trimmed_string', '');
+				if ($carat !== '' && !isset($caratOptions[$carat])) {
+					$carat = '';
+				}
 				$line->voucher_id = $voucherId;
 				$line->sr_no = $this->getTypedFieldValue($row, 'sr_no', 'string', '');
 				$line->order_no = $this->getTypedFieldValue($row, 'order_no', 'string', '');
 				$line->customer_name = $this->getTypedFieldValue($row, 'customer_name', 'string', '');
 				$line->item_name = $this->getTypedFieldValue($row, 'item_name', 'string', '');
+				$line->carat = $carat;
 				$line->psc = $this->getTypedFieldValue($row, 'psc', 'float', null);
 				$line->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
 				$line->net_wt = $this->getTypedFieldValue($row, 'net_wt', 'float', null);

@@ -14,9 +14,20 @@ class KarigarJamaVoucherLine extends CActiveRecord
 			array('voucher_id, sort_order', 'numerical', 'integerOnly' => true),
 			array('sr_no', 'length', 'max' => 20),
 			array('order_no, customer_name, item_name', 'length', 'max' => 255),
+			array('carat', 'length', 'max' => 10),
+			array('carat', 'in', 'range' => array_keys(self::getCaratOptions()), 'allowEmpty' => true),
 			array('remark', 'length', 'max' => 500),
 			array('psc, gross_wt, net_wt, touch_pct, fine_wt', 'numerical'),
-			array('id, voucher_id, sr_no, order_no, customer_name, item_name, psc, gross_wt, net_wt, touch_pct, fine_wt, remark, sort_order', 'safe', 'on' => 'search'),
+			array('id, voucher_id, sr_no, order_no, customer_name, item_name, carat, psc, gross_wt, net_wt, touch_pct, fine_wt, remark, sort_order', 'safe', 'on' => 'search'),
+		);
+	}
+
+	public static function getCaratOptions()
+	{
+		return array(
+			'22K' => '22K',
+			'18K' => '18K',
+			'14K' => '14K',
 		);
 	}
 
