@@ -43,7 +43,7 @@
                         'template' => '{view} {pdf} {update} {delete}',
                         'buttons' => array(
                             'view' => array('label' => '<i class="fa fa-eye"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/view", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-warning')),
-                            'pdf' => array('label' => '<i class="fa fa-file-pdf-o"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/pdf", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-primary', 'title' => 'Download PDF')),
+                            'pdf' => array('label' => '<i class="fa fa-file-pdf-o"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/pdf", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-primary', 'title' => 'Download PDF', 'target' => '_blank')),
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>', 
                                 'imageUrl' => false, 

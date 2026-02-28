@@ -19,7 +19,9 @@ class SupplierLedgerTxnItem extends CActiveRecord
 			array('txn_id, sort_order', 'numerical', 'integerOnly' => true),
 			array('sr_no', 'length', 'max' => 20),
 			array('item_name', 'length', 'max' => 255),
-			array('ct, gross_wt, net_wt, touch_pct, fine_wt, item_total', 'numerical'),
+			array('ct', 'length', 'max' => 10),
+			array('ct', 'in', 'range' => array_keys(self::getCaratOptions()), 'allowEmpty' => true),
+			array('gross_wt, net_wt, touch_pct, fine_wt, item_total', 'numerical'),
 			array('id, txn_id, sr_no, item_name, ct, gross_wt, net_wt, touch_pct, fine_wt, item_total, sort_order', 'safe', 'on' => 'search'),
 		);
 	}
@@ -47,6 +49,12 @@ class SupplierLedgerTxnItem extends CActiveRecord
 	public static function getChargeTypeLabels()
 	{
 		return SubitemType::getList();
+	}
+
+	/** @return array carat options for item line */
+	public static function getCaratOptions()
+	{
+		return KarigarJamaVoucherLine::getCaratOptions();
 	}
 
 	public static function model($className = __CLASS__)

@@ -56,6 +56,19 @@ if (empty($stones)) $stones = array(array());
 ?>
 <div class="line-block panel panel-default" data-idx="<?php echo $idx; ?>">
     <div class="panel-body">
+        <div class="row margin-bottom-5">
+            <div class="col-sm-1"><strong>Sr</strong></div>
+            <div class="col-sm-1"><strong>Order No</strong></div>
+            <div class="col-sm-1"><strong>Customer</strong></div>
+            <div class="col-sm-2"><strong>Item</strong></div>
+            <div class="col-sm-1"><strong>Carat</strong></div>
+            <div class="col-sm-1"><strong>Psc</strong></div>
+            <div class="col-sm-1"><strong>Gross</strong></div>
+            <div class="col-sm-1"><strong>Net</strong></div>
+            <div class="col-sm-1"><strong>Touch%</strong></div>
+            <div class="col-sm-1"><strong>Remark</strong></div>
+            <div class="col-sm-1"></div>
+        </div>
         <div class="row form-group">
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][sr_no]", is_object($ln) ? (isset($ln->sr_no) ? $ln->sr_no : '') : (isset($ln['sr_no']) ? $ln['sr_no'] : ''), array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Sr')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("lines[{$idx}][order_no]", is_object($ln)?$ln->order_no:'', array('class' => 'form-control input-sm kj-numeric', 'placeholder' => 'Order No')); ?></div>
@@ -149,9 +162,27 @@ $(function() {
 </script>
 <script>
 (function(){
+    var caratOptions = <?php echo json_encode($caratOptions); ?>;
+    var caratOpts = '<option value="">Carat</option>';
+    for (var carat in caratOptions) { caratOpts += '<option value="'+carat+'">'+caratOptions[carat]+'</option>'; }
+
     function parseNum(val) {
         var n = parseFloat(String(val).replace(/,/g, ''));
         return isNaN(n) ? 0 : n;
+    }
+    function getTouchByCarat(carat) {
+        var touchMap = {
+            '24K': '100',
+            '22K': '92',
+            '18K': '75',
+            '14K': '58'
+        };
+        return touchMap[carat] || '';
+    }
+    function applyTouchFromCarat($block) {
+        var carat = $block.find('select[name*="[carat]"]').val();
+        var touch = getTouchByCarat(carat);
+        $block.find('input[name*="[touch_pct]"]').val(touch);
     }
     function updateJamaTotals() {
         var totalFine = 0, totalAmt = 0;
@@ -168,11 +199,12 @@ $(function() {
     var lineIdx = <?php echo count($lines); ?>;
     $('#add-line-btn').on('click', function(){
         var html = '<div class="line-block panel panel-default" data-idx="'+lineIdx+'"><div class="panel-body">';
+        html += '<div class="row margin-bottom-5"><div class="col-sm-1"><strong>Sr</strong></div><div class="col-sm-1"><strong>Order No</strong></div><div class="col-sm-1"><strong>Customer</strong></div><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Psc</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net</strong></div><div class="col-sm-1"><strong>Touch%</strong></div><div class="col-sm-1"><strong>Remark</strong></div><div class="col-sm-1"></div></div>';
         html += '<div class="row form-group"><div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][sr_no]" class="form-control input-sm kj-numeric" placeholder="Sr" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][order_no]" class="form-control input-sm kj-numeric" placeholder="Order No" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][customer_name]" class="form-control input-sm" placeholder="Customer" /></div>';
         html += '<div class="col-sm-2"><input type="text" name="lines['+lineIdx+'][item_name]" class="form-control input-sm" placeholder="Item" /></div>';
-        html += '<div class="col-sm-1"><select name="lines['+lineIdx+'][carat]" class="form-control input-sm"><option value="">Carat</option><option value="22K">22K</option><option value="18K">18K</option><option value="14K">14K</option></select></div>';
+        html += '<div class="col-sm-1"><select name="lines['+lineIdx+'][carat]" class="form-control input-sm">'+caratOpts+'</select></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][psc]" class="form-control input-sm kj-numeric" placeholder="Psc" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][gross_wt]" class="form-control input-sm kj-numeric" placeholder="Gross" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="lines['+lineIdx+'][net_wt]" class="form-control input-sm kj-numeric" placeholder="Net" /></div>';
@@ -202,7 +234,13 @@ $(function() {
         var $rows = $(this).closest('.stone-rows').find('.stone-row');
         if ($rows.length > 1) { $(this).closest('.stone-row').remove(); updateJamaTotals(); }
     });
+    $('#lines-container').on('change', 'select[name*="[carat]"]', function(){
+        var $block = $(this).closest('.line-block');
+        applyTouchFromCarat($block);
+        updateJamaTotals();
+    });
     $('#lines-container').on('input change', 'input[placeholder="Net"], input[placeholder="Touch%"], input[name*="[stone_amount]"]', updateJamaTotals);
+    $('#lines-container .line-block').each(function(){ applyTouchFromCarat($(this)); });
     updateJamaTotals();
 })();
 </script>

@@ -19,6 +19,100 @@
 $ledgerTotals = isset($ledger_totals) ? $ledger_totals : array('total_closing_fine' => 0, 'total_closing_amount' => 0, 'ledger_count' => 0);
 $fineBalanceBg = ($ledgerTotals['total_closing_fine'] >= 0) ? 'background-color: #5cb85c;' : 'background-color: #d9534f;';
 $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-color: #5cb85c;' : 'background-color: #d9534f;';
+
+if (!function_exists('ledgerReportBalanceLabel')) {
+    function ledgerReportBalanceLabel($value)
+    {
+        return ((float) $value) < 0 ? 'Baki' : 'Jama';
+    }
+}
+
+if (!function_exists('ledgerReportFormatBalance')) {
+    function ledgerReportFormatBalance($value, $precision = 2)
+    {
+        return number_format(abs((float) $value), (int) $precision) . ' ' . ledgerReportBalanceLabel($value);
+    }
+}
+
+if (!function_exists('ledgerReportNumberToWords')) {
+    function ledgerReportNumberToWords($number, $precision = 2)
+    {
+        $number = (float) $number;
+        $precision = (int) $precision;
+        if ($precision < 0) {
+            $precision = 0;
+        }
+        if ($number == 0) {
+            return 'Zero';
+        }
+
+        $integerPart = (int) floor(abs($number));
+        $factor = pow(10, $precision);
+        $decimalPart = (int) round((abs($number) - $integerPart) * $factor);
+        if ($decimalPart >= $factor) {
+            $integerPart += 1;
+            $decimalPart = 0;
+        }
+        $words = array(
+            0 => '', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four', 5 => 'Five',
+            6 => 'Six', 7 => 'Seven', 8 => 'Eight', 9 => 'Nine', 10 => 'Ten',
+            11 => 'Eleven', 12 => 'Twelve', 13 => 'Thirteen', 14 => 'Fourteen', 15 => 'Fifteen',
+            16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen', 19 => 'Nineteen',
+            20 => 'Twenty', 30 => 'Thirty', 40 => 'Forty', 50 => 'Fifty',
+            60 => 'Sixty', 70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety'
+        );
+        $digitWords = array('Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine');
+
+        $belowThousand = function ($num) use (&$words) {
+            $text = '';
+            if ($num >= 100) {
+                $text .= $words[(int) floor($num / 100)] . ' Hundred ';
+                $num = $num % 100;
+            }
+            if ($num > 0) {
+                if ($num < 21) {
+                    $text .= $words[$num] . ' ';
+                } else {
+                    $text .= $words[(int) (floor($num / 10) * 10)] . ' ';
+                    if (($num % 10) > 0) {
+                        $text .= $words[$num % 10] . ' ';
+                    }
+                }
+            }
+            return trim($text);
+        };
+
+        $parts = array(10000000 => 'Crore', 100000 => 'Lakh', 1000 => 'Thousand');
+        $text = '';
+        foreach ($parts as $value => $label) {
+            if ($integerPart >= $value) {
+                $chunk = (int) floor($integerPart / $value);
+                $integerPart = $integerPart % $value;
+                $text .= $belowThousand($chunk) . ' ' . $label . ' ';
+            }
+        }
+        if ($integerPart > 0) {
+            $text .= $belowThousand($integerPart) . ' ';
+        }
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+        if ($precision > 0 && $decimalPart > 0) {
+            $decimalText = str_pad((string) $decimalPart, $precision, '0', STR_PAD_LEFT);
+            $decimalWords = array();
+            foreach (str_split($decimalText) as $digit) {
+                $decimalWords[] = $digitWords[(int) $digit];
+            }
+            $text .= ' Point ' . implode(' ', $decimalWords);
+        }
+        return trim($text);
+    }
+}
+
+if (!function_exists('ledgerReportBalanceWords')) {
+    function ledgerReportBalanceWords($value, $precision = 2)
+    {
+        return ledgerReportNumberToWords(abs((float) $value), (int) $precision) . ' ' . ledgerReportBalanceLabel($value);
+    }
+}
 ?>
 <?php if (!empty($customers) && !empty($ledgerTotals)): ?>
 <!-- Ledger totals widget block -->
@@ -30,7 +124,7 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                     <i class="fa fa-balance-scale" style="color: #fff;"></i>
                 </div>
                 <h2 class="widget-heading h3" style="color: #fff;">
-                    <strong><?php echo number_format($ledgerTotals['total_closing_fine'], 3); ?></strong>
+                    <strong><?php echo ledgerReportFormatBalance($ledgerTotals['total_closing_fine'], 3); ?></strong>
                 </h2>
                 <span style="color: rgba(255,255,255,0.9);">Total Fine Balance (all ledgers)</span>
             </div>
@@ -43,7 +137,7 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                     <i class="fa fa-money" style="color: #fff;"></i>
                 </div>
                 <h2 class="widget-heading h3" style="color: #fff;">
-                    <strong><?php echo number_format($ledgerTotals['total_closing_amount'], 2); ?></strong>
+                    <strong><?php echo ledgerReportFormatBalance($ledgerTotals['total_closing_amount'], 2); ?></strong>
                 </h2>
                 <span style="color: rgba(255,255,255,0.9);">Total Amount Balance (all ledgers)</span>
             </div>
@@ -72,15 +166,17 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                 <h2>Ledger Report (Opening Balance + Issue Entry)</h2>
             </div>
             <p>
-                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary')); ?>
+                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
                 <?php if (!empty($filter_customer_id) && count($customers) === 1): ?>
-                <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
+                <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
                 <?php endif; ?>
             </p>
             <?php
             $typeLabels = array(1 => 'Supplier', 2 => 'Customer', 3 => 'Karigar');
+            $entryTypeLabels = array('issue' => 'Issue Entry', 'supplier' => 'Supplier Voucher', 'karigar' => 'Karigar Voucher');
             $filterParts = array();
             if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $filterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
+            if (!empty($filter_entry_type) && isset($entryTypeLabels[$filter_entry_type])) $filterParts[] = 'Voucher Type: ' . $entryTypeLabels[$filter_entry_type];
             if (!empty($from_date) || !empty($to_date)) $filterParts[] = 'Issue entries from: <strong>' . ($from_date ? CHtml::encode($from_date) : '—') . '</strong> to <strong>' . ($to_date ? CHtml::encode($to_date) : '—') . '</strong>';
             if (!empty($filterParts)): ?>
             <p class="text-muted"><?php echo implode(' &nbsp;|&nbsp; ', $filterParts); ?></p>
@@ -132,8 +228,8 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                     <td class="text-right"><?php echo $opening->opening_fine_wt_drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endif; ?>
                 <?php foreach ($issues as $iss):
@@ -169,8 +265,8 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endforeach;
                 $netFine = $totalFineDr - $totalFineCr;
@@ -186,11 +282,15 @@ $amountBalanceBg = ($ledgerTotals['total_closing_amount'] >= 0) ? 'background-co
                     <td class="text-right"><?php echo $closingFineCr > 0 ? number_format($closingFineCr, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingAmtDr > 0 ? number_format($closingAmtDr, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingAmtCr > 0 ? number_format($closingAmtCr, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                    <td class="text-right"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
             </tbody>
         </table>
+        <p class="text-muted" style="margin-top:-6px; margin-bottom:16px;">
+            <strong>Fine Wt in words:</strong> <?php echo CHtml::encode(ledgerReportBalanceWords($runningFineBalance, 3)); ?> &nbsp;|&nbsp;
+            <strong>Amount in words:</strong> <?php echo CHtml::encode(ledgerReportBalanceWords($runningAmountBalance, 2)); ?>
+        </p>
     <?php endforeach; ?>
 <?php endif; ?>
 

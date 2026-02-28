@@ -60,19 +60,20 @@ class LedgerReportController extends Controller
             'ledgerReport/report',
             'customer_id' => $customerId,
             'customer_type' => isset($_GET['customer_type']) ? $_GET['customer_type'] : '',
+            'entry_type' => isset($_GET['entry_type']) ? $_GET['entry_type'] : '',
             'from_date' => isset($_GET['from_date']) ? $_GET['from_date'] : '',
             'to_date' => isset($_GET['to_date']) ? $_GET['to_date'] : '',
         ));
     }
 
     /**
-     * PDF download. Same params as report.
+     * Open PDF in browser. Same params as report.
      */
     public function actionPdf()
     {
         $data = $this->buildReportData();
         $filename = 'Ledger-Report-' . date('Y-m-d-His') . '.pdf';
-        PdfHelper::render('reportPdf', $data, $filename, 'D', 'A4', [10, 10, 15, 10, 0, 0], 'P', 'gothic', false, '', false);
+        PdfHelper::render('reportPdf', $data, $filename, 'I', 'A4', [10, 10, 15, 10, 0, 0], 'P', 'gothic', false, '', false);
     }
 
     /**
@@ -83,8 +84,13 @@ class LedgerReportController extends Controller
     {
         $customerId = isset($_GET['customer_id']) ? (int) $_GET['customer_id'] : null;
         $customerType = isset($_GET['customer_type']) ? (int) $_GET['customer_type'] : null;
+        $entryType = isset($_GET['entry_type']) ? trim(strtolower($_GET['entry_type'])) : '';
         $fromDate = isset($_GET['from_date']) ? trim($_GET['from_date']) : null;
         $toDate = isset($_GET['to_date']) ? trim($_GET['to_date']) : null;
+        $validEntryTypes = array('issue', 'supplier', 'karigar');
+        if (!in_array($entryType, $validEntryTypes, true)) {
+            $entryType = '';
+        }
 
         $openingCondition = 't.is_deleted = 0';
         $issueCondition = 't.is_deleted = 0';
@@ -143,6 +149,24 @@ class LedgerReportController extends Controller
             foreach ($kjVouchers as $v) { $karigarJamaByIssueId[(int)$v->issue_entry_id] = $v; }
         }
 
+        if ($entryType !== '') {
+            $filteredIssues = array();
+            foreach ($issues as $iss) {
+                $issueId = (int) $iss->id;
+                $hasSupplierVoucher = isset($supplierLedgerByIssueId[$issueId]);
+                $hasKarigarVoucher = isset($karigarJamaByIssueId[$issueId]);
+
+                if ($entryType === 'supplier' && $hasSupplierVoucher) {
+                    $filteredIssues[] = $iss;
+                } elseif ($entryType === 'karigar' && $hasKarigarVoucher) {
+                    $filteredIssues[] = $iss;
+                } elseif ($entryType === 'issue' && !$hasSupplierVoucher && !$hasKarigarVoucher) {
+                    $filteredIssues[] = $iss;
+                }
+            }
+            $issues = $filteredIssues;
+        }
+
         $customerIds = array();
         foreach ($openings as $o) $customerIds[$o->customer_id] = true;
         foreach ($issues as $i) $customerIds[$i->customer_id] = true;
@@ -154,6 +178,7 @@ class LedgerReportController extends Controller
                 'to_date' => $toDate,
                 'filter_customer_id' => $customerId,
                 'filter_customer_type' => $customerType,
+                'filter_entry_type' => $entryType,
             );
         }
 
@@ -186,6 +211,7 @@ class LedgerReportController extends Controller
             'to_date' => $toDate,
             'filter_customer_id' => $customerId,
             'filter_customer_type' => $customerType,
+            'filter_entry_type' => $entryType,
             'supplier_ledger_by_issue_id' => $supplierLedgerByIssueId,
             'karigar_jama_by_issue_id' => $karigarJamaByIssueId,
             'ledger_totals' => $ledgerTotals,

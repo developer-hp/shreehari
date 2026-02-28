@@ -5,6 +5,7 @@
 ?>
 
 <?php $drcrOptions = IssueEntry::getDrcrOptions(); ?>
+<?php $caratOptions = KarigarJamaVoucherLine::getCaratOptions(); ?>
 
 <div class="form">
 <?php $form = $this->beginWidget('CActiveForm', array(
@@ -91,6 +92,21 @@
     </div>
 
     <div class="form-group">
+        <label class="col-sm-2 control-label">Fine Calculator</label>
+        <div class="col-sm-2">
+            <?php echo $form->dropDownList($model, 'carat', $caratOptions, array('class' => 'form-control', 'prompt' => '-- Carat --', 'id' => 'IssueEntry_carat')); ?>
+            <?php echo $form->error($model, 'carat'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php echo $form->textField($model, 'weight', array('class' => 'form-control', 'id' => 'IssueEntry_weight', 'placeholder' => 'Weight')); ?>
+            <?php echo $form->error($model, 'weight'); ?>
+        </div>
+        <div class="col-sm-4">
+            <p class="help-block" style="margin-top:7px;">Optional: selecting carat and entering weight auto-fills Fine Wt.</p>
+        </div>
+    </div>
+
+    <div class="form-group">
         <?php echo $form->labelEx($model, 'amount', array('class' => 'col-sm-2 control-label')); ?>
         <div class="col-sm-4">
             <?php echo $form->textField($model, 'amount', array('class' => 'form-control', 'size' => 20)); ?>
@@ -136,5 +152,35 @@ $(function() {
             }
         });
     });
+
+    function parseNum(val) {
+        var n = parseFloat(String(val).replace(/,/g, ''));
+        return isNaN(n) ? 0 : n;
+    }
+
+    function getTouchByCarat(carat) {
+        var touchMap = {
+            '24K': 100,
+            '22K': 92,
+            '18K': 75,
+            '14K': 58
+        };
+        return typeof touchMap[carat] !== 'undefined' ? touchMap[carat] : null;
+    }
+
+    function updateFineFromCalculator() {
+        var carat = $('#IssueEntry_carat').val();
+        var weight = parseNum($('#IssueEntry_weight').val());
+        var touch = getTouchByCarat(carat);
+        if (touch === null || weight <= 0) {
+            return;
+        }
+        var fine = (weight * touch) / 100;
+        $('#IssueEntry_fine_wt').val(fine.toFixed(3));
+    }
+
+    $('#IssueEntry_carat').on('change', updateFineFromCalculator);
+    $('#IssueEntry_weight').on('input change', updateFineFromCalculator);
+    updateFineFromCalculator();
 });
 </script>

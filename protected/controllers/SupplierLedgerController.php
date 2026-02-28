@@ -116,7 +116,7 @@ class SupplierLedgerController extends Controller
 				$entry->amount = $totalAmount;
 				$entry->sr_no = $voucherNo;
 				$entry->drcr = $drcr;
-				$entry->remarks = 'Supplier Voucher ' . $voucherNo;
+				$entry->remarks = NULL;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
@@ -128,7 +128,7 @@ class SupplierLedgerController extends Controller
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
 			$entry->drcr = $drcr;
-			$entry->remarks = 'Supplier Ledger ' . $voucherNo;
+			$entry->remarks = NULL;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {
 				$model->issue_entry_id = $entry->id;
@@ -138,13 +138,13 @@ class SupplierLedgerController extends Controller
 	}
 
 	/**
-	 * Download transaction as PDF.
+	 * Open transaction PDF in browser.
 	 */
 	public function actionPdf($id)
 	{
 		$model = $this->loadModel($id);
 		$filename = 'Supplier-Ledger-Txn-' . $model->id . '-' . date('Y-m-d') . '.pdf';
-		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'D', 'A4', array(10, 10, 12, 10, 0, 0), 'P', 'gothic', false, '', false);
+		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(10, 10, 12, 10, 0, 0), 'P', 'gothic', false, '', false);
 	}
 
 	/**
@@ -167,14 +167,19 @@ class SupplierLedgerController extends Controller
 			$totalFineWt = 0;
 			$totalAmount = 0;
 			$sortOrder = 0;
+			$caratOptions = SupplierLedgerTxnItem::getCaratOptions();
 			foreach ($itemsData as $row) {
 				$itemName = $this->getTypedFieldValue($row, 'item_name', 'trimmed_string', '');
 				$netWt = $this->getTypedFieldValue($row, 'net_wt', 'float', null);
 				if ($itemName === '') continue;
+				$ct = $this->getTypedFieldValue($row, 'ct', 'trimmed_string', '');
+				if ($ct !== '' && !isset($caratOptions[$ct])) {
+					$ct = '';
+				}
 				$item = new SupplierLedgerTxnItem;
 				$item->txn_id = $txnId;
 				$item->item_name = $itemName;
-				$item->ct = $this->getTypedFieldValue($row, 'ct', 'float', null);
+				$item->ct = $ct !== '' ? $ct : null;
 				$item->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
 				$item->net_wt = $netWt;
 				$item->touch_pct = $this->getTypedFieldValue($row, 'touch_pct', 'float', null);

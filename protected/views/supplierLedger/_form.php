@@ -16,12 +16,12 @@ $form = $this->beginWidget('CActiveForm', array(
 </style>
 <?php
 $chargeLabels = SupplierLedgerTxnItem::getChargeTypeLabels();
+$caratOptions = SupplierLedgerTxnItem::getCaratOptions();
 $items = $model->isNewRecord ? array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>'')))) : $model->items;
 if (empty($items)) $items = array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>''))));
 $txnDate = $model->txn_date;
 if (!empty($txnDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $txnDate)) $txnDate = date('d-m-Y', strtotime($txnDate));
 if (!$txnDate) $txnDate = date('d-m-Y');
-$drcrOptions = IssueEntry::getDrcrOptions();
 ?>
 <?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
 <div class="form-group">
@@ -64,12 +64,26 @@ $it = is_object($item) ? $item : (object) $item;
 $charges = isset($it->charges) ? $it->charges : (isset($item['charges']) ? $item['charges'] : array());
 if (empty($charges) && is_object($it) && isset($it->id)) $charges = $it->charges;
 if (empty($charges)) $charges = array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>''));
+$itemCtValue = is_object($it) ? $it->ct : (isset($item['ct']) ? $item['ct'] : '');
+$itemCaratOptions = $caratOptions;
+if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
+    $itemCaratOptions = array($itemCtValue => $itemCtValue) + $itemCaratOptions;
+}
 ?>
 <div class="item-block panel panel-default" data-index="<?php echo $i; ?>">
     <div class="panel-body">
+        <div class="row margin-bottom-5">
+            <div class="col-sm-2"><strong>Item</strong></div>
+            <div class="col-sm-1"><strong>Carat</strong></div>
+            <div class="col-sm-1"><strong>Gross</strong></div>
+            <div class="col-sm-1"><strong>Net Wt</strong></div>
+            <div class="col-sm-1"><strong>Touch %</strong></div>
+            <div class="col-sm-1"><strong>Fine Wt</strong></div>
+            <div class="col-sm-1"></div>
+        </div>
         <div class="row item-main-row">
             <div class="col-sm-2"><?php echo CHtml::textField("items[{$i}][item_name]", is_object($it) ? $it->item_name : (isset($item['item_name'])?$item['item_name']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Item name')); ?></div>
-            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][ct]", is_object($it) ? $it->ct : (isset($item['ct'])?$item['ct']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Ct')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::dropDownList("items[{$i}][ct]", $itemCtValue, $itemCaratOptions, array('class' => 'form-control input-sm', 'prompt' => 'Carat')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][gross_wt]", is_object($it) ? $it->gross_wt : (isset($item['gross_wt'])?$item['gross_wt']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Gross')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][net_wt]", is_object($it) ? $it->net_wt : (isset($item['net_wt'])?$item['net_wt']:''), array('class' => 'form-control input-sm net-wt sl-numeric', 'placeholder' => 'Net wt')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][touch_pct]", is_object($it) ? $it->touch_pct : (isset($item['touch_pct'])?$item['touch_pct']:''), array('class' => 'form-control input-sm touch-pct sl-numeric', 'placeholder' => 'Touch %')); ?></div>
@@ -166,8 +180,11 @@ $(function() {
 <script>
 (function(){
     var chargeLabels = <?php echo json_encode($chargeLabels); ?>;
+    var caratOptions = <?php echo json_encode($caratOptions); ?>;
     var chargeOpts = '';
+    var caratOpts = '<option value="">Carat</option>';
     for (var k in chargeLabels) { chargeOpts += '<option value="'+k+'">'+chargeLabels[k]+'</option>'; }
+    for (var carat in caratOptions) { caratOpts += '<option value="'+carat+'">'+caratOptions[carat]+'</option>'; }
     var itemIndex = <?php echo count($items); ?>;
 
     function addChargeRow($itemBlock) {
@@ -195,6 +212,20 @@ $(function() {
     function parseNum(val) {
         var n = parseFloat(String(val).replace(/,/g, ''));
         return isNaN(n) ? 0 : n;
+    }
+    function getTouchByCarat(carat) {
+        var touchMap = {
+            '24K': '100',
+            '22K': '92',
+            '18K': '75',
+            '14K': '58'
+        };
+        return touchMap[carat] || '';
+    }
+    function applyTouchFromCarat($itemBlock) {
+        var carat = $itemBlock.find('select[name*="[ct]"]').val();
+        var touch = getTouchByCarat(carat);
+        $itemBlock.find('.touch-pct').val(touch);
     }
     function updateItemFineWt($block) {
         var net = parseNum($block.find('.net-wt').val());
@@ -227,14 +258,21 @@ $(function() {
         updateTotals();
     }
     $('#items-container').on('input change', '.net-wt, .touch-pct', function(){ updateItemFineWt($(this).closest('.item-block')); updateTotals(); });
+    $('#items-container').on('change', 'select[name*="[ct]"]', function(){
+        var $block = $(this).closest('.item-block');
+        applyTouchFromCarat($block);
+        updateItemFineWt($block);
+        updateTotals();
+    });
     $('#items-container').on('input change', '.charge-qty, .charge-rate, .charge-row input[placeholder="Qty"], .charge-row input[placeholder="Rate"]', function(){ updateChargeRowAmounts(); updateTotals(); });
     $(document).on('click', '.btn-remove-item', function(){ $(this).closest('.item-block').remove(); updateTotals(); });
     $(document).on('click', '.btn-add-charge', function(){ addChargeRow($(this).closest('.item-block')); });
     $(document).on('click', '.btn-remove-charge', function(){ $(this).closest('.charge-row').remove(); updateTotals(); });
     $('#add-item-btn').on('click', function(){
         var html = '<div class="item-block panel panel-default" data-index="'+itemIndex+'"><div class="panel-body">';
+        html += '<div class="row margin-bottom-5"><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net Wt</strong></div><div class="col-sm-1"><strong>Touch %</strong></div><div class="col-sm-1"><strong>Fine Wt</strong></div><div class="col-sm-1"></div></div>';
         html += '<div class="row item-main-row"><div class="col-sm-2"><input type="text" name="items['+itemIndex+'][item_name]" class="form-control input-sm" placeholder="Item name" /></div>';
-        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][ct]" class="form-control input-sm sl-numeric" placeholder="Ct" /></div>';
+        html += '<div class="col-sm-1"><select name="items['+itemIndex+'][ct]" class="form-control input-sm">'+caratOpts+'</select></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][gross_wt]" class="form-control input-sm sl-numeric" placeholder="Gross" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][net_wt]" class="form-control input-sm net-wt sl-numeric" placeholder="Net wt" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][touch_pct]" class="form-control input-sm touch-pct sl-numeric" placeholder="Touch %" /></div>';
@@ -251,6 +289,10 @@ $(function() {
         $('#items-container').append(html);
         itemIndex++;
         updateTotals();
+    });
+    $('#items-container .item-block').each(function(){
+        applyTouchFromCarat($(this));
+        updateItemFineWt($(this));
     });
     updateTotals();
 })();

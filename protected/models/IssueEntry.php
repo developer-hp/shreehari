@@ -7,6 +7,8 @@
  * @property string $sr_no
  * @property string $issue_date
  * @property integer $customer_id
+ * @property string $carat
+ * @property string $weight
  * @property string $fine_wt
  * @property string $amount
  * @property integer $drcr 1=DR, 2=CR
@@ -35,12 +37,14 @@ class IssueEntry extends CActiveRecord
 		return array(
 			array('issue_date, customer_id, drcr', 'required'),
 			array('customer_id, drcr, created_by, is_deleted, is_voucher', 'numerical', 'integerOnly' => true),
-			array('fine_wt, amount', 'numerical'),
+			array('weight, fine_wt, amount', 'numerical'),
+			array('carat', 'length', 'max' => 10),
+			array('carat', 'in', 'range' => array_keys(KarigarJamaVoucherLine::getCaratOptions()), 'allowEmpty' => true),
 			array('drcr', 'in', 'range' => array(self::DRCR_DEBIT, self::DRCR_CREDIT)),
 			array('sr_no', 'length', 'max' => 30),
-			array('remarks, created_at, updated_at', 'safe'),
+			array('remarks, created_at, updated_at, carat', 'safe'),
 			array('remarks', 'required'),
-			array('id, sr_no, issue_date, customer_id, fine_wt, amount, drcr, remarks, created_by, created_at, updated_at, is_deleted, is_voucher, customer_name', 'safe', 'on' => 'search'),
+			array('id, sr_no, issue_date, customer_id, carat, weight, fine_wt, amount, drcr, remarks, created_by, created_at, updated_at, is_deleted, is_voucher, customer_name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -59,6 +63,8 @@ class IssueEntry extends CActiveRecord
 			'issue_date' => 'Issue Date',
 			'customer_id' => 'Account',
 			'customer_name' => 'Account',
+			'carat' => 'Carat',
+			'weight' => 'Weight',
 			'fine_wt' => 'Fine Wt',
 			'amount' => 'Amount',
 			'drcr' => implode('/', Yii::app()->params['drcrOptions']),
@@ -149,6 +155,8 @@ class IssueEntry extends CActiveRecord
 				$criteria->compare('t.issue_date', $this->issue_date, true);
 		}
 		$criteria->compare('t.fine_wt', $this->fine_wt, true);
+		$criteria->compare('t.carat', $this->carat, true);
+		$criteria->compare('t.weight', $this->weight, true);
 		$criteria->compare('t.amount', $this->amount, true);
 		$criteria->compare('t.drcr', $this->drcr);
 		$criteria->compare('t.remarks', $this->remarks, true);

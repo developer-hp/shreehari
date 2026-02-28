@@ -25,6 +25,7 @@ class KarigarJamaVoucherLine extends CActiveRecord
 	public static function getCaratOptions()
 	{
 		return array(
+			'24K' => '24K',
 			'22K' => '22K',
 			'18K' => '18K',
 			'14K' => '14K',

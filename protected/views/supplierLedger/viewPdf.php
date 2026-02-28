@@ -56,7 +56,7 @@ $numStyle = 'text-align:right;';
         <tr>
             <th width="4%" style="<?php echo $thStyle; ?>">Sr</th>
             <th width="18%" style="<?php echo $thStyle; ?>">Item</th>
-            <th width="8%" style="<?php echo $thStyle; ?>">Ct</th>
+            <th width="8%" style="<?php echo $thStyle; ?>">Carat</th>
             <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Gross Wt</th>
             <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Net Wt</th>
             <th width="10%" style="<?php echo $thStyle; ?>">Touch %</th>

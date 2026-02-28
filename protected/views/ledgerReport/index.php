@@ -23,6 +23,7 @@
             </div>
             <?php
             $filterCustomerType = isset($_GET['customer_type']) ? (int)$_GET['customer_type'] : 0;
+            $filterEntryType = isset($_GET['entry_type']) ? trim(strtolower($_GET['entry_type'])) : '';
             $customerTypeCondition = 'is_deleted = 0';
             if ($filterCustomerType > 0 && $filterCustomerType <= 3) {
                 $customerTypeCondition .= ' AND type = ' . $filterCustomerType;
@@ -62,6 +63,17 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">Voucher Type</label>
+                    <div class="col-sm-6">
+                        <select name="entry_type" class="form-control">
+                            <option value="">-- All --</option>
+                            <option value="issue" <?php echo $filterEntryType === 'issue' ? 'selected="selected"' : ''; ?>>Issue Entry</option>
+                            <option value="supplier" <?php echo $filterEntryType === 'supplier' ? 'selected="selected"' : ''; ?>>Supplier Voucher</option>
+                            <option value="karigar" <?php echo $filterEntryType === 'karigar' ? 'selected="selected"' : ''; ?>>Karigar Voucher</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-3 control-label">Issue Date To</label>
                     <div class="col-sm-6">
                         <input type="text" name="to_date" value="<?php echo isset($_GET['to_date']) ? CHtml::encode($_GET['to_date']) : ''; ?>" class="form-control input-datepicker" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" autocomplete="off">
@@ -89,7 +101,7 @@ $(function() {
     $('#ledger-download-pdf').on('click', function() {
         var form = $('#ledger-report-form');
         var pdfUrl = '<?php echo Yii::app()->createUrl("ledgerReport/pdf"); ?>?' + form.serialize();
-        window.location.href = pdfUrl;
+        window.open(pdfUrl, '_blank');
     });
 });
 </script>

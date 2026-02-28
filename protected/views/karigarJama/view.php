@@ -42,7 +42,7 @@
         <?php if ($model->is_locked != 1): ?>
             <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
         <?php endif; ?>
-        <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('karigarJama/pdf', 'id' => $model->id), array('class' => 'btn btn-primary')); ?>
+        <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('karigarJama/pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
         </div>
     </div>
 

@@ -16,6 +16,7 @@
 <div class="block">
     <div class="block-title"><h2>Details</h2></div>
     <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-info')); ?>
+    <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
     <?php echo CHtml::link('Back to list', array('index'), array('class' => 'btn btn-default')); ?>
 
     <?php $this->widget('zii.widgets.CDetailView', array(
@@ -25,6 +26,8 @@
             'sr_no',
             array('name' => 'issue_date', 'value' => !empty($model->issue_date) ? date('d-m-Y', strtotime($model->issue_date)) : ''),
             array('name' => 'customer_id', 'value' => isset($model->customer) ? $model->customer->name : $model->customer_id),
+            'carat',
+            'weight',
             'fine_wt',
             'amount',
             array('name' => 'drcr', 'value' => function($model) {

@@ -44,6 +44,8 @@
                         'type' => 'raw',
                         'value' => 'isset($data->customer) ? CHtml::link(CHtml::encode($data->customer->name), array("ledgerReport/report", "customer_id" => $data->customer_id), array("class" => "link_blue")) : ""',
                     ),
+                    'carat',
+                    'weight',
                     'fine_wt',
                     'amount',
                     array(
@@ -54,9 +56,16 @@
                         'class' => 'ButtonColumn',
                         'header' => 'Actions',
                         'htmlOptions' => array('style' => 'width: 120px; text-align: center;'),
-                        'template' => '{update} {delete}',
+                        'template' => '{pdf} {update} {delete}',
                         'deleteConfirmation' => 'Are you sure you want to delete this issue entry?',
                         'buttons' => array(
+                            'pdf' => array(
+                                'label' => '<i class="fa fa-file-pdf-o"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-primary', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => 'Download PDF', 'target' => '_blank'),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("issueEntry/pdf", array("id" => $data->id))',
+                            ),
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>',
                                 'imageUrl' => false,

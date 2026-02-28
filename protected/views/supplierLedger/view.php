@@ -35,7 +35,7 @@
                 <?php if ($model->is_locked != 1): ?>
                     <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
                 <?php endif; ?>
-                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('supplierLedger/pdf', 'id' => $model->id), array('class' => 'btn btn-primary')); ?>
+                <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('supplierLedger/pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
             </p>
         </div>
     </div>
@@ -46,7 +46,7 @@
             <tr>
                 <th>Sr</th>
                 <th>Item</th>
-                <th>Ct</th>
+                <th>Carat</th>
                 <th>Gross Wt</th>
                 <th>Net Wt</th>
                 <th>Touch %</th>

@@ -122,7 +122,7 @@ class KarigarJamaController extends Controller
 				$entry->sr_no = $voucherNo;
 				$entry->amount = $totalAmount;
 				$entry->drcr = $drcr;
-				$entry->remarks = 'Karigar Voucher ' . $voucherNo;
+				$entry->remarks = NULL;
 				$entry->is_voucher = 1;
 				$entry->save(false);
 			}
@@ -134,7 +134,7 @@ class KarigarJamaController extends Controller
 			$entry->fine_wt = $totalFineWt;
 			$entry->amount = $totalAmount;
 			$entry->drcr = $drcr;
-			$entry->remarks = 'Karigar Voucher ' . $voucherNo;
+			$entry->remarks = NULL;
 			$entry->is_voucher = 1;
 			if ($entry->save(false)) {
 				$voucher->issue_entry_id = $entry->id;
@@ -144,14 +144,14 @@ class KarigarJamaController extends Controller
 	}
 
 	/**
-	 * Download voucher as PDF.
+	 * Open voucher PDF in browser.
 	 */
 	public function actionPdf($id)
 	{
 		$model = $this->loadModel($id);
 		$filename = 'Karigar-Voucher-' . $model->voucher_number. '.pdf';
 		// A4, landscape layout to fit full voucher grid
-		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'D', 'A4', array(6, 6, 8, 6, 0, 0), 'L', 'gothic', false, '', false);
+		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(6, 6, 8, 6, 0, 0), 'L', 'gothic', false, '', false);
 	}
 
 	protected function saveVoucherWithLines(KarigarJamaVoucher $model, array $linesData)
