@@ -1,113 +1,212 @@
 <?php
-$cellStyle = 'border:1px solid #333; padding:5px 8px;';
-$thStyle = 'border:1px solid #333; padding:6px 8px; background:#f0f0f0; font-weight:bold;';
+$cellStyle = 'border:1px solid #222; padding:4px 6px; font-size:9px;';
+$thStyle = 'border:1px solid #222; padding:4px 6px; font-size:9px; font-weight:bold;';
 $numStyle = 'text-align:right;';
+
+if (!function_exists('ledgerPdfNumberToWords')) {
+    function ledgerPdfNumberToWords($number, $precision = 2)
+    {
+        $number = (float) $number;
+        $precision = (int) $precision;
+        if ($precision < 0) {
+            $precision = 0;
+        }
+        if ($number == 0) {
+            return 'Zero';
+        }
+
+        $integerPart = (int) floor(abs($number));
+        $factor = pow(10, $precision);
+        $decimalPart = (int) round((abs($number) - $integerPart) * $factor);
+        if ($decimalPart >= $factor) {
+            $integerPart += 1;
+            $decimalPart = 0;
+        }
+        $words = array(
+            0 => '', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four', 5 => 'Five',
+            6 => 'Six', 7 => 'Seven', 8 => 'Eight', 9 => 'Nine', 10 => 'Ten',
+            11 => 'Eleven', 12 => 'Twelve', 13 => 'Thirteen', 14 => 'Fourteen', 15 => 'Fifteen',
+            16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen', 19 => 'Nineteen',
+            20 => 'Twenty', 30 => 'Thirty', 40 => 'Forty', 50 => 'Fifty',
+            60 => 'Sixty', 70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety'
+        );
+        $digitWords = array('Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine');
+
+        $belowThousand = function ($num) use (&$words) {
+            $text = '';
+            if ($num >= 100) {
+                $text .= $words[(int) floor($num / 100)] . ' Hundred ';
+                $num = $num % 100;
+            }
+            if ($num > 0) {
+                if ($num < 21) {
+                    $text .= $words[$num] . ' ';
+                } else {
+                    $text .= $words[(int) (floor($num / 10) * 10)] . ' ';
+                    if (($num % 10) > 0) {
+                        $text .= $words[$num % 10] . ' ';
+                    }
+                }
+            }
+            return trim($text);
+        };
+
+        $parts = array(10000000 => 'Crore', 100000 => 'Lakh', 1000 => 'Thousand');
+        $text = $number < 0 ? 'Minus ' : '';
+        foreach ($parts as $value => $label) {
+            if ($integerPart >= $value) {
+                $chunk = (int) floor($integerPart / $value);
+                $integerPart = $integerPart % $value;
+                $text .= $belowThousand($chunk) . ' ' . $label . ' ';
+            }
+        }
+        if ($integerPart > 0) {
+            $text .= $belowThousand($integerPart) . ' ';
+        }
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+        if ($precision > 0 && $decimalPart > 0) {
+            $decimalText = str_pad((string) $decimalPart, $precision, '0', STR_PAD_LEFT);
+            $decimalWords = array();
+            foreach (str_split($decimalText) as $digit) {
+                $decimalWords[] = $digitWords[(int) $digit];
+            }
+            $text .= ' Point ' . implode(' ', $decimalWords);
+        }
+        return trim($text);
+    }
+}
 ?>
-<div style="margin-bottom:10px;"><strong>Ledger Report (Opening Balance + Issue Entry)</strong></div>
-<?php
-$typeLabels = array(1 => 'Supplier', 2 => 'Customer', 3 => 'Karigar');
-$pdfFilterParts = array();
-if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $pdfFilterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
-if (!empty($from_date) || !empty($to_date)) $pdfFilterParts[] = 'Issue entries from: ' . ($from_date ? CHtml::encode($from_date) : '—') . ' to ' . ($to_date ? CHtml::encode($to_date) : '—');
-if (!empty($pdfFilterParts)): ?>
-<div style="margin-bottom:8px;"><?php echo implode(' | ', $pdfFilterParts); ?></div>
-<?php endif; ?>
 
 <?php if (empty($customers)): ?>
 <p>No data found for the selected filters.</p>
 <?php else: ?>
 <?php foreach ($customers as $row): ?>
+<?php
+$customer = $row['customer'];
+$opening = $row['opening'];
+$issues = $row['issues'];
+
+$jamaFine = 0;
+$bakiFine = 0;
+$jamaAmount = 0;
+$bakiAmount = 0;
+
+$runningFineBalance = 0;
+$runningAmountBalance = 0;
+
+if ($opening) {
+    $openingFine = (float) $opening->opening_fine_wt;
+    $openingAmount = (float) $opening->opening_amount;
+    if ((int) $opening->opening_fine_wt_drcr === IssueEntry::DRCR_DEBIT) {
+        $jamaFine += $openingFine;
+        $runningFineBalance += $openingFine;
+    } else {
+        $bakiFine += $openingFine;
+        $runningFineBalance -= $openingFine;
+    }
+    if ((int) $opening->opening_amount_drcr === IssueEntry::DRCR_DEBIT) {
+        $jamaAmount += $openingAmount;
+        $runningAmountBalance += $openingAmount;
+    } else {
+        $bakiAmount += $openingAmount;
+        $runningAmountBalance -= $openingAmount;
+    }
+}
+?>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:10px;">
+    <tr>
+        <td class="text-center" colspan="9" style="<?php echo $thStyle; ?> font-size:15px;text-align:center;"><?php echo CHtml::encode($customer->name); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $thStyle; ?> width:14%;">DATE</td>
+        <td style="<?php echo $thStyle; ?> width:16%;">PARTICULARS</td>
+        <td style="<?php echo $thStyle; ?> width:11%;">FINE WT JAMA</td>
+        <td style="<?php echo $thStyle; ?> width:14%;">FINE WT BAKI</td>
+        <td style="<?php echo $thStyle; ?> width:13%;">BAL FINE WT</td>
+        <td style="<?php echo $thStyle; ?> width:13%;">AMOUNT JAMA</td>
+        <td style="<?php echo $thStyle; ?> width:13%;">AMOUNT BAKI</td>
+        <td colspan="2" style="<?php echo $thStyle; ?> width:12%;">BAL AMT</td>
+    </tr>
+
+    <?php if ($opening): ?>
     <?php
-    $customer = $row['customer'];
-    $opening = $row['opening'];
-    $issues = $row['issues'];
+    $openingDate = !empty($opening->created_at) ? date('d-m-Y', strtotime($opening->created_at)) : '';
     ?>
-    <?php 
-    $drcrOptions = IssueEntry::getDrcrOptions();
-    $drLabel = $drcrOptions[IssueEntry::DRCR_DEBIT];
-    $crLabel = $drcrOptions[IssueEntry::DRCR_CREDIT];
+    <tr>
+        <td style="<?php echo $cellStyle; ?>"><?php echo $openingDate; ?></td>
+        <td style="<?php echo $cellStyle; ?>">OPENING</td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo (int) $opening->opening_fine_wt_drcr === IssueEntry::DRCR_DEBIT ? number_format((float) $opening->opening_fine_wt, 3) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo (int) $opening->opening_fine_wt_drcr === IssueEntry::DRCR_CREDIT ? number_format((float) $opening->opening_fine_wt, 3) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($runningFineBalance, 3); ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo (int) $opening->opening_amount_drcr === IssueEntry::DRCR_DEBIT ? number_format((float) $opening->opening_amount, 2) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo (int) $opening->opening_amount_drcr === IssueEntry::DRCR_CREDIT ? number_format((float) $opening->opening_amount, 2) : ''; ?></td>
+        <td colspan="2" style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($runningAmountBalance, 2); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>">REMARK</td>
+        <td colspan="8" style="<?php echo $cellStyle; ?>">Opening Balance</td>
+    </tr>
+    <?php endif; ?>
+
+    <?php foreach ($issues as $iss): ?>
+    <?php
+    $isJama = ((int) $iss->drcr === IssueEntry::DRCR_DEBIT);
+    $fineWt = (float) $iss->fine_wt;
+    $amount = (float) $iss->amount;
+    if ($isJama) {
+        $jamaFine += $fineWt;
+        $jamaAmount += $amount;
+        $runningFineBalance += $fineWt;
+        $runningAmountBalance += $amount;
+    } else {
+        $bakiFine += $fineWt;
+        $bakiAmount += $amount;
+        $runningFineBalance -= $fineWt;
+        $runningAmountBalance -= $amount;
+    }
+    $vouchNo = trim((string) $iss->sr_no);
+    $remark = trim((string) $iss->remarks);
     ?>
-    <h4 style="margin-top:18px; margin-bottom:8px;"><?php echo CHtml::encode($customer->name); ?> (<?php echo CHtml::encode($customer->mobile); ?>)</h4>
-    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
-        <thead>
-            <tr>
-                <th width="10%" style="<?php echo $thStyle; ?>">Date</th>
-                <th width="13%" style="<?php echo $thStyle; ?>">Particulars</th>
-                <th width="10%" style="<?php echo $thStyle . $numStyle; ?>">Fine Wt (<?php echo $drLabel; ?>)</th>
-                <th width="10%" style="<?php echo $thStyle . $numStyle; ?>">Fine Wt (<?php echo $crLabel; ?>)</th>
-                <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Amount (<?php echo $drLabel; ?>)</th>
-                <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Amount (<?php echo $crLabel; ?>)</th>
-                <th width="11%" style="<?php echo $thStyle . $numStyle; ?>">Fine Balance</th>
-                <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Amount Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $totalFineDr = $totalFineCr = $totalAmtDr = $totalAmtCr = 0;
-            $runningFineBalance = 0;
-            $runningAmountBalance = 0;
-            if ($opening):
-                $fw = (float)$opening->opening_fine_wt;
-                $am = (float)$opening->opening_amount;
-                if ($opening->opening_fine_wt_drcr == 1) { $totalFineDr += $fw; $runningFineBalance += $fw; } else { $totalFineCr += $fw; $runningFineBalance -= $fw; }
-                if ($opening->opening_amount_drcr == 1) { $totalAmtDr += $am; $runningAmountBalance += $am; } else { $totalAmtCr += $am; $runningAmountBalance -= $am; }
-            ?>
-            <tr>
-                <td style="<?php echo $cellStyle; ?>">—</td>
-                <td style="<?php echo $cellStyle; ?>">Opening Balance</td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $opening->opening_fine_wt_drcr == 1 ? number_format($fw, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $opening->opening_fine_wt_drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $opening->opening_amount_drcr == 1 ? number_format($am, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $opening->opening_amount_drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
-            </tr>
-            <?php endif; ?>
-            <?php foreach ($issues as $iss):
-                $fw = (float)$iss->fine_wt;
-                $am = (float)$iss->amount;
-                if ($iss->drcr == 1) { 
-                    $totalFineDr += $fw; 
-                    $totalAmtDr += $am;
-                    $runningFineBalance += $fw;
-                    $runningAmountBalance += $am;
-                } else { 
-                    $totalFineCr += $fw; 
-                    $totalAmtCr += $am;
-                    $runningFineBalance -= $fw;
-                    $runningAmountBalance -= $am;
-                }
-                $dateStr = !empty($iss->issue_date) ? date('d-m-Y', strtotime($iss->issue_date)) : '—';
-                $particularsText = $iss->sr_no . ' - ' . (string)$iss->remarks;
-            ?>
-            <tr>
-                <td style="<?php echo $cellStyle; ?>"><?php echo $dateStr; ?></td>
-                <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($particularsText); ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $iss->drcr == 1 ? number_format($fw, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $iss->drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $iss->drcr == 1 ? number_format($am, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $iss->drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
-            </tr>
-            <?php endforeach;
-            $netFine = $totalFineDr - $totalFineCr;
-            $netAmt = $totalAmtDr - $totalAmtCr;
-            $closingFineDr = $netFine >= 0 ? $netFine : 0;
-            $closingFineCr = $netFine < 0 ? -$netFine : 0;
-            $closingAmtDr = $netAmt >= 0 ? $netAmt : 0;
-            $closingAmtCr = $netAmt < 0 ? -$netAmt : 0;
-            ?>
-            <tr style="font-weight:bold; background:#f5f5f5;">
-                <td colspan="2" style="<?php echo $cellStyle . $numStyle; ?>"><strong>Closing</strong></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $closingFineDr > 0 ? number_format($closingFineDr, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $closingFineCr > 0 ? number_format($closingFineCr, 3) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $closingAmtDr > 0 ? number_format($closingAmtDr, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $closingAmtCr > 0 ? number_format($closingAmtCr, 2) : '—'; ?></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningFineBalance, 3); ?></strong></td>
-                <td style="<?php echo $cellStyle . $numStyle; ?>"><strong><?php echo number_format($runningAmountBalance, 2); ?></strong></td>
-            </tr>
-        </tbody>
-    </table>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>"><?php echo !empty($iss->issue_date) ? date('d-m-Y', strtotime($iss->issue_date)) : ''; ?></td>
+        <td style="<?php echo $cellStyle; ?>">VOUCH NO <?php echo CHtml::encode($vouchNo); ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $isJama ? number_format($fineWt, 3) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo !$isJama ? number_format($fineWt, 3) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($runningFineBalance, 3); ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $isJama ? number_format($amount, 2) : ''; ?></td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo !$isJama ? number_format($amount, 2) : ''; ?></td>
+        <td colspan="2" style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($runningAmountBalance, 2); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $cellStyle; ?>">REMARK</td>
+        <td colspan="8" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($remark); ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
+    <tr>
+        <td style="<?php echo $thStyle; ?> width:14%;">TOTAL FINE WT</td>
+        <td style="<?php echo $thStyle; ?> width:12%;">IN NUMBERS</td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>" colspan="8"><?php echo number_format($runningFineBalance, 3); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $thStyle; ?>"></td>
+        <td style="<?php echo $thStyle; ?>">IN WORDS</td>
+        <td style="<?php echo $cellStyle; ?>" colspan="8"><?php echo CHtml::encode(ledgerPdfNumberToWords($runningFineBalance, 3)); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $thStyle; ?>">TOTAL AMOUNT</td>
+        <td style="<?php echo $thStyle; ?>">IN NUMBERS</td>
+        <td style="<?php echo $cellStyle . $numStyle; ?>" colspan="8"><?php echo number_format($runningAmountBalance, 2); ?></td>
+    </tr>
+    <tr>
+        <td style="<?php echo $thStyle; ?>"></td>
+        <td style="<?php echo $thStyle; ?>">IN WORDS</td>
+        <td style="<?php echo $cellStyle; ?>" colspan="8"><?php echo CHtml::encode(ledgerPdfNumberToWords($runningAmountBalance)); ?></td>
+    </tr>
+</table>
+
 <?php endforeach; ?>
 <?php endif; ?>

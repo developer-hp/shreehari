@@ -23,15 +23,24 @@ $voucherNo = $model->voucher_number ? $model->voucher_number : $model->id;
 $printDate = date('d-m-Y');
 
 if (!function_exists('karigarVoucherNumberToWords')) {
-    function karigarVoucherNumberToWords($number)
+    function karigarVoucherNumberToWords($number, $precision = 2)
     {
         $number = (float) $number;
+        $precision = (int) $precision;
+        if ($precision < 0) {
+            $precision = 0;
+        }
         if ($number == 0) {
             return 'Zero';
         }
 
-        $integerPart = (int) floor($number);
-        $decimalPart = (int) round(($number - $integerPart) * 100);
+        $integerPart = (int) floor(abs($number));
+        $factor = pow(10, $precision);
+        $decimalPart = (int) round((abs($number) - $integerPart) * $factor);
+        if ($decimalPart >= $factor) {
+            $integerPart += 1;
+            $decimalPart = 0;
+        }
 
         $words = array(
             0 => '', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four', 5 => 'Five',
@@ -41,6 +50,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
             20 => 'Twenty', 30 => 'Thirty', 40 => 'Forty', 50 => 'Fifty',
             60 => 'Sixty', 70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety'
         );
+        $digitWords = array('Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine');
 
         $convertBelowThousand = function ($num) use (&$words) {
             $result = '';
@@ -67,7 +77,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
             1000 => 'Thousand'
         );
 
-        $text = '';
+        $text = $number < 0 ? 'Minus ' : '';
         foreach ($parts as $value => $label) {
             if ($integerPart >= $value) {
                 $chunk = (int) floor($integerPart / $value);
@@ -81,8 +91,13 @@ if (!function_exists('karigarVoucherNumberToWords')) {
         }
 
         $text = trim(preg_replace('/\s+/', ' ', $text));
-        if ($decimalPart > 0) {
-            $text .= ' Point ' . str_replace('  ', ' ', $convertBelowThousand($decimalPart));
+        if ($precision > 0 && $decimalPart > 0) {
+            $decimalText = str_pad((string) $decimalPart, $precision, '0', STR_PAD_LEFT);
+            $decimalWords = array();
+            foreach (str_split($decimalText) as $digit) {
+                $decimalWords[] = $digitWords[(int) $digit];
+            }
+            $text .= ' Point ' . implode(' ', $decimalWords);
         }
         return trim($text);
     }
@@ -190,7 +205,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(karigarVoucherNumberToWords($totalFineWt)); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(karigarVoucherNumberToWords($totalFineWt, 3)); ?></td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL AMOUNT</td>
