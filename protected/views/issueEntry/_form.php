@@ -4,6 +4,8 @@
 /* @var $form CActiveForm */
 ?>
 
+<?php $drcrOptions = IssueEntry::getDrcrOptions(); ?>
+
 <div class="form">
 <?php $form = $this->beginWidget('CActiveForm', array(
     'id' => 'issue-entry-form',
@@ -12,6 +14,8 @@
     'clientOptions' => array('validateOnSubmit' => true),
     'errorMessageCssClass' => 'help-block animation-slideUp form-error',
 )); ?>
+
+    <?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_CREDIT)); ?>
 
     <?php //echo $form->errorSummary($model); ?>
 
@@ -91,20 +95,6 @@
         <div class="col-sm-4">
             <?php echo $form->textField($model, 'amount', array('class' => 'form-control', 'size' => 20)); ?>
             <?php echo $form->error($model, 'amount'); ?>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <?php 
-        $drcrOptions = IssueEntry::getDrcrOptions();
-        $drcrLabel = implode('/', $drcrOptions);
-        echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
-        <div class="col-sm-4">
-            <?php 
-            $drcrOptions = IssueEntry::getDrcrOptions();
-            $drcrLabel = implode('/', $drcrOptions);
-            echo $form->dropDownList($model, 'drcr', $drcrOptions, array('class' => 'form-control', 'prompt' => '-- Select ' . $drcrLabel . ' --')); ?>
-            <?php echo $form->error($model, 'drcr'); ?>
         </div>
     </div>
 

@@ -55,13 +55,11 @@ class KarigarJamaVoucher extends CActiveRecord
 	protected function beforeSave()
 	{
 		if (parent::beforeSave()) {
+			$this->drcr = IssueEntry::DRCR_DEBIT;
 			if ($this->isNewRecord) {
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
-				// Default to CR if not set
-				if (empty($this->drcr)) {
-					$this->drcr = IssueEntry::DRCR_CREDIT;
-				}
+				// Karigar Voucher is always Jama
 			}
 			if ($this->voucher_number === null || $this->voucher_number === '') {
 				try {

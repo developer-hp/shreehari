@@ -21,7 +21,9 @@ if (empty($items)) $items = array(array('item_name'=>'','ct'=>'','gross_wt'=>'',
 $txnDate = $model->txn_date;
 if (!empty($txnDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $txnDate)) $txnDate = date('d-m-Y', strtotime($txnDate));
 if (!$txnDate) $txnDate = date('d-m-Y');
+$drcrOptions = IssueEntry::getDrcrOptions();
 ?>
+<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'txn_date', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -44,20 +46,6 @@ if (!$txnDate) $txnDate = date('d-m-Y');
     <div class="col-sm-4">
         <?php echo $form->textField($model, 'sr_no', array('class' => 'form-control')); ?>
         <?php echo $form->error($model, 'sr_no'); ?>
-    </div>
-</div>
-<div class="form-group">
-    <?php echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
-    <div class="col-sm-4">
-        <?php 
-        $drcrOptions = IssueEntry::getDrcrOptions();
-        $drcrLabel = implode('/', $drcrOptions);
-        if ($model->isNewRecord && empty($model->drcr)) {
-            $model->drcr = IssueEntry::DRCR_DEBIT;
-        }
-        echo $form->dropDownList($model, 'drcr', $drcrOptions, array('class' => 'form-control'));
-        ?>
-        <?php echo $form->error($model, 'drcr'); ?>
     </div>
 </div>
 <div class="form-group">

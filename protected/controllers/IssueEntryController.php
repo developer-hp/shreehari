@@ -31,6 +31,7 @@ class IssueEntryController extends Controller
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
 			$model->attributes = $_POST['IssueEntry'];
+			$model->drcr = IssueEntry::DRCR_CREDIT;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been added.');
 				$this->redirect(array('index'));
@@ -45,6 +46,7 @@ class IssueEntryController extends Controller
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
 			$model->attributes = $_POST['IssueEntry'];
+			$model->drcr = IssueEntry::DRCR_CREDIT;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been updated.');
 				$this->redirect(array('index'));

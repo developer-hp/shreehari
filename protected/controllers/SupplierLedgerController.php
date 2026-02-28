@@ -107,8 +107,7 @@ class SupplierLedgerController extends Controller
 		$totalAmount = (float) $model->total_amount;
 		$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
 		$voucherNo = ($model->voucher_number !== null && $model->voucher_number !== '') ? $model->voucher_number : ($prefix . $model->id);
-		// Use the selected drcr value, default to DR if not set
-		$drcr = isset($model->drcr) && $model->drcr ? $model->drcr : IssueEntry::DRCR_DEBIT;
+		$drcr = IssueEntry::DRCR_DEBIT;
 		if ($model->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($model->issue_entry_id);
 			if ($entry) {
@@ -157,6 +156,7 @@ class SupplierLedgerController extends Controller
 		$tx = $db->beginTransaction();
 		$committed = false;
 		try {
+			$model->drcr = IssueEntry::DRCR_DEBIT;
 			if (!$model->save()) {
 				$tx->rollBack();
 				return false;

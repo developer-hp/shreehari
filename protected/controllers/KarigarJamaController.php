@@ -113,8 +113,7 @@ class KarigarJamaController extends Controller
 			$totalFineWt += (float) $line->fine_wt;
 			foreach ($line->stones as $s) $totalAmount += (float) $s->stone_amount;
 		}
-		// Use the selected drcr value, default to CR if not set
-		$drcr = isset($voucher->drcr) && $voucher->drcr ? $voucher->drcr : IssueEntry::DRCR_CREDIT;
+		$drcr = IssueEntry::DRCR_DEBIT;
 		if ($voucher->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($voucher->issue_entry_id);
 			if ($entry) {
@@ -161,6 +160,7 @@ class KarigarJamaController extends Controller
 		$tx = $db->beginTransaction();
 		$committed = false;
 		try {
+			$model->drcr = IssueEntry::DRCR_DEBIT;
 			if (!$model->save()) {
 				$tx->rollBack();
 				return false;

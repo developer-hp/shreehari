@@ -47,14 +47,6 @@
                     'fine_wt',
                     'amount',
                     array(
-                        'name' => 'drcr',
-                        'value' => function($data) {
-                            $drcrOptions = IssueEntry::getDrcrOptions();
-                            return isset($drcrOptions[$data->drcr]) ? $drcrOptions[$data->drcr] : '';
-                        },
-                        'filter' => IssueEntry::getDrcrOptions(),
-                    ),
-                    array(
                         'name' => 'created_at',
                         'value' => '!empty($data->created_at) ? date("d-m-Y", strtotime($data->created_at)) : ""',
                     ),

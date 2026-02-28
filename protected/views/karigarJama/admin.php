@@ -29,15 +29,6 @@
                     array('name' => 'voucher_date', 'value' => '!empty($data->voucher_date) ? date("d-m-Y", strtotime($data->voucher_date)) : ""'),
                     array('name' => 'sr_no', 'value' => 'CHtml::encode($data->sr_no)'),
                     array('name' => 'karigar_name', 'value' => 'isset($data->karigar) ? $data->karigar->name : ""'),
-                    array(
-                        'name' => 'drcr',
-                        'value' => function($data) {
-                            $drcrOptions = IssueEntry::getDrcrOptions();
-                            return isset($drcrOptions[$data->drcr]) ? $drcrOptions[$data->drcr] : '';
-                        },
-                        'filter' => IssueEntry::getDrcrOptions(),
-                        'htmlOptions' => array('style' => 'text-align: center;'),
-                    ),
                     array('name' => 'total_fine_wt', 'value' => 'number_format((float)$data->total_fine_wt, 3)', 'htmlOptions' => array('class' => 'text-right')),
                     array('name' => 'total_amount', 'value' => 'number_format((float)$data->total_amount, 2)', 'htmlOptions' => array('class' => 'text-right')),
                     array(

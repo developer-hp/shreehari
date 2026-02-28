@@ -11,7 +11,9 @@ if (!$voucherDate) $voucherDate = date('d-m-Y');
 $lines = $model->isNewRecord ? array(array()) : $model->lines;
 if (empty($lines)) $lines = array(array());
 $caratOptions = KarigarJamaVoucherLine::getCaratOptions();
+$drcrOptions = IssueEntry::getDrcrOptions();
 ?>
+<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'voucher_date', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -34,20 +36,6 @@ $caratOptions = KarigarJamaVoucherLine::getCaratOptions();
     <div class="col-sm-4">
         <?php echo $form->textField($model, 'sr_no', array('class' => 'form-control')); ?>
         <?php echo $form->error($model, 'sr_no'); ?>
-    </div>
-</div>
-<div class="form-group">
-    <?php echo $form->labelEx($model, 'drcr', array('class' => 'col-sm-2 control-label')); ?>
-    <div class="col-sm-4">
-        <?php 
-        $drcrOptions = IssueEntry::getDrcrOptions();
-        $drcrLabel = implode('/', $drcrOptions);
-        if ($model->isNewRecord && empty($model->drcr)) {
-            $model->drcr = IssueEntry::DRCR_CREDIT;
-        }
-        echo $form->dropDownList($model, 'drcr', $drcrOptions, array('class' => 'form-control'));
-        ?>
-        <?php echo $form->error($model, 'drcr'); ?>
     </div>
 </div>
 <div class="form-group">
