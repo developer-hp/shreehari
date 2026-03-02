@@ -123,14 +123,15 @@ if (!function_exists('karigarVoucherNumberToWords')) {
 
     <tr>
         <td style="<?php echo $headStyle; ?> width:6%;">SR. NO</td>
-        <td style="<?php echo $headStyle; ?> width:12%;">ORDER ITEM</td>
+        <td style="<?php echo $headStyle; ?> width:10%;">ORDER ITEM</td>
         <td style="<?php echo $headStyle; ?> width:6%;">PCS</td>
         <td style="<?php echo $headStyle; ?> width:10%;">CARAT</td>
         <td style="<?php echo $headStyle; ?> width:8%;">GR.WT</td>
         <td style="<?php echo $headStyle; ?> width:8%;">NT.WT</td>
         <td style="<?php echo $headStyle; ?> width:6%;">TOUCH</td>
+        <td style="<?php echo $headStyle; ?> width:6%;">WST</td>
         <td style="<?php echo $headStyle; ?> width:8%;">FINE WT</td>
-        <td colspan="8" style="<?php echo $headStyle; ?> width:36%; text-align:center;">OTHERS</td>
+        <td colspan="7" style="<?php echo $headStyle; ?> width:36%; text-align:center;">OTHERS</td>
     </tr>
 
     <?php if (!empty($model->lines)): ?>
@@ -143,8 +144,9 @@ if (!function_exists('karigarVoucherNumberToWords')) {
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->gross_wt, 3); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->net_wt, 3); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->touch_pct, 2); ?></td>
+                <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->wastage, 2); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->fine_wt, 3); ?></td>
-                <td colspan="8" style="<?php echo $cellStyle; ?> padding:0;">
+                <td colspan="7" style="<?php echo $cellStyle; ?> padding:0;">
                     <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:8px;">
                         <tr>
                             <td style="<?php echo $headStyle; ?> border-top:none; border-left:none; width:14%; text-align:center;">SR.NO</td>
@@ -187,7 +189,8 @@ if (!function_exists('karigarVoucherNumberToWords')) {
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
-            <td colspan="8" style="<?php echo $cellStyle; ?>">&nbsp;</td>
+            <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
+            <td colspan="7" style="<?php echo $cellStyle; ?>">&nbsp;</td>
         </tr>
         <tr>
             <td style="<?php echo $headStyle; ?> text-align:center;">REMARK</td>

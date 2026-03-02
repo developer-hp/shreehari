@@ -17,8 +17,8 @@ class KarigarJamaVoucherLine extends CActiveRecord
 			array('carat', 'length', 'max' => 10),
 			array('carat', 'in', 'range' => array_keys(self::getCaratOptions()), 'allowEmpty' => true),
 			array('remark', 'length', 'max' => 500),
-			array('psc, gross_wt, net_wt, touch_pct, fine_wt', 'numerical'),
-			array('id, voucher_id, sr_no, order_no, customer_name, item_name, carat, psc, gross_wt, net_wt, touch_pct, fine_wt, remark, sort_order', 'safe', 'on' => 'search'),
+			array('psc, gross_wt, net_wt, touch_pct, wastage, fine_wt', 'numerical'),
+			array('id, voucher_id, sr_no, order_no, customer_name, item_name, carat, psc, gross_wt, net_wt, touch_pct, wastage, fine_wt, remark, sort_order', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -45,7 +45,8 @@ class KarigarJamaVoucherLine extends CActiveRecord
 		if (parent::beforeSave()) {
 			$net = (float) $this->net_wt;
 			$touch = (float) $this->touch_pct;
-			$this->fine_wt = round(($touch / 100) * $net, 3);
+			$wastage = (float) $this->wastage;
+			$this->fine_wt = round((($touch + $wastage) / 100) * $net, 3);
 			return true;
 		}
 		return false;

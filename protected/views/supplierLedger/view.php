@@ -50,6 +50,7 @@
                 <th>Gross Wt</th>
                 <th>Net Wt</th>
                 <th>Touch %</th>
+                <th>Wst</th>
                 <th>Fine Wt</th>
                 <th>Other Items</th>
                 <th>Item Total</th>
@@ -64,6 +65,7 @@
                 <td><?php echo number_format((float)$item->gross_wt, 3); ?></td>
                 <td><?php echo number_format((float)$item->net_wt, 3); ?></td>
                 <td><?php echo CHtml::encode($item->touch_pct); ?></td>
+                <td><?php echo number_format((float)$item->wastage, 2); ?></td>
                 <td><?php echo number_format((float)$item->fine_wt, 3); ?></td>
                 <td class="small">
                     <?php if (!empty($item->charges)): ?>

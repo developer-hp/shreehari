@@ -231,6 +231,7 @@ class KarigarJamaController extends Controller
 				$line->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
 				$line->net_wt = $this->getTypedFieldValue($row, 'net_wt', 'float', null);
 				$line->touch_pct = $this->getTypedFieldValue($row, 'touch_pct', 'float', null);
+				$line->wastage = $this->getTypedFieldValue($row, 'wastage', 'float', 0);
 				$line->remark = $this->getTypedFieldValue($row, 'remark', 'string', '');
 				$line->sort_order = $sortOrder++;
 				$line->save(false);

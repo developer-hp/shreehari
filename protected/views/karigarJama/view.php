@@ -59,6 +59,7 @@
                 <th>Gross</th>
                 <th>Net</th>
                 <th>Touch %</th>
+                <th>Wst</th>
                 <th>Fine Wt</th>
                 <th>Stone</th>
                 <th>Remark</th>
@@ -76,6 +77,7 @@
                 <td><?php echo number_format((float)$line->gross_wt, 3); ?></td>
                 <td><?php echo number_format((float)$line->net_wt, 3); ?></td>
                 <td><?php echo CHtml::encode($line->touch_pct); ?></td>
+                <td><?php echo number_format((float)$line->wastage, 2); ?></td>
                 <td><?php echo number_format((float)$line->fine_wt, 3); ?></td>
                 <td class="small">
                     <?php if (!empty($line->stones)): ?>

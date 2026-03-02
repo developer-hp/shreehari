@@ -17,8 +17,8 @@ $form = $this->beginWidget('CActiveForm', array(
 <?php
 $chargeLabels = SupplierLedgerTxnItem::getChargeTypeLabels();
 $caratOptions = SupplierLedgerTxnItem::getCaratOptions();
-$items = $model->isNewRecord ? array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>'')))) : $model->items;
-if (empty($items)) $items = array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>''))));
+$items = $model->isNewRecord ? array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','wastage'=>'0','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>'')))) : $model->items;
+if (empty($items)) $items = array(array('item_name'=>'','ct'=>'','gross_wt'=>'','net_wt'=>'','touch_pct'=>'','wastage'=>'0','charges'=>array(array('charge_type'=>1,'charge_name'=>'','quantity'=>'','rate'=>''))));
 $txnDate = $model->txn_date;
 if (!empty($txnDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $txnDate)) $txnDate = date('d-m-Y', strtotime($txnDate));
 if (!$txnDate) $txnDate = date('d-m-Y');
@@ -78,6 +78,7 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
             <div class="col-sm-1"><strong>Gross</strong></div>
             <div class="col-sm-1"><strong>Net Wt</strong></div>
             <div class="col-sm-1"><strong>Touch %</strong></div>
+            <div class="col-sm-1"><strong>Wst</strong></div>
             <div class="col-sm-1"><strong>Fine Wt</strong></div>
             <div class="col-sm-1"></div>
         </div>
@@ -87,6 +88,7 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][gross_wt]", is_object($it) ? $it->gross_wt : (isset($item['gross_wt'])?$item['gross_wt']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Gross')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][net_wt]", is_object($it) ? $it->net_wt : (isset($item['net_wt'])?$item['net_wt']:''), array('class' => 'form-control input-sm net-wt sl-numeric', 'placeholder' => 'Net wt')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][touch_pct]", is_object($it) ? $it->touch_pct : (isset($item['touch_pct'])?$item['touch_pct']:''), array('class' => 'form-control input-sm touch-pct sl-numeric', 'placeholder' => 'Touch %')); ?></div>
+            <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][wastage]", is_object($it) ? ((isset($it->wastage) && $it->wastage !== null && $it->wastage !== '') ? $it->wastage : 0) : (isset($item['wastage']) && $item['wastage'] !== '' ? $item['wastage'] : 0), array('class' => 'form-control input-sm wastage sl-numeric', 'placeholder' => 'Wst')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField('', (isset($it->fine_wt) && $it->fine_wt !== null && $it->fine_wt !== '') ? number_format((float)$it->fine_wt, 3) : '', array('class' => 'form-control input-sm item-fine-wt', 'readonly' => 'readonly', 'placeholder' => 'Fine wt', 'style' => 'background:#eee;')); ?></div>
             <div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-item">Remove</button></div>
         </div>
@@ -230,7 +232,8 @@ $(function() {
     function updateItemFineWt($block) {
         var net = parseNum($block.find('.net-wt').val());
         var touch = parseNum($block.find('.touch-pct').val());
-        var fine = (touch / 100) * net;
+        var wastage = parseNum($block.find('.wastage').val());
+        var fine = ((touch + wastage) / 100) * net;
         $block.find('.item-fine-wt').val(fine > 0 ? fine.toFixed(3) : '');
     }
     function updateTotals() {
@@ -239,7 +242,8 @@ $(function() {
             var $b = $(this);
             var net = parseNum($b.find('.net-wt').val());
             var touch = parseNum($b.find('.touch-pct').val());
-            totalFine += (touch / 100) * net;
+            var wastage = parseNum($b.find('.wastage').val());
+            totalFine += ((touch + wastage) / 100) * net;
             $b.find('.charge-row').each(function(){
                 var q = parseNum($(this).find('input[placeholder="Qty"]').val());
                 var r = parseNum($(this).find('input[placeholder="Rate"]').val());
@@ -257,7 +261,7 @@ $(function() {
         }
         updateTotals();
     }
-    $('#items-container').on('input change', '.net-wt, .touch-pct', function(){ updateItemFineWt($(this).closest('.item-block')); updateTotals(); });
+    $('#items-container').on('input change', '.net-wt, .touch-pct, .wastage', function(){ updateItemFineWt($(this).closest('.item-block')); updateTotals(); });
     $('#items-container').on('change', 'select[name*="[ct]"]', function(){
         var $block = $(this).closest('.item-block');
         applyTouchFromCarat($block);
@@ -270,12 +274,13 @@ $(function() {
     $(document).on('click', '.btn-remove-charge', function(){ $(this).closest('.charge-row').remove(); updateTotals(); });
     $('#add-item-btn').on('click', function(){
         var html = '<div class="item-block panel panel-default" data-index="'+itemIndex+'"><div class="panel-body">';
-        html += '<div class="row margin-bottom-5"><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net Wt</strong></div><div class="col-sm-1"><strong>Touch %</strong></div><div class="col-sm-1"><strong>Fine Wt</strong></div><div class="col-sm-1"></div></div>';
+        html += '<div class="row margin-bottom-5"><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net Wt</strong></div><div class="col-sm-1"><strong>Touch %</strong></div><div class="col-sm-1"><strong>Wst</strong></div><div class="col-sm-1"><strong>Fine Wt</strong></div><div class="col-sm-1"></div></div>';
         html += '<div class="row item-main-row"><div class="col-sm-2"><input type="text" name="items['+itemIndex+'][item_name]" class="form-control input-sm" placeholder="Item name" /></div>';
         html += '<div class="col-sm-1"><select name="items['+itemIndex+'][ct]" class="form-control input-sm">'+caratOpts+'</select></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][gross_wt]" class="form-control input-sm sl-numeric" placeholder="Gross" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][net_wt]" class="form-control input-sm net-wt sl-numeric" placeholder="Net wt" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][touch_pct]" class="form-control input-sm touch-pct sl-numeric" placeholder="Touch %" /></div>';
+        html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][wastage]" class="form-control input-sm wastage sl-numeric" value="0" placeholder="Wst" /></div>';
         html += '<div class="col-sm-1"><input type="text" class="form-control input-sm item-fine-wt" readonly placeholder="Fine wt" style="background:#eee;" /></div>';
         html += '<div class="col-sm-1"><button type="button" class="btn btn-danger btn-sm btn-remove-item">Remove</button></div></div>';
         html += '<div class="charges-wrap mt-3 mb-2"><div class="row charge-header-row mb-2"><div class="col-sm-2"><strong>Other details (charges):</strong></div><div class="col-sm-2"></div><div class="col-sm-1"></div><div class="col-sm-1"></div><div class="col-sm-1"><strong>Amount</strong></div><div class="col-sm-1 text-right"><button type="button" class="btn btn-xs btn-primary btn-add-charge"><i class="fa fa-plus"></i> Add charge</button></div></div>';

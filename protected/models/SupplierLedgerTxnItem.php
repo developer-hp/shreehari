@@ -2,7 +2,7 @@
 
 /**
  * Supplier Voucher Item (one product line).
- * fine_wt = (touch_pct/100) * net_wt
+ * fine_wt = ((touch_pct + wastage)/100) * net_wt
  * Charge type comes from cp_subitem_types (SubitemType).
  */
 class SupplierLedgerTxnItem extends CActiveRecord
@@ -21,8 +21,8 @@ class SupplierLedgerTxnItem extends CActiveRecord
 			array('item_name', 'length', 'max' => 255),
 			array('ct', 'length', 'max' => 10),
 			array('ct', 'in', 'range' => array_keys(self::getCaratOptions()), 'allowEmpty' => true),
-			array('gross_wt, net_wt, touch_pct, fine_wt, item_total', 'numerical'),
-			array('id, txn_id, sr_no, item_name, ct, gross_wt, net_wt, touch_pct, fine_wt, item_total, sort_order', 'safe', 'on' => 'search'),
+			array('gross_wt, net_wt, touch_pct, wastage, fine_wt, item_total', 'numerical'),
+			array('id, txn_id, sr_no, item_name, ct, gross_wt, net_wt, touch_pct, wastage, fine_wt, item_total, sort_order', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -39,7 +39,8 @@ class SupplierLedgerTxnItem extends CActiveRecord
 		if (parent::beforeSave()) {
 			$net = (float) $this->net_wt;
 			$touch = (float) $this->touch_pct;
-			$this->fine_wt = round(($touch / 100) * $net, 3);
+			$wastage = (float) $this->wastage;
+			$this->fine_wt = round((($touch + $wastage) / 100) * $net, 3);
 			return true;
 		}
 		return false;

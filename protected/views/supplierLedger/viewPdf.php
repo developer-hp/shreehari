@@ -55,14 +55,15 @@ $numStyle = 'text-align:right;';
     <thead>
         <tr>
             <th width="4%" style="<?php echo $thStyle; ?>">Sr</th>
-            <th width="18%" style="<?php echo $thStyle; ?>">Item</th>
+            <th width="16%" style="<?php echo $thStyle; ?>">Item</th>
             <th width="8%" style="<?php echo $thStyle; ?>">Carat</th>
             <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Gross Wt</th>
             <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Net Wt</th>
-            <th width="10%" style="<?php echo $thStyle; ?>">Touch %</th>
-            <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Fine Wt</th>
+            <th width="8%" style="<?php echo $thStyle; ?>">Touch %</th>
+            <th width="8%" style="<?php echo $thStyle; ?>">Wst</th>
+            <th width="10%" style="<?php echo $thStyle . $numStyle; ?>">Fine Wt</th>
             <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Other Items</th>
-            <th width="12%" style="<?php echo $thStyle . $numStyle; ?>">Item Total</th>
+            <th width="10%" style="<?php echo $thStyle . $numStyle; ?>">Item Total</th>
         </tr>
     </thead>
     <tbody>
@@ -74,6 +75,7 @@ $numStyle = 'text-align:right;';
             <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$item->gross_wt, 3); ?></td>
             <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$item->net_wt, 3); ?></td>
             <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($item->touch_pct); ?></td>
+            <td style="<?php echo $cellStyle; ?>"><?php echo number_format((float)$item->wastage, 2); ?></td>
             <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$item->fine_wt, 3); ?></td>
             <td>
                 <?php if (!empty($item->charges)): ?>
