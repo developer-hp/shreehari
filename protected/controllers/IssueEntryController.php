@@ -15,7 +15,7 @@ class IssueEntryController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', 'actions' => array('index', 'view', 'admin', 'create', 'update', 'delete', 'pdf'), 'users' => array('@')),
+			array('allow', 'actions' => array('index', 'view', 'admin', 'create', 'update', 'delete', 'pdf', 'print'), 'users' => array('@')),
 			array('deny', 'users' => array('*')),
 		);
 	}
@@ -30,6 +30,12 @@ class IssueEntryController extends Controller
 		$model = $this->loadModel($id);
 		$filename = 'Issue-Entry-' . ($model->sr_no ? $model->sr_no : $model->id) . '.pdf';
 		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(10, 10, 12, 10, 0, 0), 'P', 'gothic', false, '', false);
+	}
+
+	public function actionPrint($id)
+	{
+		$model = $this->loadModel($id);
+		$this->renderPartial('print', array('model' => $model), false, true);
 	}
 
 	public function actionCreate()

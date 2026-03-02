@@ -56,7 +56,7 @@
                         'class' => 'ButtonColumn',
                         'header' => 'Actions',
                         'htmlOptions' => array('style' => 'width: 120px; text-align: center;'),
-                        'template' => '{pdf} {update} {delete}',
+                        'template' => '{pdf} {print} {update} {delete}',
                         'deleteConfirmation' => 'Are you sure you want to delete this issue entry?',
                         'buttons' => array(
                             'pdf' => array(
@@ -65,6 +65,13 @@
                                 'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-primary', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => 'Download PDF', 'target' => '_blank'),
                                 'type' => 'raw',
                                 'url' => 'Yii::app()->createUrl("issueEntry/pdf", array("id" => $data->id))',
+                            ),
+                            'print' => array(
+                                'label' => '<i class="fa fa-print"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-default', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => 'Print', 'target' => '_blank'),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("issueEntry/print", array("id" => $data->id))',
                             ),
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>',

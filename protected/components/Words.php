@@ -72,6 +72,11 @@ class Words
 		return self::inr($amount);
 	}
 
+	public static function amountWordsForVoucher($amount)
+	{
+		return strtoupper(self::amountToWords($amount));
+	}
+
 	/**
 	 * Fine weight words (supports up to 3 decimals).
 	 * Example: 12.345 => "Twelve point Three Four Five"
@@ -89,6 +94,15 @@ class Words
 				'0'=>'Zero','1'=>'One','2'=>'Two','3'=>'Three','4'=>'Four','5'=>'Five','6'=>'Six','7'=>'Seven','8'=>'Eight','9'=>'Nine'
 			);
 			$out .= ' point ' . $digitWords[$digits[0]] . ' ' . $digitWords[$digits[1]] . ' ' . $digitWords[$digits[2]];
+		}
+		return $out;
+	}
+
+	public static function weightWordsForVoucher($wt, $appendUnit = false)
+	{
+		$out = strtoupper(self::weight($wt));
+		if ($appendUnit) {
+			$out .= ' GRAMS ONLY';
 		}
 		return $out;
 	}

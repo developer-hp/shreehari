@@ -51,9 +51,9 @@
                     array(
                         'class' => 'ButtonColumn',
                         'htmlOptions' => array('style' => 'width: 200px;text-align: center;'),
-                        'template' => '{view} {pdf} {update} {delete}',
+                        'template' => '{view} {update} {delete}',
                         'buttons' => array(
-                            'view' => array('label' => '<i class="fa fa-eye"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/view", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-warning')),
+                            'view' => array('label' => '<i class="fa fa-eye"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/view", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-warning','title' => 'View')),
                             'pdf' => array('label' => '<i class="fa fa-file-pdf-o"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("karigarJama/pdf", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-primary', 'title' => 'Download PDF', 'target' => '_blank')),
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>', 

@@ -122,22 +122,22 @@ $printDate = date('d-m-Y');
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL FINE WT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalFineWt, 3); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalFineWt, 3); ?> GMS</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::weight($totalFineWt)); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::weightWordsForVoucher($totalFineWt)); ?> GRAMS ONLY</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL AMOUNT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalAmount, 2); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalAmount, 2); ?> INR</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::amountToWords($totalAmount)); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::amountWordsForVoucher($totalAmount)); ?></td>
     </tr>
 
     <tr>
