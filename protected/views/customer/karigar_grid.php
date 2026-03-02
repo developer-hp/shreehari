@@ -95,8 +95,8 @@
                'value'=>function($data){
                 $wt = $data->closing_wt !== null && $data->closing_wt !== '' ? (float)$data->closing_wt : null;
                 if ($wt === null) { echo '—'; return; }
-                if ($wt >= 0) echo number_format($wt, 3, '.', '') . ' DR';
-                else echo number_format(-$wt, 3, '.', '') . ' CR';
+             if ($wt >= 0) echo number_format($wt, 3, '.', '') . ' Jama';
+             else echo number_format(-$wt, 3, '.', '') . ' Baki';
                }
           ),
           array(
@@ -106,8 +106,8 @@
                'value'=>function($data){
                 $amt = $data->closing_amount !== null && $data->closing_amount !== '' ? (float)$data->closing_amount : null;
                 if ($amt === null) { echo '—'; return; }
-                if ($amt >= 0) echo number_format($amt, 2, '.', '') . ' DR';
-                else echo number_format(-$amt, 2, '.', '') . ' CR';
+             if ($amt >= 0) echo number_format($amt, 2, '.', '') . ' Jama';
+             else echo number_format(-$amt, 2, '.', '') . ' Baki';
                }
           ),
             array(

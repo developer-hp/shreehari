@@ -50,11 +50,12 @@
                     ),
                     array(
                         'class' => 'ButtonColumn',
-                        'htmlOptions' => array('style' => 'width: 200px;text-align: center;'),
-                        'template' => '{view} {update} {delete}',
+                        'htmlOptions' => array('style' => 'width: 240px;text-align: center;'),
+                        'template' => '{view} {pdf} {print} {update} {delete}',
                         'buttons' => array(
                             'view' => array('label' => '<i class="fa fa-eye"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("supplierLedger/view", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-warning','title' => 'View')),
                             'pdf' => array('label' => '<i class="fa fa-file-pdf-o"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("supplierLedger/pdf", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-primary', 'title' => 'Download PDF', 'target' => '_blank')),
+                            'print' => array('label' => '<i class="fa fa-print"></i>', 'imageUrl' => false, 'url' => 'Yii::app()->createUrl("supplierLedger/print", array("id"=>$data->id))', 'options' => array('class' => 'btn btn-sm btn-default', 'title' => 'Print', 'target' => '_blank')),
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>', 
                                 'imageUrl' => false, 

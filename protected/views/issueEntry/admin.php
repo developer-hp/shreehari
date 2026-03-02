@@ -55,7 +55,7 @@
                     array(
                         'class' => 'ButtonColumn',
                         'header' => 'Actions',
-                        'htmlOptions' => array('style' => 'width: 120px; text-align: center;'),
+                        'htmlOptions' => array('style' => 'width: 150px; text-align: center;'),
                         'template' => '{pdf} {print} {update} {delete}',
                         'deleteConfirmation' => 'Are you sure you want to delete this issue entry?',
                         'buttons' => array(

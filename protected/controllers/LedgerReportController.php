@@ -44,6 +44,19 @@ class LedgerReportController extends Controller
      */
     public function actionUpdateOpeningFromClosing()
     {
+        if (!LedgerAccess::isAdmin()) {
+            Yii::app()->user->setFlash('error', 'Only Admin can update opening from closing.');
+            $this->redirect(array(
+                'ledgerReport/report',
+                'customer_id' => isset($_GET['customer_id']) ? $_GET['customer_id'] : '',
+                'customer_type' => isset($_GET['customer_type']) ? $_GET['customer_type'] : '',
+                'entry_type' => isset($_GET['entry_type']) ? $_GET['entry_type'] : '',
+                'from_date' => isset($_GET['from_date']) ? $_GET['from_date'] : '',
+                'to_date' => isset($_GET['to_date']) ? $_GET['to_date'] : '',
+            ));
+            return;
+        }
+
         $customerId = isset($_GET['customer_id']) ? (int) $_GET['customer_id'] : 0;
         if ($customerId <= 0) {
             Yii::app()->user->setFlash('error', 'Please select a customer.');
