@@ -15,7 +15,7 @@ class KarigarJamaController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'deleteLockedSelected', 'deleteAllLocked', 'linkIssueEntry', 'pdf'), 'users' => array('@')),
+			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'deleteLockedSelected', 'deleteAllLocked', 'linkIssueEntry', 'pdf', 'print'), 'users' => array('@')),
 			array('deny', 'users' => array('*')),
 		);
 	}
@@ -196,6 +196,12 @@ class KarigarJamaController extends Controller
 		$filename = 'Karigar-Voucher-' . $model->voucher_number. '.pdf';
 		// A4, landscape layout to fit full voucher grid
 		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(6, 6, 8, 6, 0, 0), 'L', 'gothic', false, '', false);
+	}
+
+	public function actionPrint($id)
+	{
+		$model = $this->loadModel($id);
+		$this->renderPartial('print', array('model' => $model), false, true);
 	}
 
 	protected function saveVoucherWithLines(KarigarJamaVoucher $model, array $linesData)

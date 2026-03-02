@@ -83,6 +83,7 @@
                     <div class="col-sm-offset-3 col-sm-6">
                         <button type="submit" class="btn btn-info"><i class="fa fa-eye"></i> View Report</button>
                         <a href="javascript:void(0)" id="ledger-download-pdf" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Download PDF</a>
+                        <a href="javascript:void(0)" id="ledger-print" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
                     </div>
                 </div>
             </form>
@@ -102,6 +103,11 @@ $(function() {
         var form = $('#ledger-report-form');
         var pdfUrl = '<?php echo Yii::app()->createUrl("ledgerReport/pdf"); ?>?' + form.serialize();
         window.open(pdfUrl, '_blank');
+    });
+    $('#ledger-print').on('click', function() {
+        var form = $('#ledger-report-form');
+        var printUrl = '<?php echo Yii::app()->createUrl("ledgerReport/print"); ?>?' + form.serialize();
+        window.open(printUrl, '_blank');
     });
 });
 </script>

@@ -15,7 +15,7 @@ class LedgerReportController extends Controller
     public function accessRules()
     {
         return array(
-            array('allow', 'actions' => array('index', 'report', 'pdf', 'updateOpeningFromClosing'), 'users' => array('@')),
+            array('allow', 'actions' => array('index', 'report', 'pdf', 'print', 'updateOpeningFromClosing'), 'users' => array('@')),
             array('deny', 'users' => array('*')),
         );
     }
@@ -74,6 +74,12 @@ class LedgerReportController extends Controller
         $data = $this->buildReportData();
         $filename = 'Ledger-Report-' . date('Y-m-d-His') . '.pdf';
         PdfHelper::render('reportPdf', $data, $filename, 'I', 'A4', [10, 10, 15, 10, 0, 0], 'P', 'gothic', false, '', false);
+    }
+
+    public function actionPrint()
+    {
+        $data = $this->buildReportData();
+        $this->renderPartial('print', $data, false, true);
     }
 
     /**

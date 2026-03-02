@@ -15,7 +15,7 @@ class SupplierLedgerController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'deleteLockedSelected', 'deleteAllLocked', 'linkIssueEntry', 'pdf'), 'users' => array('@')),
+			array('allow', 'actions' => array('index', 'admin', 'view', 'create', 'update', 'delete', 'deleteLockedSelected', 'deleteAllLocked', 'linkIssueEntry', 'pdf', 'print'), 'users' => array('@')),
 			array('deny', 'users' => array('*')),
 		);
 	}
@@ -189,6 +189,12 @@ class SupplierLedgerController extends Controller
 		$model = $this->loadModel($id);
 		$filename = 'Supplier-Ledger-Txn-' . $model->id . '-' . date('Y-m-d') . '.pdf';
 		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(10, 10, 12, 10, 0, 0), 'P', 'gothic', false, '', false);
+	}
+
+	public function actionPrint($id)
+	{
+		$model = $this->loadModel($id);
+		$this->renderPartial('print', array('model' => $model), false, true);
 	}
 
 	/**

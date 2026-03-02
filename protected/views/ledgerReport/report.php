@@ -167,6 +167,7 @@ if (!function_exists('ledgerReportBalanceWords')) {
             </div>
             <p>
                 <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
+                <?php echo CHtml::link('<i class="fa fa-print"></i> Print', array('ledgerReport/print', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-default', 'target' => '_blank')); ?>
                 <?php if (!empty($filter_customer_id) && count($customers) === 1): ?>
                 <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
                 <?php endif; ?>

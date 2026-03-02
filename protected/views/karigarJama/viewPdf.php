@@ -145,11 +145,9 @@ $printDate = date('d-m-Y');
     </tr>
     <tr>
         <td colspan="16" style="border:none;">
-            <div style="height:200px; width:42%; float:left; border:none;">
-                <div style="font-size:10px; font-weight:bold; margin-bottom:58px;"><br><br>SIGNATURE:<br><br><br><br></div>
-            </div>
-            <div style="height:90px; width:42%; float:left; border:none;">
-                <div style="font-size:10px;">DATE : <?php echo $printDate; ?></div>
+            <div style="margin-top:28px; font-size:10px;">
+                <div style="margin-bottom:36px;"><strong>SIGNATURE:</strong></div>
+                <div><strong>DATE :</strong> <?php echo $printDate; ?></div>
             </div>
             <div style="clear:both;"></div>
         </td>

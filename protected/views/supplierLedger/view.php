@@ -36,6 +36,7 @@
                     <?php echo CHtml::link('Edit', array('update', 'id' => $model->id), array('class' => 'btn btn-success')); ?>
                 <?php endif; ?>
                 <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('supplierLedger/pdf', 'id' => $model->id), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
+                <?php echo CHtml::link('<i class="fa fa-print"></i> Print', array('supplierLedger/print', 'id' => $model->id), array('class' => 'btn btn-default', 'target' => '_blank')); ?>
             </p>
         </div>
     </div>
