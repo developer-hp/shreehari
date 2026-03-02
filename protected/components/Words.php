@@ -67,6 +67,11 @@ class Words
 		return $out . ' Only';
 	}
 
+	public static function amountToWords($amount)
+	{
+		return self::inr($amount);
+	}
+
 	/**
 	 * Fine weight words (supports up to 3 decimals).
 	 * Example: 12.345 => "Twelve point Three Four Five"

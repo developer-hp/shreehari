@@ -21,87 +21,6 @@ if (isset($model->drcr)) {
 
 $voucherNo = $model->voucher_number ? $model->voucher_number : $model->id;
 $printDate = date('d-m-Y');
-
-if (!function_exists('karigarVoucherNumberToWords')) {
-    function karigarVoucherNumberToWords($number, $precision = 2)
-    {
-        $number = (float) $number;
-        $precision = (int) $precision;
-        if ($precision < 0) {
-            $precision = 0;
-        }
-        if ($number == 0) {
-            return 'Zero';
-        }
-
-        $integerPart = (int) floor(abs($number));
-        $factor = pow(10, $precision);
-        $decimalPart = (int) round((abs($number) - $integerPart) * $factor);
-        if ($decimalPart >= $factor) {
-            $integerPart += 1;
-            $decimalPart = 0;
-        }
-
-        $words = array(
-            0 => '', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four', 5 => 'Five',
-            6 => 'Six', 7 => 'Seven', 8 => 'Eight', 9 => 'Nine', 10 => 'Ten',
-            11 => 'Eleven', 12 => 'Twelve', 13 => 'Thirteen', 14 => 'Fourteen', 15 => 'Fifteen',
-            16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen', 19 => 'Nineteen',
-            20 => 'Twenty', 30 => 'Thirty', 40 => 'Forty', 50 => 'Fifty',
-            60 => 'Sixty', 70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety'
-        );
-        $digitWords = array('Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine');
-
-        $convertBelowThousand = function ($num) use (&$words) {
-            $result = '';
-            if ($num >= 100) {
-                $result .= $words[(int) floor($num / 100)] . ' Hundred ';
-                $num = $num % 100;
-            }
-            if ($num > 0) {
-                if ($num < 21) {
-                    $result .= $words[$num] . ' ';
-                } else {
-                    $result .= $words[(int) (floor($num / 10) * 10)] . ' ';
-                    if (($num % 10) > 0) {
-                        $result .= $words[$num % 10] . ' ';
-                    }
-                }
-            }
-            return trim($result);
-        };
-
-        $parts = array(
-            10000000 => 'Crore',
-            100000 => 'Lakh',
-            1000 => 'Thousand'
-        );
-
-        $text = $number < 0 ? 'Minus ' : '';
-        foreach ($parts as $value => $label) {
-            if ($integerPart >= $value) {
-                $chunk = (int) floor($integerPart / $value);
-                $integerPart = $integerPart % $value;
-                $text .= $convertBelowThousand($chunk) . ' ' . $label . ' ';
-            }
-        }
-
-        if ($integerPart > 0) {
-            $text .= $convertBelowThousand($integerPart) . ' ';
-        }
-
-        $text = trim(preg_replace('/\s+/', ' ', $text));
-        if ($precision > 0 && $decimalPart > 0) {
-            $decimalText = str_pad((string) $decimalPart, $precision, '0', STR_PAD_LEFT);
-            $decimalWords = array();
-            foreach (str_split($decimalText) as $digit) {
-                $decimalWords[] = $digitWords[(int) $digit];
-            }
-            $text .= ' Point ' . implode(' ', $decimalWords);
-        }
-        return trim($text);
-    }
-}
 ?>
 
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:9px;">
@@ -110,7 +29,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?> width:12%;">DATE</td>
-        <td colspan="7" style="<?php echo $headStyle; ?> width:44%; text-align:center;"><?php echo $model->voucher_date ? date('d-m-Y', strtotime($model->voucher_date)) : ''; ?></td>
+        <td colspan="7" style="<?php echo $headStyle; ?> width:44%;"><?php echo $model->voucher_date ? date('d-m-Y', strtotime($model->voucher_date)) : ''; ?></td>
         <td colspan="2" style="<?php echo $headStyle; ?> width:10%; text-align:center;">VOUCHER NO</td>
         <td colspan="5" style="<?php echo $headStyle; ?> width:34%; text-align:center;"><?php echo CHtml::encode($voucherNo); ?></td>
     </tr>
@@ -208,7 +127,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(karigarVoucherNumberToWords($totalFineWt, 3)); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::weight($totalFineWt)); ?></td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL AMOUNT</td>
@@ -218,7 +137,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(karigarVoucherNumberToWords($totalAmount)); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::amountToWords($totalAmount)); ?></td>
     </tr>
 
     <tr>
