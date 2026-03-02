@@ -203,7 +203,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL FINE WT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($totalFineWt, 3); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalFineWt, 3); ?></td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
@@ -213,7 +213,7 @@ if (!function_exists('karigarVoucherNumberToWords')) {
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL AMOUNT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format($totalAmount, 2); ?></td>
+        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalAmount, 2); ?></td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>

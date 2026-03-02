@@ -204,9 +204,9 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     <th width="13%">Particulars</th>
                     <th width="10%" class="text-right">Fine Wt (<?php echo $drLabel; ?>)</th>
                     <th width="10%" class="text-right">Fine Wt (<?php echo $crLabel; ?>)</th>
+                    <th width="11%" class="text-right">Fine Balance</th>
                     <th width="12%" class="text-right">Amount (<?php echo $drLabel; ?>)</th>
                     <th width="12%" class="text-right">Amount (<?php echo $crLabel; ?>)</th>
-                    <th width="11%" class="text-right">Fine Balance</th>
                     <th width="12%" class="text-right">Amount Balance</th>
                 </tr>
             </thead>
@@ -226,9 +226,9 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     <td>Opening Balance</td>
                     <td class="text-right"><?php echo $opening->opening_fine_wt_drcr == 1 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_fine_wt_drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $opening->opening_amount_drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endif; ?>
@@ -263,9 +263,9 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     <td><?php echo $particularsCell; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 1 ? number_format($fw, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($fw, 3) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><?php echo $iss->drcr == 1 ? number_format($am, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $iss->drcr == 2 ? number_format($am, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
                 <?php endforeach;
@@ -280,9 +280,9 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     <td colspan="2" class="text-right"><strong>Closing</strong></td>
                     <td class="text-right"><?php echo $closingFineDr > 0 ? number_format($closingFineDr, 3) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingFineCr > 0 ? number_format($closingFineCr, 3) : '—'; ?></td>
+                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><?php echo $closingAmtDr > 0 ? number_format($closingAmtDr, 2) : '—'; ?></td>
                     <td class="text-right"><?php echo $closingAmtCr > 0 ? number_format($closingAmtCr, 2) : '—'; ?></td>
-                    <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningFineBalance, 3); ?></strong></td>
                     <td class="text-right"><strong><?php echo ledgerReportFormatBalance($runningAmountBalance, 2); ?></strong></td>
                 </tr>
             </tbody>

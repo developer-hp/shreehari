@@ -217,7 +217,7 @@ if ($opening) {
     <tr>
         <td style="<?php echo $thStyle; ?> width:14%;">TOTAL FINE WT</td>
         <td style="<?php echo $thStyle; ?> width:12%;">IN NUMBERS</td>
-        <td style="<?php echo $cellStyle . $numStyle; ?>" colspan="8"><?php echo ledgerPdfFormatBalance($runningFineBalance, 3); ?></td>
+        <td style="<?php echo $cellStyle; ?>" colspan="8"><?php echo ledgerPdfFormatBalance($runningFineBalance, 3); ?></td>
     </tr>
     <tr>
         <td style="<?php echo $thStyle; ?>"></td>
@@ -227,7 +227,7 @@ if ($opening) {
     <tr>
         <td style="<?php echo $thStyle; ?>">TOTAL AMOUNT</td>
         <td style="<?php echo $thStyle; ?>">IN NUMBERS</td>
-        <td style="<?php echo $cellStyle . $numStyle; ?>" colspan="8"><?php echo ledgerPdfFormatBalance($runningAmountBalance, 2); ?></td>
+        <td style="<?php echo $cellStyle; ?>" colspan="8"><?php echo ledgerPdfFormatBalance($runningAmountBalance, 2); ?></td>
     </tr>
     <tr>
         <td style="<?php echo $thStyle; ?>"></td>
