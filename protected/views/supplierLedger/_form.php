@@ -147,6 +147,29 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
 
 <script type="text/javascript">
 $(function() {
+    var formSelector = '#supplier-ledger-txn-form';
+
+    function focusNextField($current, reverse) {
+        var $fields = $(formSelector).find('input, select, textarea, button, a').filter(':visible:enabled').filter(function() {
+            var $el = $(this);
+            if ($el.is('[tabindex="-1"]')) return false;
+            if ($el.is('[readonly]') || $el.is(':disabled')) return false;
+            return true;
+        });
+        var index = $fields.index($current);
+        if (index < 0) return;
+        var nextIndex = reverse ? index - 1 : index + 1;
+        if (nextIndex < 0 || nextIndex >= $fields.length) return;
+        $fields.eq(nextIndex).focus();
+    }
+
+    $(document).on('keydown', formSelector + ' input, ' + formSelector + ' select, ' + formSelector + ' textarea', function(ev) {
+        if ((ev.which || ev.keyCode) !== 13) return;
+        if ($(ev.target).is('textarea')) return;
+        ev.preventDefault();
+        focusNextField($(this), ev.shiftKey);
+    });
+
     var $supplierSelect = $('.select2-supplier');
     if ($supplierSelect.length && (!$supplierSelect.data('select2'))) {
         $supplierSelect.select2({ placeholder: '----Select Supplier----', allowClear: true, width: '100%' });
