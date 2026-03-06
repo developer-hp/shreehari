@@ -1,7 +1,7 @@
 <?php
 $borderColor = '#111';
-$cellStyle = 'border:1px solid ' . $borderColor . '; padding:3px 4px; font-size:9px;';
-$headStyle = 'border:1px solid ' . $borderColor . '; padding:4px 4px; font-size:9px; font-weight:bold;';
+$cellStyle = 'border:1px solid ' . $borderColor . '; padding:3px 4px; font-size:10px;';
+$headStyle = 'border:1px solid ' . $borderColor . '; padding:4px 4px; font-size:10px; font-weight:bold;';
 $numStyle = 'text-align:right;';
 
 $totalFineWt = 0;

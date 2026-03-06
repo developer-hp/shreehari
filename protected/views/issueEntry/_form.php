@@ -26,6 +26,15 @@
         $cust = Customer::model()->findByPk($model->customer_id);
         $c_type = $cust ? $cust->type : '';
     }
+
+    $voucherDisplay = trim((string) $model->sr_no);
+    if ($voucherDisplay === '' && $model->isNewRecord) {
+        try {
+            $voucherDisplay = DocumentNumberService::peekNextSrNo(DocumentNumberService::DOC_ISSUE);
+        } catch (Exception $e) {
+            $voucherDisplay = 'AUTO';
+        }
+    }
     ?>
     
     <div class="form-group">
@@ -48,6 +57,13 @@
                 'autocomplete' => 'off',
             )); ?>
             <?php echo $form->error($model, 'issue_date'); ?>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Voucher No</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" value="<?php echo CHtml::encode($voucherDisplay); ?>" readonly="readonly" style="background:#f7f7f7;" />
         </div>
     </div>
 

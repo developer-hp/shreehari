@@ -1,7 +1,7 @@
 <?php
 $table = 'border:1px solid #222; border-collapse:collapse;';
-$cell = 'border:1px solid #222; padding:3px 4px; font-size:10px;';
-$head = 'border:1px solid #222; padding:3px 4px; font-size:10px; font-weight:bold;';
+$cell = 'border:1px solid #222; padding:3px 4px; font-size:11px;';
+$head = 'border:1px solid #222; padding:3px 4px; font-size:11px; font-weight:bold;';
 
 $issueDate = !empty($model->issue_date) ? date('d-m-Y', strtotime($model->issue_date)) : '';
 $customerName = isset($model->customer) ? trim((string) $model->customer->name) : '';

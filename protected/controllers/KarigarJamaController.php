@@ -195,7 +195,7 @@ class KarigarJamaController extends Controller
 		$model = $this->loadModel($id);
 		$filename = 'Karigar-Voucher-' . $model->voucher_number. '.pdf';
 		// A4, landscape layout to fit full voucher grid
-		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(6, 6, 8, 6, 0, 0), 'L', 'gothic', false, '', false);
+		PdfHelper::render('viewPdf', array('model' => $model), $filename, 'I', 'A4', array(6, 6, 8, 6, 0, 0), 'P', 'gothic', false, '', false);
 	}
 
 	public function actionPrint($id)
