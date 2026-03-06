@@ -83,15 +83,15 @@
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Inward</td>
-                                    <td class="text-right"><strong class="text-success"><?php echo number_format((float) $todayInFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong class="text-success"><?php echo number_format((float) $todayInFineWt, 3); ?> GM</strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Outward</td>
-                                    <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $todayOutFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $todayOutFineWt, 3); ?> GM</strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Balance</td>
-                                    <td class="text-right"><strong><?php echo number_format((float) $todayBalanceFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong><?php echo number_format(abs((float) $todayBalanceFineWt), 3); ?> GM <?php echo $todayBalanceFineWt >= 0 ? '<span class="text-success">(' . $crLabel . ')</span>' : '<span class="text-danger">(' . $drLabel . ')</span>'; ?></strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -122,15 +122,15 @@
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Inward</td>
-                                    <td class="text-right"><strong class="text-success"><?php echo number_format((float) $totalInFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong class="text-success"><?php echo number_format((float) $totalInFineWt, 3); ?> GM</strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Outward</td>
-                                    <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $totalOutFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $totalOutFineWt, 3); ?> GM</strong></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Fine Wt Balance</td>
-                                    <td class="text-right"><strong><?php echo number_format((float) $ledgerBalanceFineWt, 3); ?></strong></td>
+                                    <td class="text-right"><strong><?php echo number_format(abs((float) $ledgerBalanceFineWt), 3); ?> GM <?php echo $ledgerBalanceFineWt >= 0 ? '<span class="text-success">(' . $crLabel . ')</span>' : '<span class="text-danger">(' . $drLabel . ')</span>'; ?></strong></td>
                                 </tr>
                             </tbody>
                         </table>
