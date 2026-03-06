@@ -23,7 +23,7 @@ $txnDate = $model->txn_date;
 if (!empty($txnDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $txnDate)) $txnDate = date('d-m-Y', strtotime($txnDate));
 if (!$txnDate) $txnDate = date('d-m-Y');
 ?>
-<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
+<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_CREDIT)); ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'txn_date', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">

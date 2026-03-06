@@ -58,7 +58,7 @@ class SupplierLedgerTxn extends CActiveRecord
 	protected function beforeSave()
 	{
 		if (parent::beforeSave()) {
-			$this->drcr = IssueEntry::DRCR_DEBIT;
+			$this->drcr = IssueEntry::DRCR_CREDIT;
 			if ($this->isNewRecord) {
 				if (empty($this->sr_no)) {
 					try {
@@ -67,7 +67,7 @@ class SupplierLedgerTxn extends CActiveRecord
 				}
 				$this->created_at = date('Y-m-d H:i:s');
 				if (Yii::app()->user->id) $this->created_by = (int) Yii::app()->user->id;
-				// Supplier Voucher is always Jama
+				// Supplier Voucher is always Baki (inward)
 			}
 			if ($this->voucher_number === null || $this->voucher_number === '') {
 				try {

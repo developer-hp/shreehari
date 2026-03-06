@@ -174,7 +174,11 @@ if (!function_exists('ledgerReportBalanceWords')) {
             </p>
             <?php
             $typeLabels = array(1 => 'Supplier', 2 => 'Customer', 3 => 'Karigar');
-            $entryTypeLabels = array('issue' => 'Issue Entry', 'supplier' => 'Supplier Voucher', 'karigar' => 'Karigar Voucher');
+            $entryTypeLabels = array(
+                'issue' => 'Outward (Issue Entry / Jama)',
+                'supplier' => 'Inward (Supplier Voucher / Baki)',
+                'karigar' => 'Inward (Karigar Voucher / Baki)',
+            );
             $filterParts = array();
             if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $filterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
             if (!empty($filter_entry_type) && isset($entryTypeLabels[$filter_entry_type])) $filterParts[] = 'Voucher Type: ' . $entryTypeLabels[$filter_entry_type];

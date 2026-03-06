@@ -157,7 +157,7 @@ class KarigarJamaController extends Controller
 			$totalFineWt += (float) $line->fine_wt;
 			foreach ($line->stones as $s) $totalAmount += (float) $s->stone_amount;
 		}
-		$drcr = IssueEntry::DRCR_DEBIT;
+		$drcr = IssueEntry::DRCR_CREDIT;
 		if ($voucher->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($voucher->issue_entry_id);
 			if ($entry) {
@@ -210,7 +210,7 @@ class KarigarJamaController extends Controller
 		$tx = $db->beginTransaction();
 		$committed = false;
 		try {
-			$model->drcr = IssueEntry::DRCR_DEBIT;
+			$model->drcr = IssueEntry::DRCR_CREDIT;
 			if (!$model->save()) {
 				$tx->rollBack();
 				return false;

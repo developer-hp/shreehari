@@ -44,7 +44,7 @@ class IssueEntryController extends Controller
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
 			$model->attributes = $_POST['IssueEntry'];
-			$model->drcr = IssueEntry::DRCR_CREDIT;
+			$model->drcr = IssueEntry::DRCR_DEBIT;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been added.');
 				$this->redirect(array('index'));
@@ -64,7 +64,7 @@ class IssueEntryController extends Controller
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
 			$model->attributes = $_POST['IssueEntry'];
-			$model->drcr = IssueEntry::DRCR_CREDIT;
+			$model->drcr = IssueEntry::DRCR_DEBIT;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been updated.');
 				$this->redirect(array('index'));
@@ -92,7 +92,7 @@ class IssueEntryController extends Controller
 		$model->unsetAttributes();
 		if (isset($_GET['IssueEntry']))
 			$model->attributes = $_GET['IssueEntry'];
-		// Exclude voucher-origin entries (from Jama / Supplier Ledger) in grid
+		// Exclude voucher-origin entries (from Baki / inward vouchers) in grid
 		$model->is_voucher = 0;
 		$this->render('admin', array('model' => $model));
 	}

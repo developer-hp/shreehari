@@ -13,7 +13,7 @@ if (empty($lines)) $lines = array(array());
 $caratOptions = KarigarJamaVoucherLine::getCaratOptions();
 $drcrOptions = IssueEntry::getDrcrOptions();
 ?>
-<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
+<?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_CREDIT)); ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'voucher_date', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">

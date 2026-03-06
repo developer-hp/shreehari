@@ -16,7 +16,7 @@
     'errorMessageCssClass' => 'help-block animation-slideUp form-error',
 )); ?>
 
-    <?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_CREDIT)); ?>
+    <?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_DEBIT)); ?>
 
     <?php //echo $form->errorSummary($model); ?>
 

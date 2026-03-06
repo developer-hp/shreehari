@@ -131,7 +131,7 @@ class SupplierLedgerController extends Controller
 	}
 
 	/**
-	 * Create or update Issue Entry from this transaction (total_fine_wt, total_amount). Supplier = customer, DR.
+	 * Create or update Issue Entry from this transaction (total_fine_wt, total_amount). Supplier voucher is inward (Baki/CR).
 	 * Called automatically after save; also exposed for manual link.
 	 */
 	public function actionLinkIssueEntry($id)
@@ -151,7 +151,7 @@ class SupplierLedgerController extends Controller
 		$totalAmount = (float) $model->total_amount;
 		$prefix = DocumentNumberService::getVoucherPrefix(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
 		$voucherNo = ($model->voucher_number !== null && $model->voucher_number !== '') ? $model->voucher_number : ($prefix . $model->id);
-		$drcr = IssueEntry::DRCR_DEBIT;
+		$drcr = IssueEntry::DRCR_CREDIT;
 		if ($model->issue_entry_id) {
 			$entry = IssueEntry::model()->findByPk($model->issue_entry_id);
 			if ($entry) {
@@ -206,7 +206,7 @@ class SupplierLedgerController extends Controller
 		$tx = $db->beginTransaction();
 		$committed = false;
 		try {
-			$model->drcr = IssueEntry::DRCR_DEBIT;
+			$model->drcr = IssueEntry::DRCR_CREDIT;
 			if (!$model->save()) {
 				$tx->rollBack();
 				return false;
