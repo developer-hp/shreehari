@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<!-- Ledger In / Out / Balance -->
+<!-- Ledger Inward / Outward / Balance -->
 <div class="row" style="margin-top: 10px;">
     <div class="col-lg-12">
         <div class="block">
@@ -69,24 +69,24 @@
                                 $drLabel = $drcrOptions[IssueEntry::DRCR_DEBIT];
                                 ?>
                                 <tr>
-                                    <td class="text-muted" style="width: 120px;">Amount In (<?php echo $crLabel; ?>)</td>
+                                    <td class="text-muted">Amount Inward (<?php echo $crLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-success">₹ <?php echo number_format((float) $todayInAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Amount Out (<?php echo $drLabel; ?>)</td>
+                                    <td class="text-muted">Amount Outward (<?php echo $drLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-danger">₹ <?php echo number_format((float) $todayOutAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Balance (In − Out)</td>
+                                    <td class="text-muted">Balance (Inward - Outward)</td>
                                     <td class="text-right"><strong><?php echo number_format((float) $todayBalanceAmount, 2); ?> <?php echo $todayBalanceAmount >= 0 ? '<span class="text-success">(' . $crLabel . ')</span>' : '<span class="text-danger">(' . $drLabel . ')</span>'; ?></strong></td>
                                 </tr>
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
-                                    <td class="text-muted">Fine Wt In</td>
+                                    <td class="text-muted">Fine Wt Inward</td>
                                     <td class="text-right"><strong class="text-success"><?php echo number_format((float) $todayInFineWt, 3); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Fine Wt Out</td>
+                                    <td class="text-muted">Fine Wt Outward</td>
                                     <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $todayOutFineWt, 3); ?></strong></td>
                                 </tr>
                                 <tr>
@@ -108,11 +108,11 @@
                                 }
                                 ?>
                                 <tr>
-                                    <td class="text-muted" style="width: 120px;">Amount In (<?php echo $crLabel; ?>)</td>
+                                    <td class="text-muted">Amount Inward (<?php echo $crLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-success">₹ <?php echo number_format((float) $totalInAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Amount Out (<?php echo $drLabel; ?>)</td>
+                                    <td class="text-muted">Amount Outward (<?php echo $drLabel; ?>)</td>
                                     <td class="text-right"><strong class="text-danger">₹ <?php echo number_format((float) $totalOutAmount, 2); ?></strong></td>
                                 </tr>
                                 <tr>
@@ -121,11 +121,11 @@
                                 </tr>
                                 <tr><td colspan="2" class="border-top"></td></tr>
                                 <tr>
-                                    <td class="text-muted">Fine Wt In</td>
+                                    <td class="text-muted">Fine Wt Inward</td>
                                     <td class="text-right"><strong class="text-success"><?php echo number_format((float) $totalInFineWt, 3); ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Fine Wt Out</td>
+                                    <td class="text-muted">Fine Wt Outward</td>
                                     <td class="text-right"><strong class="text-danger"><?php echo number_format((float) $totalOutFineWt, 3); ?></strong></td>
                                 </tr>
                                 <tr>
@@ -152,7 +152,7 @@
                 <h2 class="widget-heading h3 text">
                     <strong><?php echo (int) $issueEntryCount; ?></strong>
                 </h2>
-                <span class="text-muted">Issue Entry (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <span class="text-muted">Outward (Issue / Jama) (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $issueEntryTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $issueEntryTotalFineWt, 3); ?></div>
             </div>
@@ -167,7 +167,7 @@
                 <h2 class="widget-heading h3 text">
                     <strong><?php echo (int) $supplierLedgerCount; ?></strong>
                 </h2>
-                <span class="text-muted">Supplier Voucher (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <span class="text-muted">Inward (Supplier / Baki) (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $supplierLedgerTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $supplierLedgerTotalFineWt, 3); ?></div>
             </div>
@@ -182,7 +182,7 @@
                 <h2 class="widget-heading h3 text">
                     <strong><?php echo (int) $karigarJamaCount; ?></strong>
                 </h2>
-                <span class="text-muted">Karigar Voucher (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <span class="text-muted">Inward (Karigar / Baki) (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $karigarJamaTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $karigarJamaTotalFineWt, 3); ?></div>
             </div>
@@ -195,7 +195,7 @@
     <div class="col-lg-8">
         <div class="block">
             <div class="block-title">
-                <h2>Amount by day (Last 7 days)</h2>
+                <h2>Amount by day (Last 7 days: Outward/Inward)</h2>
             </div>
             <div class="block-content">
                 <div id="ledger-chart-bars" style="height: 280px;"></div>
@@ -205,7 +205,7 @@
     <div class="col-lg-4">
         <div class="block">
             <div class="block-title">
-                <h2>Today's amount split</h2>
+                <h2>Today's amount split (Outward/Inward)</h2>
             </div>
             <div class="block-content">
                 <div id="ledger-chart-pie" style="height: 280px;"></div>
@@ -218,7 +218,7 @@
     <div class="col-lg-12">
         <div class="block">
             <div class="block-title">
-                <h2>Fine weight by day (Last 7 days)</h2>
+                <h2>Fine weight by day (Last 7 days: Outward/Inward)</h2>
             </div>
             <div class="block-content">
                 <div id="ledger-chart-finewt" style="height: 280px;"></div>
@@ -232,7 +232,7 @@
     <div class="col-lg-4">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
-                <h2>Recent Issue Entries</h2>
+                <h2>Recent Outward Entries (Issue/Jama)</h2>
                 <div class="block-options">
                     <?php echo CHtml::link('View all', array('issueEntry/admin'), array('class' => 'btn btn-xs btn-default')); ?>
                 </div>
@@ -271,7 +271,7 @@
     <div class="col-lg-4">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
-                <h2>Recent Supplier Voucher</h2>
+                <h2>Recent Inward Entries (Supplier/Baki)</h2>
                 <div class="block-options">
                     <?php echo CHtml::link('View all', array('supplierLedger/admin'), array('class' => 'btn btn-xs btn-default')); ?>
                 </div>
@@ -305,7 +305,7 @@
     <div class="col-lg-4">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
-                <h2>Recent Karigar Voucher</h2>
+                <h2>Recent Inward Entries (Karigar/Baki)</h2>
                 <div class="block-options">
                     <?php echo CHtml::link('View all', array('karigarJama/admin'), array('class' => 'btn btn-xs btn-default')); ?>
                 </div>
@@ -377,9 +377,9 @@
         if ($bars.length) {
             $.plot($bars,
                 [
-                    { label: 'Issue Entry', data: dataIssue, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Supplier Voucher', data: dataSup, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Karigar Voucher', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Outward (Issue / Jama)', data: dataIssue, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Inward (Supplier / Baki)', data: dataSup, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Inward (Karigar / Baki)', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
                     colors: ['#5ccdde', '#454e59', '#9b59b6'],
@@ -428,9 +428,9 @@
         if ($fineWt.length) {
             $.plot($fineWt,
                 [
-                    { label: 'Issue Entry', data: dataIssueFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Supplier Voucher', data: dataSupFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Karigar Voucher', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Outward (Issue / Jama)', data: dataIssueFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Inward (Supplier / Baki)', data: dataSupFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Inward (Karigar / Baki)', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
                     colors: ['#5ccdde', '#454e59', '#9b59b6'],

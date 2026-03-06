@@ -131,14 +131,14 @@ class LedgerDashboardController extends Controller
 			$chartKarigarJamaFineWt[] = (float) $dayJamaFw;
 		}
 
-		// --- Chart: today's pie (Issue Entry / Supplier Voucher / Karigar Voucher amounts) ---
+		// --- Chart: today's pie (Outward + Inward split) ---
 		$chartTodayPie = array(
-			array('label' => 'Issue Entry', 'amount' => $issueEntryTotalAmount),
-			array('label' => 'Supplier Voucher', 'amount' => $supplierLedgerTotalAmount),
-			array('label' => 'Karigar Voucher', 'amount' => $karigarJamaTotalAmount),
+			array('label' => 'Outward (Issue / Jama)', 'amount' => $issueEntryTotalAmount),
+			array('label' => 'Inward (Supplier / Baki)', 'amount' => $supplierLedgerTotalAmount),
+			array('label' => 'Inward (Karigar / Baki)', 'amount' => $karigarJamaTotalAmount),
 		);
 
-		// --- Ledger In / Out / Balance (from Issue Entry: CR = In, DR = Out) ---
+		// --- Ledger In / Out / Balance (from Issue Entry: Baki/CR = Inward, Jama/DR = Outward) ---
 		$db = Yii::app()->db;
 		$cr = (int) IssueEntry::DRCR_CREDIT;
 		$dr = (int) IssueEntry::DRCR_DEBIT;
