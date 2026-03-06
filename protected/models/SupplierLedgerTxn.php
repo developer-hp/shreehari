@@ -15,7 +15,7 @@ class SupplierLedgerTxn extends CActiveRecord
 	public function rules()
 	{
 		return array(
-			array('txn_date, supplier_id,sr_no', 'required'),
+			array('txn_date, supplier_id', 'required'),
 			array('supplier_id, issue_entry_id, created_by, is_deleted, is_locked, drcr', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),

@@ -22,6 +22,19 @@ if (empty($items)) $items = array(array('item_name'=>'','ct'=>'','gross_wt'=>'',
 $txnDate = $model->txn_date;
 if (!empty($txnDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $txnDate)) $txnDate = date('d-m-Y', strtotime($txnDate));
 if (!$txnDate) $txnDate = date('d-m-Y');
+
+$voucherDisplay = (string) $model->voucher_number;
+if ($voucherDisplay === '') {
+    if ($model->isNewRecord) {
+        try {
+            $voucherDisplay = DocumentNumberService::peekNextSrNo(DocumentNumberService::DOC_SUPPLIER_LEDGER_VOUCHER);
+        } catch (Exception $e) {
+            $voucherDisplay = 'AUTO';
+        }
+    } else {
+        $voucherDisplay = 'AUTO';
+    }
+}
 ?>
 <?php echo $form->hiddenField($model, 'drcr', array('value' => IssueEntry::DRCR_CREDIT)); ?>
 <div class="form-group">
@@ -31,6 +44,14 @@ if (!$txnDate) $txnDate = date('d-m-Y');
         <?php echo $form->error($model, 'txn_date'); ?>
     </div>
 </div>
+<?php if ($model->isNewRecord): ?>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Voucher No</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" value="<?php echo CHtml::encode($voucherDisplay); ?>" readonly="readonly" style="background:#f7f7f7;" />
+    </div>
+</div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'supplier_id', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -41,6 +62,7 @@ if (!$txnDate) $txnDate = date('d-m-Y');
         <?php echo $form->error($model, 'supplier_id'); ?>
     </div>
 </div>
+<?php if (!$model->isNewRecord): ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'sr_no', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -48,6 +70,7 @@ if (!$txnDate) $txnDate = date('d-m-Y');
         <?php echo $form->error($model, 'sr_no'); ?>
     </div>
 </div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'remark', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-8">

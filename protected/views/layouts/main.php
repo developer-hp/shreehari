@@ -156,7 +156,7 @@
                             <?php
 
 
-                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$ledgerDashboard=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType='';
+                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$ledgerDashboard=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType=$daybook='';
                             $ledger_tab = $ledgerAcc = $ledgerSup = $ledgerKar = $ledgerIss = $ledgerMaint = '';
                             $action = strtolower(Yii::app()->controller->id);
                             $action1 = strtolower(Yii::app()->controller->action->id);
@@ -374,6 +374,8 @@
                                 $karigarJama = 'active';
                             else if($action=="subitemtype")
                                 $subitemType = 'active';
+                            else if($action=="daybook")
+                                $daybook = 'active';
                             ?>
 
 
@@ -461,6 +463,9 @@
 
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Report</span>', array("ledgerReport/index"), array('class' => $ledgerReport)) ?>
+                                    </li>
+                                    <li>
+                                        <?php echo CHtml::link('<i class="fa fa-calendar sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Day Book</span>', array("daybook/index"), array('class' => $daybook)) ?>
                                     </li>
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Voucher</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>

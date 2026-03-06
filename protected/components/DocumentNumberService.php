@@ -87,5 +87,29 @@ class DocumentNumberService
 			throw $e;
 		}
 	}
+
+	/**
+	 * Preview next SR number without incrementing sequence.
+	 * Useful for read-only display on create forms.
+	 * @param string $docType
+	 * @return string
+	 */
+	public static function peekNextSrNo($docType)
+	{
+		$docType = strtoupper(trim((string)$docType));
+		if ($docType === '') {
+			throw new CException('docType is required');
+		}
+
+		$displayPrefix = self::getVoucherPrefix($docType);
+		$dbDocType = ($docType === self::DOC_SUPPLIER_LEDGER_VOUCHER || $docType === self::DOC_KARIGAR_JAMA_VOUCHER) ? $displayPrefix : $docType;
+
+		$db = Yii::app()->db;
+		$nextNo = $db->createCommand('SELECT next_no FROM cp_document_sequence WHERE doc_type = :t')
+			->queryScalar(array(':t' => $dbDocType));
+
+		$nextNo = ($nextNo === false || $nextNo === null) ? 1 : (int)$nextNo;
+		return $displayPrefix . str_pad((string)$nextNo, 6, '0', STR_PAD_LEFT);
+	}
 }
 

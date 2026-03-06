@@ -8,6 +8,20 @@ $form = $this->beginWidget('CActiveForm', array(
 $voucherDate = $model->voucher_date;
 if (!empty($voucherDate) && preg_match('/^\d{4}-\d{2}-\d{2}/', $voucherDate)) $voucherDate = date('d-m-Y', strtotime($voucherDate));
 if (!$voucherDate) $voucherDate = date('d-m-Y');
+
+$voucherDisplay = (string) $model->voucher_number;
+if ($voucherDisplay === '') {
+    if ($model->isNewRecord) {
+        try {
+            $voucherDisplay = DocumentNumberService::peekNextSrNo(DocumentNumberService::DOC_KARIGAR_JAMA_VOUCHER);
+        } catch (Exception $e) {
+            $voucherDisplay = 'AUTO';
+        }
+    } else {
+        $voucherDisplay = 'AUTO';
+    }
+}
+
 $lines = $model->isNewRecord ? array(array()) : $model->lines;
 if (empty($lines)) $lines = array(array());
 $caratOptions = KarigarJamaVoucherLine::getCaratOptions();
@@ -21,6 +35,14 @@ $drcrOptions = IssueEntry::getDrcrOptions();
         <?php echo $form->error($model, 'voucher_date'); ?>
     </div>
 </div>
+<?php if ($model->isNewRecord): ?>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Voucher No</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" value="<?php echo CHtml::encode($voucherDisplay); ?>" readonly="readonly" style="background:#f7f7f7;" />
+    </div>
+</div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'karigar_id', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -31,6 +53,7 @@ $drcrOptions = IssueEntry::getDrcrOptions();
         <?php echo $form->error($model, 'karigar_id'); ?>
     </div>
 </div>
+<?php if (!$model->isNewRecord): ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'sr_no', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-4">
@@ -38,6 +61,7 @@ $drcrOptions = IssueEntry::getDrcrOptions();
         <?php echo $form->error($model, 'sr_no'); ?>
     </div>
 </div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo $form->labelEx($model, 'remark', array('class' => 'col-sm-2 control-label')); ?>
     <div class="col-sm-8">
