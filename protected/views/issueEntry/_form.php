@@ -83,13 +83,7 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <?php echo $form->labelEx($model, 'fine_wt', array('class' => 'col-sm-2 control-label')); ?>
-        <div class="col-sm-4">
-            <?php echo $form->textField($model, 'fine_wt', array('class' => 'form-control', 'size' => 20)); ?>
-            <?php echo $form->error($model, 'fine_wt'); ?>
-        </div>
-    </div>
+    
 
     <div class="form-group">
         <label class="col-sm-2 control-label">Fine Calculator</label>
@@ -103,6 +97,13 @@
         </div>
         <div class="col-sm-4">
             <p class="help-block" style="margin-top:7px;">Optional: selecting carat and entering weight auto-fills Fine Wt.</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <?php echo $form->labelEx($model, 'fine_wt', array('class' => 'col-sm-2 control-label')); ?>
+        <div class="col-sm-4">
+            <?php echo $form->textField($model, 'fine_wt', array('class' => 'form-control', 'size' => 20)); ?>
+            <?php echo $form->error($model, 'fine_wt'); ?>
         </div>
     </div>
 
