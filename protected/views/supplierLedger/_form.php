@@ -163,6 +163,7 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-primary')); ?>
+        <?php echo CHtml::submitButton('Save & Print', array('class' => 'btn btn-info', 'name' => 'save_print')); ?>
         <?php echo CHtml::link('Cancel', array('supplierLedger/admin'), array('class' => 'btn btn-default')); ?>
     </div>
 </div>

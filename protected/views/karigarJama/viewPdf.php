@@ -25,6 +25,9 @@ $printDate = date('d-m-Y');
 
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:9px;">
     <tr>
+        <td colspan="16" style="text-align:center; font-size:8px; padding-bottom:2px;">shree hari</td>
+    </tr>
+    <tr>
         <td colspan="16" style="<?php echo $headStyle; ?> text-align:center; font-size:13px; font-style:italic;">KARIGAR VOUCHER</td>
     </tr>
     <tr>

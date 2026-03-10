@@ -10,11 +10,20 @@
 </head>
 <body>
 <?php $this->renderPartial('viewPdf', array('model' => $model)); ?>
+<?php $returnUrl = Yii::app()->request->getParam('returnUrl', $this->createUrl('view', array('id' => $model->id))); ?>
 <script type="text/javascript">
 (function() {
+    var fallbackUrl = <?php echo CJavaScript::encode($returnUrl); ?>;
     window.onload = function() {
         window.print();
-        setTimeout(function(){ window.close(); }, 300);
+        setTimeout(function() {
+            window.close();
+            setTimeout(function() {
+                if (!window.closed) {
+                    window.location.href = fallbackUrl;
+                }
+            }, 200);
+        }, 300);
     };
 })();
 </script>

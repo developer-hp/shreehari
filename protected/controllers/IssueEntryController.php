@@ -43,11 +43,15 @@ class IssueEntryController extends Controller
 		$model = new IssueEntry;
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['IssueEntry'];
 			$model->drcr = IssueEntry::DRCR_DEBIT;
 			$model->amount = $_POST['IssueEntry']['amount'] ? $_POST['IssueEntry']['amount'] : 0;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been added.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('index'));
 			}
 		}
@@ -64,11 +68,15 @@ class IssueEntryController extends Controller
 		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['IssueEntry'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['IssueEntry'];
 			$model->drcr = IssueEntry::DRCR_DEBIT;
 			$model->amount = $_POST['IssueEntry']['amount'] ? $_POST['IssueEntry']['amount'] : 0;
 			if ($model->save()) {
 				Yii::app()->user->setFlash('success', 'Issue entry has been updated.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('index'));
 			}
 		}

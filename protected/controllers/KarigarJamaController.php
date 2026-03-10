@@ -44,10 +44,14 @@ class KarigarJamaController extends Controller
 		$model = new KarigarJamaVoucher;
 		$this->performAjaxValidation($model);
 		if (isset($_POST['KarigarJamaVoucher'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['KarigarJamaVoucher'];
 			$lines = isset($_POST['lines']) ? $_POST['lines'] : array();
 			if ($this->saveVoucherWithLines($model, $lines)) {
 				Yii::app()->user->setFlash('success', 'Jama voucher saved.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('view', 'id' => $model->id));
 			}
 		}
@@ -64,10 +68,14 @@ class KarigarJamaController extends Controller
 		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['KarigarJamaVoucher'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['KarigarJamaVoucher'];
 			$lines = isset($_POST['lines']) ? $_POST['lines'] : array();
 			if ($this->saveVoucherWithLines($model, $lines)) {
 				Yii::app()->user->setFlash('success', 'Jama voucher updated.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('view', 'id' => $model->id));
 			}
 		}

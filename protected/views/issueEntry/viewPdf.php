@@ -36,6 +36,9 @@ $amountWords = Words::amountWordsForVoucher($amount);
 
 <table width="100%" cellpadding="0" cellspacing="0" style="<?php echo $table; ?> margin-bottom:16px;">
     <tr>
+        <td colspan="4" style="text-align:center; font-size:9px; padding-bottom:2px;">shree hari</td>
+    </tr>
+    <tr>
         <td colspan="4" style="<?php echo $head; ?> text-align:center; font-style:italic; font-size:13px;">ISSUE VOUCHER</td>
     </tr>
     <tr>

@@ -44,9 +44,13 @@ class SupplierLedgerController extends Controller
 		$model = new SupplierLedgerTxn;
 		$this->performAjaxValidation($model);
 		if (isset($_POST['SupplierLedgerTxn'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['SupplierLedgerTxn'];
 			if ($this->saveTxnWithItems($model, isset($_POST['items']) ? $_POST['items'] : array())) {
 				Yii::app()->user->setFlash('success', 'Transaction saved.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('view', 'id' => $model->id));
 			}
 		}
@@ -63,10 +67,14 @@ class SupplierLedgerController extends Controller
 		}
 		$this->performAjaxValidation($model);
 		if (isset($_POST['SupplierLedgerTxn'])) {
+			$saveAndPrint = isset($_POST['save_print']);
 			$model->attributes = $_POST['SupplierLedgerTxn'];
 			$items = isset($_POST['items']) ? $_POST['items'] : array();
 			if ($this->saveTxnWithItems($model, $items)) {
 				Yii::app()->user->setFlash('success', 'Transaction updated.');
+				if ($saveAndPrint) {
+					$this->redirect(array('print', 'id' => $model->id));
+				}
 				$this->redirect(array('view', 'id' => $model->id));
 			}
 		}
