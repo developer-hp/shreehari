@@ -47,6 +47,7 @@
             <tr>
                 <th>Sr</th>
                 <th>Item</th>
+                <th>Customer Name</th>
                 <th>Carat</th>
                 <th>Gross Wt</th>
                 <th>Net Wt</th>
@@ -62,6 +63,7 @@
             <tr>
                 <td><?php echo $itemSr; ?></td>
                 <td><?php echo CHtml::encode($item->item_name); ?></td>
+                <td><?php echo CHtml::encode($item->customer_name); ?></td>
                 <td><?php echo CHtml::encode($item->ct); ?></td>
                 <td><?php echo number_format((float)$item->gross_wt, 3); ?></td>
                 <td><?php echo number_format((float)$item->net_wt, 3); ?></td>

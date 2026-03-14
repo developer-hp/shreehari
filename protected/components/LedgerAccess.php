@@ -55,6 +55,8 @@ class LedgerAccess
 		$ut = self::userType();
 		$isLocked = isset($model->$lockField) ? ((int) $model->$lockField === 1) : false;
 
+		if($isLocked) return false;
+
 		if ($ut === self::ROLE_ADMIN) {
 			return true;
 		}

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `cp_supplier_ledger_txn_item` (
   `txn_id` int NOT NULL,
   `sr_no` varchar(20) DEFAULT NULL,
   `item_name` varchar(255) DEFAULT NULL,
+  `customer_name` varchar(255) DEFAULT NULL,
   `ct` decimal(10,2) DEFAULT NULL COMMENT 'count',
   `gross_wt` decimal(18,3) DEFAULT NULL,
   `net_wt` decimal(18,3) DEFAULT NULL,

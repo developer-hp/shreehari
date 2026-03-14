@@ -18,11 +18,11 @@ class SupplierLedgerTxnItem extends CActiveRecord
 			array('txn_id', 'required'),
 			array('txn_id, sort_order', 'numerical', 'integerOnly' => true),
 			array('sr_no', 'length', 'max' => 20),
-			array('item_name', 'length', 'max' => 255),
+			array('item_name, customer_name', 'length', 'max' => 255),
 			array('ct', 'length', 'max' => 10),
 			array('ct', 'in', 'range' => array_keys(self::getCaratOptions()), 'allowEmpty' => true),
 			array('gross_wt, net_wt, touch_pct, wastage, fine_wt, item_total', 'numerical'),
-			array('id, txn_id, sr_no, item_name, ct, gross_wt, net_wt, touch_pct, wastage, fine_wt, item_total, sort_order', 'safe', 'on' => 'search'),
+			array('id, txn_id, sr_no, item_name, customer_name, ct, gross_wt, net_wt, touch_pct, wastage, fine_wt, item_total, sort_order', 'safe', 'on' => 'search'),
 		);
 	}
 

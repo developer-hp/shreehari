@@ -97,6 +97,7 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
     <div class="panel-body">
         <div class="row margin-bottom-5">
             <div class="col-sm-2"><strong>Item</strong></div>
+            <div class="col-sm-2"><strong>Customer Name</strong></div>
             <div class="col-sm-1"><strong>Carat</strong></div>
             <div class="col-sm-1"><strong>Gross</strong></div>
             <div class="col-sm-1"><strong>Net Wt</strong></div>
@@ -107,6 +108,7 @@ if ($itemCtValue !== '' && !isset($itemCaratOptions[$itemCtValue])) {
         </div>
         <div class="row item-main-row">
             <div class="col-sm-2"><?php echo CHtml::textField("items[{$i}][item_name]", is_object($it) ? $it->item_name : (isset($item['item_name'])?$item['item_name']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Item name')); ?></div>
+            <div class="col-sm-2"><?php echo CHtml::textField("items[{$i}][customer_name]", is_object($it) ? (isset($it->customer_name) ? $it->customer_name : '') : (isset($item['customer_name'])?$item['customer_name']:''), array('class' => 'form-control input-sm', 'placeholder' => 'Customer name')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::dropDownList("items[{$i}][ct]", $itemCtValue, $itemCaratOptions, array('class' => 'form-control input-sm', 'prompt' => 'Carat')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][gross_wt]", is_object($it) ? $it->gross_wt : (isset($item['gross_wt'])?$item['gross_wt']:''), array('class' => 'form-control input-sm sl-numeric', 'placeholder' => 'Gross')); ?></div>
             <div class="col-sm-1"><?php echo CHtml::textField("items[{$i}][net_wt]", is_object($it) ? $it->net_wt : (isset($item['net_wt'])?$item['net_wt']:''), array('class' => 'form-control input-sm net-wt sl-numeric', 'placeholder' => 'Net wt')); ?></div>
@@ -321,8 +323,9 @@ $(function() {
     $(document).on('click', '.btn-remove-charge', function(){ $(this).closest('.charge-row').remove(); updateTotals(); });
     $('#add-item-btn').on('click', function(){
         var html = '<div class="item-block panel panel-default" data-index="'+itemIndex+'"><div class="panel-body">';
-        html += '<div class="row margin-bottom-5"><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net Wt</strong></div><div class="col-sm-1"><strong>Touch %</strong></div><div class="col-sm-1"><strong>Wst</strong></div><div class="col-sm-1"><strong>Fine Wt</strong></div><div class="col-sm-1"></div></div>';
+        html += '<div class="row margin-bottom-5"><div class="col-sm-2"><strong>Item</strong></div><div class="col-sm-2"><strong>Customer Name</strong></div><div class="col-sm-1"><strong>Carat</strong></div><div class="col-sm-1"><strong>Gross</strong></div><div class="col-sm-1"><strong>Net Wt</strong></div><div class="col-sm-1"><strong>Touch %</strong></div><div class="col-sm-1"><strong>Wst</strong></div><div class="col-sm-1"><strong>Fine Wt</strong></div><div class="col-sm-1"></div></div>';
         html += '<div class="row item-main-row"><div class="col-sm-2"><input type="text" name="items['+itemIndex+'][item_name]" class="form-control input-sm" placeholder="Item name" /></div>';
+        html += '<div class="col-sm-2"><input type="text" name="items['+itemIndex+'][customer_name]" class="form-control input-sm" placeholder="Customer name" /></div>';
         html += '<div class="col-sm-1"><select name="items['+itemIndex+'][ct]" class="form-control input-sm">'+caratOpts+'</select></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][gross_wt]" class="form-control input-sm sl-numeric" placeholder="Gross" /></div>';
         html += '<div class="col-sm-1"><input type="text" name="items['+itemIndex+'][net_wt]" class="form-control input-sm net-wt sl-numeric" placeholder="Net wt" /></div>';

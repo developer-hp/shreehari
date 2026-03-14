@@ -37,7 +37,8 @@ $totalAmount = (float) $model->total_amount;
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:10px;">
     <tr>
         <td style="<?php echo $headStyle; ?> width:4%;">Sr</td>
-        <td style="<?php echo $headStyle; ?> width:14%;">Item</td>
+        <td style="<?php echo $headStyle; ?> width:12%;">Item</td>
+        <td style="<?php echo $headStyle; ?> width:12%;">Customer Name</td>
         <td style="<?php echo $headStyle; ?> width:6%;">Carat</td>
         <td style="<?php echo $headStyle . $numStyle; ?> width:8%;">Gross Wt</td>
         <td style="<?php echo $headStyle . $numStyle; ?> width:8%;">Net Wt</td>
@@ -52,6 +53,7 @@ $totalAmount = (float) $model->total_amount;
             <tr>
                 <td style="<?php echo $cellStyle; ?> text-align:center;"><?php echo $index + 1; ?></td>
                 <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($item->item_name); ?></td>
+                <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($item->customer_name); ?></td>
                 <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($item->ct); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float) $item->gross_wt, 3); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float) $item->net_wt, 3); ?></td>
@@ -91,6 +93,7 @@ $totalAmount = (float) $model->total_amount;
         <?php endforeach; ?>
     <?php else: ?>
         <tr>
+            <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>

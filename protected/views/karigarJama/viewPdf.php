@@ -25,27 +25,28 @@ $printDate = date('d-m-Y');
 
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:9px;">
     <tr>
-        <td colspan="16" style="text-align:center; font-size:8px; padding-bottom:2px;">shree hari</td>
+        <td colspan="17" style="text-align:center; font-size:8px; padding-bottom:2px;">shree hari</td>
     </tr>
     <tr>
-        <td colspan="16" style="<?php echo $headStyle; ?> text-align:center; font-size:13px; font-style:italic;">KARIGAR VOUCHER</td>
+        <td colspan="17" style="<?php echo $headStyle; ?> text-align:center; font-size:13px; font-style:italic;">KARIGAR VOUCHER</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?> width:12%;">DATE</td>
         <td colspan="7" style="<?php echo $headStyle; ?> width:44%;"><?php echo $model->voucher_date ? date('d-m-Y', strtotime($model->voucher_date)) : ''; ?></td>
         <td colspan="2" style="<?php echo $headStyle; ?> width:10%; text-align:center;">VOUCHER NO</td>
-        <td colspan="5" style="<?php echo $headStyle; ?> width:34%; text-align:center;"><?php echo CHtml::encode($voucherNo); ?></td>
+        <td colspan="6" style="<?php echo $headStyle; ?> width:34%; text-align:center;"><?php echo CHtml::encode($voucherNo); ?></td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">KARIGAR NAME</td>
-        <td colspan="14" style="<?php echo $cellStyle; ?>"><?php echo isset($model->karigar) ? CHtml::encode($model->karigar->name) : ''; ?></td>
+        <td colspan="15" style="<?php echo $cellStyle; ?>"><?php echo isset($model->karigar) ? CHtml::encode($model->karigar->name) : ''; ?></td>
     </tr>
 
-    <tr><td colspan="16" style="border-left:1px solid <?php echo $borderColor; ?>; border-right:1px solid <?php echo $borderColor; ?>; height:22px;"></td></tr>
+    <tr><td colspan="17" style="border-left:1px solid <?php echo $borderColor; ?>; border-right:1px solid <?php echo $borderColor; ?>; height:22px;"></td></tr>
 
     <tr>
         <td style="<?php echo $headStyle; ?> width:6%;">SR. NO</td>
         <td style="<?php echo $headStyle; ?> width:10%;">ORDER ITEM</td>
+        <td style="<?php echo $headStyle; ?> width:10%;">CUSTOMER NAME</td>
         <td style="<?php echo $headStyle; ?> width:6%;">PCS</td>
         <td style="<?php echo $headStyle; ?> width:10%;">CARAT</td>
         <td style="<?php echo $headStyle; ?> width:8%;">GR.WT</td>
@@ -61,6 +62,7 @@ $printDate = date('d-m-Y');
             <tr>
                 <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($lnumber+1); ?></td>
                 <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($line->item_name); ?></td>
+                <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($line->customer_name); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $line->psc !== null && $line->psc !== '' ? number_format((float)$line->psc, 0) : ''; ?></td>
                 <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($line->carat); ?></td>
                 <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo number_format((float)$line->gross_wt, 3); ?></td>
@@ -98,7 +100,7 @@ $printDate = date('d-m-Y');
             </tr>
             <tr>
                 <td style="<?php echo $headStyle; ?> text-align:center;">REMARK</td>
-                <td colspan="15" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($line->remark); ?></td>
+                <td colspan="16" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($line->remark); ?></td>
             </tr>
         <?php endforeach; ?>
     <?php else: ?>
@@ -112,42 +114,43 @@ $printDate = date('d-m-Y');
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
+            <td style="<?php echo $cellStyle; ?>">&nbsp;</td>
             <td colspan="7" style="<?php echo $cellStyle; ?>">&nbsp;</td>
         </tr>
         <tr>
             <td style="<?php echo $headStyle; ?> text-align:center;">REMARK</td>
-            <td colspan="15" style="<?php echo $cellStyle; ?>">&nbsp;</td>
+            <td colspan="16" style="<?php echo $cellStyle; ?>">&nbsp;</td>
         </tr>
     <?php endif; ?>
 
-    <tr><td colspan="16" style="border-left:1px solid <?php echo $borderColor; ?>; border-right:1px solid <?php echo $borderColor; ?>; height:18px;"></td></tr>
+    <tr><td colspan="17" style="border-left:1px solid <?php echo $borderColor; ?>; border-right:1px solid <?php echo $borderColor; ?>; height:18px;"></td></tr>
 
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL FINE WT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalFineWt, 3); ?> GMS</td>
+        <td colspan="12" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalFineWt, 3); ?> GMS</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::weightWordsForVoucher($totalFineWt)); ?> GRAMS ONLY</td>
+        <td colspan="12" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::weightWordsForVoucher($totalFineWt)); ?> GRAMS ONLY</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $headStyle; ?>">TOTAL AMOUNT</td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN NUMBERS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalAmount, 2); ?> INR</td>
+        <td colspan="12" style="<?php echo $cellStyle; ?>"><?php echo number_format($totalAmount, 2); ?> INR</td>
     </tr>
     <tr>
         <td colspan="2" style="<?php echo $cellStyle; ?>"></td>
         <td colspan="3" style="<?php echo $headStyle; ?>">IN WORDS</td>
-        <td colspan="11" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::amountWordsForVoucher($totalAmount)); ?></td>
+        <td colspan="12" style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode(Words::amountWordsForVoucher($totalAmount)); ?></td>
     </tr>
 
     <tr>
-        <td colspan="16" style="padding-top:26px; padding-bottom:8px; border:none;"></td>
+        <td colspan="17" style="padding-top:26px; padding-bottom:8px; border:none;"></td>
     </tr>
     <tr>
-        <td colspan="16" style="border:none;">
+        <td colspan="17" style="border:none;">
             <div style="margin-top:28px; font-size:10px;">
                 <div style="margin-bottom:36px;"><strong>SIGNATURE:</strong></div>
                 <div><strong>DATE :</strong> <?php echo $printDate; ?></div>

@@ -237,6 +237,7 @@ class SupplierLedgerController extends Controller
 				$item = new SupplierLedgerTxnItem;
 				$item->txn_id = $txnId;
 				$item->item_name = $itemName;
+				$item->customer_name = $this->getTypedFieldValue($row, 'customer_name', 'trimmed_string', null);
 				$item->ct = $ct !== '' ? $ct : null;
 				$item->gross_wt = $this->getTypedFieldValue($row, 'gross_wt', 'float', null);
 				$item->net_wt = $netWt;
