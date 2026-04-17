@@ -256,9 +256,9 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     $sl = isset($supplier_ledger_by_issue_id[$iss->id]) ? $supplier_ledger_by_issue_id[$iss->id] : null;
                     $kj = isset($karigar_jama_by_issue_id[$iss->id]) ? $karigar_jama_by_issue_id[$iss->id] : null;
                     if ($sl) {
-                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('supplierLedger/view', 'id' => $sl->id));
+                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('supplierLedger/view', 'id' => $sl->id),array('target'=>'_blank'));
                     } elseif ($kj) {
-                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('karigarJama/view', 'id' => $kj->id));
+                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('karigarJama/view', 'id' => $kj->id),array('target'=>'_blank'));
                     } else {
                         $particularsCell = CHtml::encode($particularsText);
                     }

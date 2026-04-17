@@ -333,4 +333,14 @@ class Customer extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+
+	protected function beforeSave()
+	{
+		if (parent::beforeSave()) {
+				if($this->name)
+				$this->name = strtoupper($this->name);
+		}
+		return true;
+	}
 }

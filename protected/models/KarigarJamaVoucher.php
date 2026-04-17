@@ -13,6 +13,7 @@ class KarigarJamaVoucher extends CActiveRecord
 	{
 		return array(
 			array('voucher_date, karigar_id', 'required'),
+			array('voucher_date', 'validateNotFutureDate'),
 			array('karigar_id, issue_entry_id, created_by, is_deleted, is_locked, drcr', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),
@@ -20,6 +21,18 @@ class KarigarJamaVoucher extends CActiveRecord
 			array('remark, created_at, karigar_name', 'safe'),
 			array('id, voucher_date, karigar_id, issue_entry_id, drcr, remark, sr_no, voucher_number, total_fine_wt, total_amount, created_at, created_by, is_deleted, is_locked, karigar_name', 'safe', 'on' => 'search'),
 		);
+	}
+
+	public function validateNotFutureDate($attribute, $params)
+	{
+	    if (!empty($this->$attribute)) {
+	        $inputDate = strtotime($this->$attribute);
+	        $today = strtotime(date('Y-m-d'));
+
+	        if ($inputDate > $today) {
+	            $this->addError($attribute, 'Future date is not allowed.');
+	        }
+	    }
 	}
 
 	public function relations()

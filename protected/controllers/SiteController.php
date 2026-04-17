@@ -128,7 +128,8 @@ class SiteController extends Controller {
         if (!$id) {
             $this->redirect(array('login'));
         }
-        $this->render('index');
+        $this->redirect(array('ledgerDashboard/index'));
+        // $this->render('index');
     }
     
     

@@ -8,7 +8,7 @@ $customerName = isset($model->customer) ? trim((string) $model->customer->name) 
 $voucherNo = trim((string) $model->sr_no);
 $lineSrNo = $voucherNo !== '' ? $voucherNo : 'AUTO TAKEN';
 $carat = trim((string) $model->carat);
-$fineWt = (float) $model->fine_wt;
+$fineWt = $model->fine_wt;
 $amount = (float) $model->amount;
 $remarkText = trim((string) $model->remarks);
 
@@ -28,7 +28,7 @@ if (!function_exists('issueVoucherFmtNumber')) {
     }
 }
 
-$fineWtNum = issueVoucherFmtNumber($fineWt, 3);
+$fineWtNum = $fineWt;
 $amountNum = issueVoucherFmtNumber($amount, 2);
 $fineWtWords = Words::weightWordsForVoucher($fineWt, true);
 $amountWords = Words::amountWordsForVoucher($amount);
@@ -63,7 +63,7 @@ $amountWords = Words::amountWordsForVoucher($amount);
     <tr>
         <td style="<?php echo $cell; ?>"><?php echo CHtml::encode($particulars); ?></td>
         <td style="<?php echo $cell; ?> text-align:right;"><?php echo CHtml::encode($carat); ?></td>
-        <td style="<?php echo $cell; ?> text-align:right;"><?php echo CHtml::encode($fineWtNum); ?></td>
+        <td style="<?php echo $cell; ?> text-align:right;"><?php echo $fineWtNum; ?></td>
         <td style="<?php echo $cell; ?> text-align:right;"><?php echo CHtml::encode($amountNum); ?></td>
     </tr>
     <tr>
@@ -75,7 +75,7 @@ $amountWords = Words::amountWordsForVoucher($amount);
 <table width="100%" cellpadding="0" cellspacing="0" style="<?php echo $table; ?> margin-bottom:22px;">
     <tr>
         <td rowspan="2" style="<?php echo $head; ?> width:15%;">TOTAL FINE WT</td>
-        <td style="<?php echo $cell; ?> width:89%;"><strong>IN NUMBERS :</strong> <?php echo CHtml::encode($fineWtNum); ?> GMS</td>
+        <td style="<?php echo $cell; ?> width:89%;"><strong>IN NUMBERS :</strong> <?php echo $fineWtNum; ?> GMS</td>
     </tr>
     <tr>
         <td style="<?php echo $cell; ?>"><strong>IN WORDS :</strong> <?php echo CHtml::encode($fineWtWords); ?></td>

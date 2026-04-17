@@ -2,6 +2,7 @@
 $form = $this->beginWidget('CActiveForm', array(
     'id' => 'supplier-ledger-txn-form',
     'enableAjaxValidation' => true,
+    'errorMessageCssClass' => 'help-block animation-slideUp form-error',
     'htmlOptions' => array('class' => 'form-horizontal supplier-ledger-form-fullwidth'),
 ));
 ?>

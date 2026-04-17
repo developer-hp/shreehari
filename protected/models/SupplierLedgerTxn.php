@@ -16,6 +16,7 @@ class SupplierLedgerTxn extends CActiveRecord
 	{
 		return array(
 			array('txn_date, supplier_id', 'required'),
+			array('txn_date', 'validateNotFutureDate'),
 			array('supplier_id, issue_entry_id, created_by, is_deleted, is_locked, drcr', 'numerical', 'integerOnly' => true),
 			array('total_fine_wt, total_amount', 'numerical'),
 			array('sr_no, voucher_number', 'length', 'max' => 30),
@@ -23,6 +24,17 @@ class SupplierLedgerTxn extends CActiveRecord
 			array('remark, created_at, supplier_name', 'safe'),
 			array('id, txn_date, supplier_id, sr_no, voucher_number, issue_entry_id, drcr, remark, total_fine_wt, total_amount, created_at, created_by, is_deleted, is_locked, supplier_name', 'safe', 'on' => 'search'),
 		);
+	}
+	public function validateNotFutureDate($attribute, $params)
+	{
+	    if (!empty($this->$attribute)) {
+	        $inputDate = strtotime($this->$attribute);
+	        $today = strtotime(date('Y-m-d'));
+
+	        if ($inputDate > $today) {
+	            $this->addError($attribute, 'Future date is not allowed.');
+	        }
+	    }
 	}
 
 	public function relations()

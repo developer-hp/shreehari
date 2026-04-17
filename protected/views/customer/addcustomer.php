@@ -79,7 +79,7 @@ Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 							<?php echo $form->labelEx($model,'type', array('class' => 'col-md-3 control-label')); ?>
 							<div class="col-md-7">
 							<?php // echo $form->textArea($model,'type', array('class' => 'form-control')); 
-							$cust_type=array(1=>'Supplier',2=>'Customer',3=>'Karigar');
+							$cust_type=array(1=>'Supplier',3=>'Karigar');
 							echo $form->dropDownList($model,'type',$cust_type,
 											array(
 												'prompt'=>'----Select Type----',

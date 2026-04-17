@@ -249,11 +249,7 @@
                                 $ledger_tab = 'active';
                                 $ledgerKar = 'active';
                             }
-                            else if($action=="issueentry")
-                            {
-                                $ledger_tab = 'active';
-                                $ledgerIss = 'active';
-                            }
+                            
                             else if($action=="ledgermaintenance")
                             {
                                 $ledger_tab = 'active';
@@ -382,10 +378,10 @@
                             <ul class="sidebar-nav">
 
                                     <li>
-                                    <?php echo CHtml::link('<i class="gi gi-compass sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Dashboard</span>', array("site/index"), array('class' => $li2)) ?>
+                                    <?php echo CHtml::link('<i class="gi gi-compass sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Dashboard</span>', array("ledgerDashboard/index"), array('class' => $li2)) ?>
                                     </li>
                                     <li>
-                                    <?php echo CHtml::link('<i class="fa fa-bar-chart sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Dashboard</span>', array("ledgerDashboard/index"), array('class' => $ledgerDashboard)) ?>
+                                        <?php echo CHtml::link('<i class="fa fa-calendar sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Day Book</span>', array("daybook/index"), array('class' => $daybook)) ?>
                                     </li>
                                     <li class="sidebar-separator">
                                         <i class="fa fa-ellipsis-h"></i>
@@ -422,15 +418,11 @@
                                     </li>
 
                                      <li class="<?php  echo $custome_tab;?>">
-                                        <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-user-circle-o sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Customer</span></a>
+                                        <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-user-circle-o sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">New Account</span></a>
                                         <ul>
                                             <li>
                                                 <?php 
                                                  echo CHtml::link('<i class="fa fa-users sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier</span>', array("customer/list_supplier"), array('class' => $item)) ?>
-                                            </li> 
-                                            <li>
-                                                <?php 
-                                                 echo CHtml::link('<i class="fa fa-users sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Customer</span>', array("customer/list_customer"), array('class' => $item2)) ?>
                                             </li> 
                                             <li>
                                                 <?php 
@@ -439,20 +431,6 @@
                                                                               
                                         </ul>
                                     </li>
-
-                                    <li>
-                                    <?php  echo CHtml::link('<i class="fa fa-money sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Manage Cash</span>', array("cashevent/admin"), array('class' => $cash)) ?>
-                                    </li>
-
-                                     
-                                    <li>
-                                    <?php  echo CHtml::link('<i class="fa fa-list sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Manage Repairing</span>', array("repair/index"), array('class' => $repair)) ?>
-                                    </li>
-
-                                    <li>
-                                        <?php echo CHtml::link('<i class="fa fa-file sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Report</span>', array("cashevent/report"), array('class' => $report)) ?>
-                                    </li>
-
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-balance-scale sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Opening Balance</span>', array("accountOpeningBalance/index"), array('class' => $openingBalance)) ?>
                                     </li>
@@ -463,9 +441,6 @@
 
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Ledger Report</span>', array("ledgerReport/index"), array('class' => $ledgerReport)) ?>
-                                    </li>
-                                    <li>
-                                        <?php echo CHtml::link('<i class="fa fa-calendar sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Day Book</span>', array("daybook/index"), array('class' => $daybook)) ?>
                                     </li>
                                     <li>
                                         <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Voucher</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>

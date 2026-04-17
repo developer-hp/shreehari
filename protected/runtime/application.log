@@ -6024,3 +6024,31 @@ Stack trace:
 #21 {main}
 REQUEST_URI=/shreehari/site/login
 ---
+2026/04/13 05:48:38 [error] [exception.CException] CException: Property "CActiveDataProvider.pageSize" is not defined. in C:\laragon\www\demo\shreehari\yii-1\framework\base\CComponent.php:172
+Stack trace:
+#0 C:\laragon\www\demo\shreehari\yii-1\framework\web\CActiveDataProvider.php(96): CComponent->__set('pageSize', 1)
+#1 C:\laragon\www\demo\shreehari\protected\models\KarigarJamaVoucher.php(107): CActiveDataProvider->__construct(Object(KarigarJamaVoucher), Array)
+#2 C:\laragon\www\demo\shreehari\protected\views\karigarJama\admin.php(34): KarigarJamaVoucher->search()
+#3 C:\laragon\www\demo\shreehari\yii-1\framework\web\CBaseController.php(126): require('C:\\laragon\\www\\...')
+#4 C:\laragon\www\demo\shreehari\yii-1\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\\laragon\\www\\...', Array, true)
+#5 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(872): CBaseController->renderFile('C:\\laragon\\www\\...', Array, true)
+#6 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(785): CController->renderPartial('admin', Array, true)
+#7 C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php(34): CController->render('admin', Array)
+#8 C:\laragon\www\demo\shreehari\protected\controllers\KarigarJamaController.php(25): KarigarJamaController->actionAdmin()
+#9 C:\laragon\www\demo\shreehari\yii-1\framework\web\actions\CInlineAction.php(49): KarigarJamaController->actionIndex()
+#10 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#11 C:\laragon\www\demo\shreehari\yii-1\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#12 C:\laragon\www\demo\shreehari\yii-1\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#13 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(1148): CFilter->filter(Object(CFilterChain))
+#14 C:\laragon\www\demo\shreehari\yii-1\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#15 C:\laragon\www\demo\shreehari\yii-1\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(291): CFilterChain->run()
+#17 C:\laragon\www\demo\shreehari\yii-1\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#18 C:\laragon\www\demo\shreehari\yii-1\framework\web\CWebApplication.php(282): CController->run('index')
+#19 C:\laragon\www\demo\shreehari\yii-1\framework\web\CWebApplication.php(141): CWebApplication->runController('karigarJama/ind...')
+#20 C:\laragon\www\demo\shreehari\yii-1\framework\base\CApplication.php(185): CWebApplication->processRequest()
+#21 C:\laragon\www\demo\shreehari\index.php(13): CApplication->run()
+#22 {main}
+REQUEST_URI=/shreehari/karigarJama/index
+HTTP_REFERER=https://demo.local/shreehari/issueEntry/index
+---

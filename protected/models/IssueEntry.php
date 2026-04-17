@@ -59,7 +59,7 @@ class IssueEntry extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'sr_no' => 'SR No',
+			'sr_no' => 'Voucher No',
 			'issue_date' => 'Issue Date',
 			'customer_id' => 'Account',
 			'customer_name' => 'Account',

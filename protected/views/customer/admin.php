@@ -69,7 +69,7 @@
              'headerHtmlOptions'=>array('class'=>'text_upper'),
             'value'=>function($data)
             {
-              echo CHtml::link($data->name, array('cashevent/list_supplier_bill',"id"=>$data->id), array('class'=>'link_blue'));
+              echo CHtml::link($data->name, array('ledgerReport/report',"id"=>$data->id), array('class'=>'link_blue'));
                 // echo $data->name;
             }
           ),
@@ -116,55 +116,7 @@
              else echo number_format(-$amt, 2, '.', '') . ' Baki';
                }
           ),
-          array(
-               // 'name'=>'Amount',
-               'header'=>'Amount',
-               'headerHtmlOptions'=>array('style'=>'text-align: right;','class'=>'text_upper'),
-               'htmlOptions'=>array('style'=>'text-align: right;', 'class'=>'right_amount'),
-               'footer'=>'<span class="footer_amount pull-right">'.$model->amount_Total_For_User_Type($model->search()->getData()).'</span>',
-               'value'=>function($data){
-                if(isset($data->id))
-                {
-                   $condition = "1=1";
-                    $criteria=new CDbCriteria;
-                    $criteria->select =' sum(amount) as amount ';
-                    // $condition .= ' AND amount > 0 ' ;
-                    $condition .= ' AND customer_id ='.$data->id;
-                    $criteria->condition = $condition;
-                     // print_r($criteria);
-                    $cash_amount=Cashlogs::model()->find($criteria);
-                    echo $cash_amount->amount;
-                  /*  if($cash_amount->amount > 0)
-                    {
-                     // echo number_format((float)$cash_amount->amount, 2, '.', '');
-                      echo $cash_amount->amount;
-                    }*/
-                }
-               }
-            ),
-
-          array(
-               // 'name'=>'Amount',
-               'header'=>'Metal',
-               'headerHtmlOptions'=>array('style'=>'text-align: right;', 'class'=>'text_upper'),
-               'htmlOptions'=>array('style'=>'text-align: right;', 'class'=>'right_amount'),
-               'footer'=>'<span class="footer_amount pull-right">'.$model->metal_Total_For_User_Type($model->search()->getData()).'</span>',
-               'value'=>function($data){
-                if(isset($data->id))
-                {
-                   $condition = "1=1";
-                    $criteria = new CDbCriteria;
-                    $criteria->select ='SUM(IF((t.amount = "0" OR t.amount is null OR t.amount = "") and   t.item_id = "0" ,(t.weight),0)) AS weight ';
-                    $condition .= ' AND customer_id ='.$data->id;
-                    $criteria->condition = $condition;
-                    $cash_amount=Cashlogs::model()->find($criteria);
-                    if($cash_amount->weight != 0)
-                    {
-                       echo number_format((float) $cash_amount->weight, 3, '.', '');
-                    }
-                }
-               }
-            ),
+          
 					// 'type',
 						/*array(
 							'name'=>'type',
@@ -201,8 +153,15 @@
 						array(
                         'class' => 'ButtonColumn',
                         'htmlOptions' => array('style' => 'width: 160px;text-align: center;'),
-                        'template' => '{bill} {update} {delete}',
+                        'template' => '{ledger} {update} {delete}',
                         'buttons' => array(
+                            'ledger' => array(
+                                'label' => '<i class="fa fa-book"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-info', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => Yii::t('app', 'Ledger Report')),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("ledgerReport/report", array("customer_id"=>$data->id))'
+                            ),
                             'cash' => array(
                                 'label' => '<i class="fa fa-money"></i>',
                                 'imageUrl' => false,

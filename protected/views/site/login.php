@@ -52,7 +52,7 @@
     
     <div class="form-group form-actions">
         <div class="col-xs-7" style="margin-top: 10px; ">
-            <?php  echo CHtml::link('Forgot Password?',array('forgot'),array('class'=>'')); ?>
+            <?php  //echo CHtml::link('Forgot Password?',array('forgot'),array('class'=>'')); ?>
             <!-- <label class="csscheckbox csscheckbox-primary">
                 <?php // echo $form->checkBox($model, 'rememberMe'); ?><span></span> <?php // echo $form->label($model, 'rememberMe'); ?>
             </label> -->

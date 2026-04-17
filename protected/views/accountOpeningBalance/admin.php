@@ -30,6 +30,11 @@
 
             <?php $this->widget('zii.widgets.grid.CGridView', array(
                 'id' => 'account-opening-balance-grid',
+                'pager' => array(
+                        'class'=>'CLinkPager',
+                        'header'=>'',
+                        'htmlOptions'=>array('class' => 'pagination')
+                ),
                 'dataProvider' => $model->search(),
                 'itemsCssClass' => 'table table-striped table-bordered table-vcenter table-responsive',
                 'filter' => $model,
