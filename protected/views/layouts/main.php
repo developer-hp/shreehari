@@ -156,8 +156,8 @@
                             <?php
 
 
-                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$ledgerDashboard=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$subitemType=$daybook='';
-                            $masterTab = $goldTab = $reportTab = '';
+                            $user = $li2 =$item= $events=$forms=$settings=$item2=$item3=$cash=$report=$repair=$openingBalance=$ledgerDashboard=$issueEntry=$ledgerReport=$supplierLedger=$karigarJama=$diamondVoucher=$subitemType=$daybook='';
+                            $masterTab = $goldTab = $diamondTab = $reportTab = '';
                             $ledger_tab = $ledgerAcc = $ledgerSup = $ledgerKar = $ledgerIss = $ledgerMaint = '';
                             $action = strtolower(Yii::app()->controller->id);
                             $action1 = strtolower(Yii::app()->controller->action->id);
@@ -364,6 +364,8 @@
                                 $openingBalance = 'active';
                             else if($action=="issueentry")
                                 $issueEntry = 'active';
+                            else if($action=="diamondvoucher")
+                                $diamondVoucher = 'active';
                             else if($action=="ledgerreport")
                                 $ledgerReport = 'active';
                             else if($action=="supplierledger")
@@ -375,11 +377,14 @@
                             else if($action=="daybook")
                                 $daybook = 'active';
 
-                            if ($item === 'active' || $item3 === 'active' || $openingBalance === 'active' || $subitemType === 'active') {
+                            if ($item === 'active' || $item3 === 'active' || $openingBalance === 'active' || $subitemType === 'active' || $user === 'active') {
                                 $masterTab = 'active';
                             }
                             if ($issueEntry === 'active' || $supplierLedger === 'active' || $karigarJama === 'active') {
                                 $goldTab = 'active';
+                            }
+                            if ($diamondVoucher === 'active') {
+                                $diamondTab = 'active';
                             }
                             if ($ledgerReport === 'active' || $daybook === 'active') {
                                 $reportTab = 'active';
@@ -443,6 +448,11 @@
                                             <li>
                                                 <?php echo CHtml::link('<i class="fa fa-balance-scale sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Opening Balance</span>', array("accountOpeningBalance/index"), array('class' => $openingBalance)) ?>
                                             </li>
+                                            <?php  if(LedgerAccess::isAdmin()): ?>
+                                            <li>
+                                            <?php echo CHtml::link('<i class="fa fa-group sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Manage Users</span>', array("user/index"), array('class' => $user)) ?>
+                                            </li>
+                                            <?php  endif;   ?>
                                         </ul>
                                     </li>
                                     <li class="<?php echo $goldTab; ?>">
@@ -456,6 +466,14 @@
                                             </li>
                                             <li>
                                                 <?php echo CHtml::link('<i class="fa fa-book sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Supplier Voucher</span>', array("supplierLedger/index"), array('class' => $supplierLedger)) ?>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="<?php echo $diamondTab; ?>">
+                                        <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-diamond sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Diamond</span></a>
+                                        <ul>
+                                            <li>
+                                                <?php echo CHtml::link('<i class="fa fa-diamond sidebar-nav-icon"></i> <span class="sidebar-nav-mini-hide">Diamond Voucher</span>', array("diamondVoucher/index"), array('class' => $diamondVoucher)) ?>
                                             </li>
                                         </ul>
                                     </li>
@@ -534,12 +552,11 @@
                                         <li class="dropdown-header">
                                             <strong>ADMINISTRATOR</strong>
                                         </li>
-                                        <?php // if($modal->user_type==1): ?>
-                                    
+                                        <?php  if(LedgerAccess::isAdmin()): ?>
                                         <li>
                                             <?php echo CHtml::link('<i class="fa fa-user fa-fw pull-right"></i> Profile', array('user/change')); ?>
                                         </li>
-                                        <?php // endif; ?>
+                                        <?php endif; ?>
                                         <li>
                                             <?php echo CHtml::link('<i class="fa fa-power-off fa-fw pull-right"></i> Log out', array('site/logout')); ?>
                                         </li>

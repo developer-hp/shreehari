@@ -195,10 +195,21 @@ if ($opening) {
     }
     $vouchNo = trim((string) $iss->sr_no);
     $remark = trim((string) $iss->remarks);
+    $sl = isset($supplier_ledger_by_issue_id[$iss->id]) ? $supplier_ledger_by_issue_id[$iss->id] : null;
+    $kj = isset($karigar_jama_by_issue_id[$iss->id]) ? $karigar_jama_by_issue_id[$iss->id] : null;
+    $dv = isset($diamond_voucher_by_issue_id[$iss->id]) ? $diamond_voucher_by_issue_id[$iss->id] : null;
+    $particularLabel = 'Issue Entry';
+    if ($sl) {
+        $particularLabel = 'Supplier Voucher';
+    } elseif ($kj) {
+        $particularLabel = 'Karigar Voucher';
+    } elseif ($dv) {
+        $particularLabel = 'Diamond Voucher';
+    }
     ?>
     <tr>
         <td style="<?php echo $cellStyle; ?>"><?php echo !empty($iss->issue_date) ? date('d-m-Y', strtotime($iss->issue_date)) : ''; ?></td>
-        <td style="<?php echo $cellStyle; ?>">VOUCH NO <?php echo CHtml::encode($vouchNo); ?></td>
+        <td style="<?php echo $cellStyle; ?>"><?php echo CHtml::encode($particularLabel); ?><?php echo $vouchNo !== '' ? ' - ' . CHtml::encode($vouchNo) : ''; ?></td>
         <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo $isJama ? number_format($fineWt, 3) : ''; ?></td>
         <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo !$isJama ? number_format($fineWt, 3) : ''; ?></td>
         <td style="<?php echo $cellStyle . $numStyle; ?>"><?php echo ledgerPdfFormatBalance($runningFineBalance, 3); ?></td>

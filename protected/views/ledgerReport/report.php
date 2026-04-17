@@ -169,7 +169,10 @@ if (!function_exists('ledgerReportBalanceWords')) {
                 <?php echo CHtml::link('<i class="fa fa-file-pdf-o"></i> Download PDF', array('ledgerReport/pdf', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-primary', 'target' => '_blank')); ?>
                 <?php echo CHtml::link('<i class="fa fa-print"></i> Print', array('ledgerReport/print', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-default', 'target' => '_blank')); ?>
                 <?php if (LedgerAccess::isAdmin() && !empty($filter_customer_id) && count($customers) === 1): ?>
-                <?php echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance to current closing and delete all issue entries for this customer? This cannot be undone.')); ?>
+                <?php
+                $cutoffDateForClosing = !empty($to_date) ? $to_date : $from_date;
+                $cutoffDateLabel = !empty($cutoffDateForClosing) ? $cutoffDateForClosing : 'the selected date';
+                echo CHtml::link('<i class="fa fa-refresh"></i> Update opening from closing', array('ledgerReport/updateOpeningFromClosing', 'customer_id' => $filter_customer_id, 'customer_type' => isset($filter_customer_type) ? $filter_customer_type : '', 'entry_type' => isset($filter_entry_type) ? $filter_entry_type : '', 'from_date' => $from_date, 'to_date' => $to_date), array('class' => 'btn btn-info', 'confirm' => 'Set opening balance up to ' . $cutoffDateLabel . ' and delete only issue entries till that date for this customer? This cannot be undone.')); ?>
                 <?php endif; ?>
             </p>
             <?php
@@ -178,6 +181,7 @@ if (!function_exists('ledgerReportBalanceWords')) {
                 'issue' => 'Outward (Issue Entry / Jama)',
                 'supplier' => 'Inward (Supplier Voucher / Baki)',
                 'karigar' => 'Inward (Karigar Voucher / Baki)',
+                'diamond' => 'Diamond Voucher',
             );
             $filterParts = array();
             if (!empty($filter_customer_type) && isset($typeLabels[$filter_customer_type])) $filterParts[] = 'Type: ' . $typeLabels[$filter_customer_type];
@@ -255,10 +259,13 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     $particularsText = $iss->sr_no . ' - ' . (string)$iss->remarks;
                     $sl = isset($supplier_ledger_by_issue_id[$iss->id]) ? $supplier_ledger_by_issue_id[$iss->id] : null;
                     $kj = isset($karigar_jama_by_issue_id[$iss->id]) ? $karigar_jama_by_issue_id[$iss->id] : null;
+                    $dv = isset($diamond_voucher_by_issue_id[$iss->id]) ? $diamond_voucher_by_issue_id[$iss->id] : null;
                     if ($sl) {
                         $particularsCell = CHtml::link(CHtml::encode($particularsText), array('supplierLedger/view', 'id' => $sl->id),array('target'=>'_blank'));
                     } elseif ($kj) {
                         $particularsCell = CHtml::link(CHtml::encode($particularsText), array('karigarJama/view', 'id' => $kj->id),array('target'=>'_blank'));
+                    } elseif ($dv) {
+                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('diamondVoucher/view', 'id' => $dv->id), array('target' => '_blank'));
                     } else {
                         $particularsCell = CHtml::link(CHtml::encode($particularsText), array('issueEntry/view', 'id' => $iss->id), array('target' => '_blank'));
                     }

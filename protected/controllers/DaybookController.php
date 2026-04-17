@@ -48,6 +48,38 @@ class DaybookController extends Controller
             'order' => 't.id ASC',
         ));
 
+        $issueIds = array();
+        foreach ($entries as $entry) {
+            $issueIds[] = (int) $entry->id;
+        }
+
+        $supplierLedgerByIssueId = array();
+        $karigarJamaByIssueId = array();
+        $diamondVoucherByIssueId = array();
+        if (!empty($issueIds)) {
+            $placeholders = implode(',', $issueIds);
+            $supplierRows = SupplierLedgerTxn::model()->findAll(array(
+                'condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)',
+            ));
+            foreach ($supplierRows as $row) {
+                $supplierLedgerByIssueId[(int) $row->issue_entry_id] = $row;
+            }
+
+            $karigarRows = KarigarJamaVoucher::model()->findAll(array(
+                'condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)',
+            ));
+            foreach ($karigarRows as $row) {
+                $karigarJamaByIssueId[(int) $row->issue_entry_id] = $row;
+            }
+
+            $diamondRows = DiamondVoucher::model()->findAll(array(
+                'condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)',
+            ));
+            foreach ($diamondRows as $row) {
+                $diamondVoucherByIssueId[(int) $row->issue_entry_id] = $row;
+            }
+        }
+
         $jamaRows = array();
         $bakiRows = array();
 
@@ -61,8 +93,18 @@ class DaybookController extends Controller
         foreach ($entries as $e) {
             $fineWt = (float) $e->fine_wt;
             $amount = (float) $e->amount;
+            $sourceLabel = 'Issue Entry';
+            if (isset($supplierLedgerByIssueId[(int) $e->id])) {
+                $sourceLabel = 'Supplier Voucher';
+            } elseif (isset($karigarJamaByIssueId[(int) $e->id])) {
+                $sourceLabel = 'Karigar Voucher';
+            } elseif (isset($diamondVoucherByIssueId[(int) $e->id])) {
+                $sourceLabel = 'Diamond Voucher';
+            }
             $row = array(
                 'name' => isset($e->customer) ? (string) $e->customer->name : '',
+                'source' => $sourceLabel,
+                'voucher_no' => trim((string) $e->sr_no),
                 'metal' => $fineWt,
                 'amount' => $amount,
             );

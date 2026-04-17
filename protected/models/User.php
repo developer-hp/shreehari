@@ -129,6 +129,7 @@ class User extends CActiveRecord
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('user_type',$this->user_type);
+		$criteria->addCondition('user_type!=1');
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('deleted',0);
 

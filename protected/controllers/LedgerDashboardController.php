@@ -74,6 +74,17 @@ class LedgerDashboardController extends Controller
 			$karigarJamaTotalFineWt += (float) $v->total_fine_wt;
 		}
 
+		// --- Diamond Voucher: selected date's count & total amount ---
+		$diamondVoucherToday = DiamondVoucher::model()->findAll(
+			't.is_deleted = 0 AND t.voucher_date = :d',
+			array(':d' => $filterDate)
+		);
+		$diamondVoucherCount = count($diamondVoucherToday);
+		$diamondVoucherTotalAmount = 0;
+		foreach ($diamondVoucherToday as $v) {
+			$diamondVoucherTotalAmount += (float) $v->amount;
+		}
+
 		// --- Recent 10 records (with relations for names) ---
 		$recentIssueEntries = IssueEntry::model()->with('customer')->findAll(array(
 			'condition' => 't.is_deleted = 0 and is_voucher=0',
@@ -93,15 +104,23 @@ class LedgerDashboardController extends Controller
 			'limit' => 10,
 		));
 
+		$recentDiamondVoucher = DiamondVoucher::model()->with(array('account', 'subitemType'))->findAll(array(
+			'condition' => 't.is_deleted = 0',
+			'order' => 't.id DESC',
+			'limit' => 10,
+		));
+
 		// --- Chart: last 7 days daily totals (amount + fine wt) ---
 		$chartDays = 7;
 		$chartLabels = array();
 		$chartIssueEntry = array();
 		$chartSupplierLedger = array();
 		$chartKarigarJama = array();
+		$chartDiamondVoucher = array();
 		$chartIssueEntryFineWt = array();
 		$chartSupplierLedgerFineWt = array();
 		$chartKarigarJamaFineWt = array();
+		$chartDiamondVoucherFineWt = array();
 		for ($i = $chartDays - 1; $i >= 0; $i--) {
 			$d = date('Y-m-d', strtotime("-$i days"));
 			$chartLabels[] = date('d M', strtotime($d));
@@ -129,6 +148,12 @@ class LedgerDashboardController extends Controller
 			}
 			$chartKarigarJama[] = (float) $dayJama;
 			$chartKarigarJamaFineWt[] = (float) $dayJamaFw;
+			$dayDiamond = 0;
+			foreach (DiamondVoucher::model()->findAll('t.is_deleted = 0 AND t.voucher_date = :d', array(':d' => $d)) as $v) {
+				$dayDiamond += (float) $v->amount;
+			}
+			$chartDiamondVoucher[] = (float) $dayDiamond;
+			$chartDiamondVoucherFineWt[] = 0.0;
 		}
 
 		// --- Chart: today's pie (Outward + Inward split) ---
@@ -136,6 +161,7 @@ class LedgerDashboardController extends Controller
 			array('label' => 'Outward (Issue / Jama)', 'amount' => $issueEntryTotalAmount),
 			array('label' => 'Inward (Supplier / Baki)', 'amount' => $supplierLedgerTotalAmount),
 			array('label' => 'Inward (Karigar / Baki)', 'amount' => $karigarJamaTotalAmount),
+			array('label' => 'Diamond Voucher', 'amount' => $diamondVoucherTotalAmount),
 		);
 
 		// --- Ledger In / Out / Balance (from Issue Entry: Baki/CR = Inward, Jama/DR = Outward) ---
@@ -181,17 +207,22 @@ class LedgerDashboardController extends Controller
 			'karigarJamaCount' => $karigarJamaCount,
 			'karigarJamaTotalAmount' => $karigarJamaTotalAmount,
 			'karigarJamaTotalFineWt' => $karigarJamaTotalFineWt,
+			'diamondVoucherCount' => $diamondVoucherCount,
+			'diamondVoucherTotalAmount' => $diamondVoucherTotalAmount,
 			'recentIssueEntries' => $recentIssueEntries,
 			'recentSupplierLedger' => $recentSupplierLedger,
 			'recentKarigarJama' => $recentKarigarJama,
+			'recentDiamondVoucher' => $recentDiamondVoucher,
 			'today' => $today,
 			'chartLabels' => $chartLabels,
 			'chartIssueEntry' => $chartIssueEntry,
 			'chartSupplierLedger' => $chartSupplierLedger,
 			'chartKarigarJama' => $chartKarigarJama,
+			'chartDiamondVoucher' => $chartDiamondVoucher,
 			'chartIssueEntryFineWt' => $chartIssueEntryFineWt,
 			'chartSupplierLedgerFineWt' => $chartSupplierLedgerFineWt,
 			'chartKarigarJamaFineWt' => $chartKarigarJamaFineWt,
+			'chartDiamondVoucherFineWt' => $chartDiamondVoucherFineWt,
 			'chartTodayPie' => $chartTodayPie,
 			'filterDate' => $filterDate,
 			'filterDateDisplay' => date('d-m-Y', strtotime($filterDate)),

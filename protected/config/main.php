@@ -127,6 +127,7 @@ return array(
         'voucherPrefixes' => array(
             'supplier_voucher' => 'SV',  // Supplier Voucher prefix (was SLV)
             'karigar_voucher' => 'KV',   // Karigar Voucher prefix (was JMV)
+            'diamond_voucher' => 'DV',   // Diamond Voucher prefix
         ),
     ),
 );

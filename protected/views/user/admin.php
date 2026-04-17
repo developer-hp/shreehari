@@ -18,11 +18,7 @@
             </div>
             <?php
             	// echo CHtml::link('NEU',array('create'),array('class'=>'btn btn-effect-ripple btn-success'));
-
-            	echo CHtml::link('Add New User',array('user/create'),array('class'=>'btn btn-effect-ripple btn-primary'));
-            	
-                echo CHtml::link('Send Register Mail',array('site/send'),array('class'=>'btn btn-effect-ripple btn-primary'));
-                
+            	// echo CHtml::link('Add New User',array('user/create'),array('class'=>'btn btn-effect-ripple btn-primary'));
             ?>
             <?php if (Yii::app()->user->hasFlash('success')): ?>
                 <div class="alert alert-success alert-dismissable">
@@ -59,13 +55,14 @@
 		array(
                         'class' => 'CButtonColumn',
                         'htmlOptions' => array('style' => 'width: 85px;text-align:center'),
-                        'template' => '{update} {delete} ',
+                        'template' => '{update}',
                         'buttons' => array(
                             'update' => array(
                                 'label' => '<i class="fa fa-pencil"></i>',
                                 'imageUrl' => false,
                                 'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-primary', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => Yii::t('app', 'EDIT')),
                                 'type' => 'raw',
+                                'visible' => 'LedgerAccess::isAdmin()',
                             ),
                             'delete' => array(
                                 'label' => '<i class="fa fa-trash-o"></i>',

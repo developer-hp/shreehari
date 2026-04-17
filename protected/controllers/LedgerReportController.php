@@ -39,8 +39,8 @@ class LedgerReportController extends Controller
     }
 
     /**
-     * Update opening balance from current closing for a customer, then redirect to report.
-     * GET: customer_id (required).
+     * Update opening balance from closing up to the selected date for a customer,
+     * then redirect to report. GET: customer_id (required), to_date/from_date.
      */
     public function actionUpdateOpeningFromClosing()
     {
@@ -58,14 +58,33 @@ class LedgerReportController extends Controller
         }
 
         $customerId = isset($_GET['customer_id']) ? (int) $_GET['customer_id'] : 0;
+        $cutoffDateInput = isset($_GET['to_date']) && trim($_GET['to_date']) !== ''
+            ? trim($_GET['to_date'])
+            : (isset($_GET['from_date']) ? trim($_GET['from_date']) : '');
         if ($customerId <= 0) {
             Yii::app()->user->setFlash('error', 'Please select a customer.');
             $this->redirect(array('ledgerReport/index'));
             return;
         }
-        $model = OpeningBalanceService::updateOpeningFromClosing($customerId);
+
+        if ($cutoffDateInput === '') {
+            Yii::app()->user->setFlash('error', 'Please select a date before updating opening from closing.');
+            $this->redirect(array(
+                'ledgerReport/report',
+                'customer_id' => $customerId,
+                'customer_type' => isset($_GET['customer_type']) ? $_GET['customer_type'] : '',
+                'entry_type' => isset($_GET['entry_type']) ? $_GET['entry_type'] : '',
+                'from_date' => isset($_GET['from_date']) ? $_GET['from_date'] : '',
+                'to_date' => isset($_GET['to_date']) ? $_GET['to_date'] : '',
+            ));
+            return;
+        }
+
+        $model = OpeningBalanceService::updateOpeningFromClosing($customerId, $cutoffDateInput);
         if ($model !== null) {
-            Yii::app()->user->setFlash('success', 'Opening balance has been updated from closing.');
+            $cutoffTimestamp = strtotime($cutoffDateInput);
+            $cutoffDisplay = $cutoffTimestamp !== false ? date('d-m-Y', $cutoffTimestamp) : $cutoffDateInput;
+            Yii::app()->user->setFlash('success', 'Opening balance has been updated from closing up to ' . $cutoffDisplay . '.');
         } else {
             Yii::app()->user->setFlash('error', 'Failed to update opening balance from closing.');
         }
@@ -106,7 +125,7 @@ class LedgerReportController extends Controller
         $entryType = isset($_GET['entry_type']) ? trim(strtolower($_GET['entry_type'])) : '';
         $fromDate = isset($_GET['from_date']) ? trim($_GET['from_date']) : null;
         $toDate = isset($_GET['to_date']) ? trim($_GET['to_date']) : null;
-        $validEntryTypes = array('issue', 'supplier', 'karigar');
+        $validEntryTypes = array('issue', 'supplier', 'karigar', 'diamond');
         if (!in_array($entryType, $validEntryTypes, true)) {
             $entryType = '';
         }
@@ -160,12 +179,15 @@ class LedgerReportController extends Controller
         $issueIds = array_map(function ($i) { return (int) $i->id; }, $issues);
         $supplierLedgerByIssueId = array();
         $karigarJamaByIssueId = array();
+        $diamondVoucherByIssueId = array();
         if (!empty($issueIds)) {
             $placeholders = implode(',', $issueIds);
             $slTxns = SupplierLedgerTxn::model()->findAll(array('condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)'));
             foreach ($slTxns as $t) { $supplierLedgerByIssueId[(int)$t->issue_entry_id] = $t; }
             $kjVouchers = KarigarJamaVoucher::model()->findAll(array('condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)'));
             foreach ($kjVouchers as $v) { $karigarJamaByIssueId[(int)$v->issue_entry_id] = $v; }
+            $diamondVouchers = DiamondVoucher::model()->findAll(array('condition' => 'issue_entry_id IN (' . $placeholders . ') AND (is_deleted = 0 OR is_deleted IS NULL)'));
+            foreach ($diamondVouchers as $v) { $diamondVoucherByIssueId[(int)$v->issue_entry_id] = $v; }
         }
 
         if ($entryType !== '') {
@@ -174,12 +196,15 @@ class LedgerReportController extends Controller
                 $issueId = (int) $iss->id;
                 $hasSupplierVoucher = isset($supplierLedgerByIssueId[$issueId]);
                 $hasKarigarVoucher = isset($karigarJamaByIssueId[$issueId]);
+                $hasDiamondVoucher = isset($diamondVoucherByIssueId[$issueId]);
 
                 if ($entryType === 'supplier' && $hasSupplierVoucher) {
                     $filteredIssues[] = $iss;
                 } elseif ($entryType === 'karigar' && $hasKarigarVoucher) {
                     $filteredIssues[] = $iss;
-                } elseif ($entryType === 'issue' && !$hasSupplierVoucher && !$hasKarigarVoucher) {
+                } elseif ($entryType === 'diamond' && $hasDiamondVoucher) {
+                    $filteredIssues[] = $iss;
+                } elseif ($entryType === 'issue' && !$hasSupplierVoucher && !$hasKarigarVoucher && !$hasDiamondVoucher) {
                     $filteredIssues[] = $iss;
                 }
             }
@@ -233,6 +258,7 @@ class LedgerReportController extends Controller
             'filter_entry_type' => $entryType,
             'supplier_ledger_by_issue_id' => $supplierLedgerByIssueId,
             'karigar_jama_by_issue_id' => $karigarJamaByIssueId,
+            'diamond_voucher_by_issue_id' => $diamondVoucherByIssueId,
             'ledger_totals' => $ledgerTotals,
         );
     }

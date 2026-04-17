@@ -14,6 +14,7 @@ class DocumentNumberService
 	const DOC_SUPPLIER_LEDGER = 'SLT';
 	const DOC_SUPPLIER_LEDGER_VOUCHER = 'SV';  // Supplier Voucher
 	const DOC_KARIGAR_JAMA_VOUCHER = 'KV';     // Karigar Voucher
+	const DOC_DIAMOND_VOUCHER = 'DV';          // Diamond Voucher
 
 	/**
 	 * Get display prefix for voucher types from params, with fallback to constants.
@@ -27,6 +28,8 @@ class DocumentNumberService
 			return isset($prefixes['supplier_voucher']) ? $prefixes['supplier_voucher'] : 'SV';
 		} elseif ($docType === self::DOC_KARIGAR_JAMA_VOUCHER) {
 			return isset($prefixes['karigar_voucher']) ? $prefixes['karigar_voucher'] : 'KV';
+		} elseif ($docType === self::DOC_DIAMOND_VOUCHER) {
+			return isset($prefixes['diamond_voucher']) ? $prefixes['diamond_voucher'] : 'DV';
 		}
 		return $docType; // For other types, return as-is
 	}
@@ -46,7 +49,7 @@ class DocumentNumberService
 		// Get the actual prefix to use (from params or docType itself)
 		$displayPrefix = self::getVoucherPrefix($docType);
 		// Use display prefix as doc_type in database for voucher types
-		$dbDocType = ($docType === self::DOC_SUPPLIER_LEDGER_VOUCHER || $docType === self::DOC_KARIGAR_JAMA_VOUCHER) ? $displayPrefix : $docType;
+		$dbDocType = ($docType === self::DOC_SUPPLIER_LEDGER_VOUCHER || $docType === self::DOC_KARIGAR_JAMA_VOUCHER || $docType === self::DOC_DIAMOND_VOUCHER) ? $displayPrefix : $docType;
 
 		$db = Yii::app()->db;
 		$existingTx = $db->getCurrentTransaction();
@@ -102,7 +105,7 @@ class DocumentNumberService
 		}
 
 		$displayPrefix = self::getVoucherPrefix($docType);
-		$dbDocType = ($docType === self::DOC_SUPPLIER_LEDGER_VOUCHER || $docType === self::DOC_KARIGAR_JAMA_VOUCHER) ? $displayPrefix : $docType;
+		$dbDocType = ($docType === self::DOC_SUPPLIER_LEDGER_VOUCHER || $docType === self::DOC_KARIGAR_JAMA_VOUCHER || $docType === self::DOC_DIAMOND_VOUCHER) ? $displayPrefix : $docType;
 
 		$db = Yii::app()->db;
 		$nextNo = $db->createCommand('SELECT next_no FROM cp_document_sequence WHERE doc_type = :t')

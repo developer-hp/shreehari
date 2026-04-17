@@ -8,12 +8,14 @@ $td = 'border:1px solid #444; padding:5px 8px; font-size:13px;';
 $tdR = $td . ' text-align:right;';
 $rowTotal = 'background:#f3f6fb;';
 $rowNet = 'background:#fff7e0;';
+$metaStyle = 'display:block; font-size:11px; color:#666; margin-top:2px;';
 if ($isPrint) {
     $th = 'border:1px solid #222; padding:5px 6px; font-size:16px; font-weight:700; text-align:center;';
     $thSub = 'border:1px solid #222; padding:5px 6px; font-size:13px; font-weight:700; text-align:center;';
     $thCol = 'border:1px solid #222; padding:5px 6px; font-size:12px; font-weight:700;';
     $td = 'border:1px solid #222; padding:4px 6px; font-size:12px;';
     $tdR = $td . ' text-align:right;';
+    $metaStyle = 'display:block; font-size:10px; color:#333; margin-top:2px;';
 }
 ?>
 
@@ -44,10 +46,20 @@ if ($isPrint) {
             <?php foreach ($rows as $r): ?>
                 <?php $j = isset($r['jama']) ? $r['jama'] : null; $b = isset($r['baki']) ? $r['baki'] : null; ?>
                 <tr>
-                    <td style="<?php echo $td; ?>"><?php echo $j ? CHtml::encode($j['name']) : ''; ?></td>
+                    <td style="<?php echo $td; ?>">
+                        <?php if ($j): ?>
+                            <?php echo CHtml::encode($j['name']); ?>
+                            <span style="<?php echo $metaStyle; ?>"><?php echo CHtml::encode($j['source']); ?><?php echo !empty($j['voucher_no']) ? ' - ' . CHtml::encode($j['voucher_no']) : ''; ?></span>
+                        <?php endif; ?>
+                    </td>
                     <td style="<?php echo $tdR; ?>"><?php echo $j ? number_format((float) $j['metal'], 3) : ''; ?></td>
                     <td style="<?php echo $tdR; ?>"><?php echo $j ? number_format((float) $j['amount'], 2) : ''; ?></td>
-                    <td style="<?php echo $td; ?>"><?php echo $b ? CHtml::encode($b['name']) : ''; ?></td>
+                    <td style="<?php echo $td; ?>">
+                        <?php if ($b): ?>
+                            <?php echo CHtml::encode($b['name']); ?>
+                            <span style="<?php echo $metaStyle; ?>"><?php echo CHtml::encode($b['source']); ?><?php echo !empty($b['voucher_no']) ? ' - ' . CHtml::encode($b['voucher_no']) : ''; ?></span>
+                        <?php endif; ?>
+                    </td>
                     <td style="<?php echo $tdR; ?>"><?php echo $b ? number_format((float) $b['metal'], 3) : ''; ?></td>
                     <td style="<?php echo $tdR; ?>"><?php echo $b ? number_format((float) $b['amount'], 2) : ''; ?></td>
                 </tr>

@@ -70,6 +70,7 @@
                             <option value="issue" <?php echo $filterEntryType === 'issue' ? 'selected="selected"' : ''; ?>>Outward (Issue Entry / Jama)</option>
                             <option value="supplier" <?php echo $filterEntryType === 'supplier' ? 'selected="selected"' : ''; ?>>Inward (Supplier Voucher / Baki)</option>
                             <option value="karigar" <?php echo $filterEntryType === 'karigar' ? 'selected="selected"' : ''; ?>>Inward (Karigar Voucher / Baki)</option>
+                            <option value="diamond" <?php echo $filterEntryType === 'diamond' ? 'selected="selected"' : ''; ?>>Diamond Voucher</option>
                         </select>
                     </div>
                 </div>

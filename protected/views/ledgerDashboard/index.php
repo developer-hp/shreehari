@@ -143,7 +143,7 @@
 
 <!-- Today's summary widgets -->
 <div class="row" style="margin-top: 10px;">
-    <div class="col-sm-6 col-lg-4">
+    <div class="col-sm-6 col-lg-3">
         <a href="<?php echo Yii::app()->createUrl('issueEntry/index'); ?>" class="widget">
             <div class="widget-content widget-content-mini text-right clearfix">
                 <div class="widget-icon pull-left themed-background">
@@ -158,7 +158,7 @@
             </div>
         </a>
     </div>
-    <div class="col-sm-6 col-lg-4">
+    <div class="col-sm-6 col-lg-3">
         <a href="<?php echo Yii::app()->createUrl('supplierLedger/index'); ?>" class="widget">
             <div class="widget-content widget-content-mini text-right clearfix">
                 <div class="widget-icon pull-left themed-background">
@@ -173,7 +173,7 @@
             </div>
         </a>
     </div>
-    <div class="col-sm-6 col-lg-4">
+    <div class="col-sm-6 col-lg-3">
         <a href="<?php echo Yii::app()->createUrl('karigarJama/index'); ?>" class="widget">
             <div class="widget-content widget-content-mini text-right clearfix">
                 <div class="widget-icon pull-left themed-background">
@@ -185,6 +185,21 @@
                 <span class="text-muted">Inward (Karigar / Baki) (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
                 <div class="text-muted small">₹ <?php echo number_format((float) $karigarJamaTotalAmount, 2); ?></div>
                 <div class="text-muted small">Fine Wt: <?php echo number_format((float) $karigarJamaTotalFineWt, 3); ?></div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="<?php echo Yii::app()->createUrl('diamondVoucher/index'); ?>" class="widget">
+            <div class="widget-content widget-content-mini text-right clearfix">
+                <div class="widget-icon pull-left themed-background">
+                    <i class="fa fa-diamond text-light-op"></i>
+                </div>
+                <h2 class="widget-heading h3 text">
+                    <strong><?php echo (int) $diamondVoucherCount; ?></strong>
+                </h2>
+                <span class="text-muted">Diamond Voucher (<?php echo isset($filterDateDisplay) ? $filterDateDisplay : date('d-m-Y'); ?>)</span>
+                <div class="text-muted small">₹ <?php echo number_format((float) $diamondVoucherTotalAmount, 2); ?></div>
+                <div class="text-muted small">Fine Wt: 0.000</div>
             </div>
         </a>
     </div>
@@ -229,7 +244,7 @@
 
 <!-- Recent activity blocks -->
 <div class="row" style="margin-top: 20px;">
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
                 <h2>Recent Outward Entries (Issue/Jama)</h2>
@@ -268,7 +283,7 @@
             </table>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
                 <h2>Recent Inward Entries (Supplier/Baki)</h2>
@@ -302,7 +317,7 @@
             </table>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="block" style="min-height: 320px;">
             <div class="block-title">
                 <h2>Recent Inward Entries (Karigar/Baki)</h2>
@@ -336,6 +351,38 @@
             </table>
         </div>
     </div>
+    <div class="col-lg-6">
+        <div class="block" style="min-height: 320px;">
+            <div class="block-title">
+                <h2>Recent Diamond Vouchers</h2>
+                <div class="block-options">
+                    <?php echo CHtml::link('View all', array('diamondVoucher/admin'), array('class' => 'btn btn-xs btn-default')); ?>
+                </div>
+            </div>
+            <table class="table table-striped table-borderless table-vcenter">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Account</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($recentDiamondVoucher)): ?>
+                        <tr><td colspan="3">No result found</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($recentDiamondVoucher as $voucher): ?>
+                            <tr>
+                                <td><?php echo !empty($voucher->voucher_date) ? date('d-m-Y', strtotime($voucher->voucher_date)) : '-'; ?></td>
+                                <td><?php echo isset($voucher->account) ? CHtml::encode($voucher->account->name) : '-'; ?></td>
+                                <td class="text-right">₹ <?php echo number_format((float) $voucher->amount, 2); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -344,28 +391,32 @@
     var chartIssueEntry = <?php echo json_encode($chartIssueEntry); ?>;
     var chartSupplierLedger = <?php echo json_encode($chartSupplierLedger); ?>;
     var chartKarigarJama = <?php echo json_encode($chartKarigarJama); ?>;
+    var chartDiamondVoucher = <?php echo json_encode($chartDiamondVoucher); ?>;
     var chartIssueEntryFineWt = <?php echo json_encode($chartIssueEntryFineWt); ?>;
     var chartSupplierLedgerFineWt = <?php echo json_encode($chartSupplierLedgerFineWt); ?>;
     var chartKarigarJamaFineWt = <?php echo json_encode($chartKarigarJamaFineWt); ?>;
+    var chartDiamondVoucherFineWt = <?php echo json_encode($chartDiamondVoucherFineWt); ?>;
     var chartTodayPie = <?php echo json_encode($chartTodayPie); ?>;
 
     var ticksBars = [];
     for (var i = 0; i < chartLabels.length; i++) {
         ticksBars.push([i + 1, chartLabels[i]]);
     }
-    var dataIssue = [], dataSup = [], dataJama = [];
+    var dataIssue = [], dataSup = [], dataJama = [], dataDiamond = [];
     for (var j = 0; j < chartLabels.length; j++) {
         var x = j + 1;
-        dataIssue.push([x - 0.2, chartIssueEntry[j] || 0]);
-        dataSup.push([x, chartSupplierLedger[j] || 0]);
-        dataJama.push([x + 0.2, chartKarigarJama[j] || 0]);
+        dataIssue.push([x - 0.3, chartIssueEntry[j] || 0]);
+        dataSup.push([x - 0.1, chartSupplierLedger[j] || 0]);
+        dataJama.push([x + 0.1, chartKarigarJama[j] || 0]);
+        dataDiamond.push([x + 0.3, chartDiamondVoucher[j] || 0]);
     }
-    var dataIssueFw = [], dataSupFw = [], dataJamaFw = [];
+    var dataIssueFw = [], dataSupFw = [], dataJamaFw = [], dataDiamondFw = [];
     for (var k = 0; k < chartLabels.length; k++) {
         var x = k + 1;
-        dataIssueFw.push([x - 0.2, chartIssueEntryFineWt[k] || 0]);
-        dataSupFw.push([x, chartSupplierLedgerFineWt[k] || 0]);
-        dataJamaFw.push([x + 0.2, chartKarigarJamaFineWt[k] || 0]);
+        dataIssueFw.push([x - 0.3, chartIssueEntryFineWt[k] || 0]);
+        dataSupFw.push([x - 0.1, chartSupplierLedgerFineWt[k] || 0]);
+        dataJamaFw.push([x + 0.1, chartKarigarJamaFineWt[k] || 0]);
+        dataDiamondFw.push([x + 0.3, chartDiamondVoucherFineWt[k] || 0]);
     }
 
     function initCharts() {
@@ -379,10 +430,11 @@
                 [
                     { label: 'Outward (Issue / Jama)', data: dataIssue, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
                     { label: 'Inward (Supplier / Baki)', data: dataSup, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Inward (Karigar / Baki)', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Inward (Karigar / Baki)', data: dataJama, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Diamond Voucher', data: dataDiamond, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
-                    colors: ['#5ccdde', '#454e59', '#9b59b6'],
+                    colors: ['#5ccdde', '#454e59', '#9b59b6', '#f39c12'],
                     legend: { show: true, position: 'nw', backgroundOpacity: 0 },
                     grid: { borderWidth: 0, hoverable: true },
                     yaxis: { min: 0, tickColor: '#f5f5f5', tickFormatter: function(v) { return '₹ ' + v; } },
@@ -430,10 +482,11 @@
                 [
                     { label: 'Outward (Issue / Jama)', data: dataIssueFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
                     { label: 'Inward (Supplier / Baki)', data: dataSupFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
-                    { label: 'Inward (Karigar / Baki)', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
+                    { label: 'Inward (Karigar / Baki)', data: dataJamaFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } },
+                    { label: 'Diamond Voucher', data: dataDiamondFw, bars: { show: true, barWidth: 0.18, align: 'center', lineWidth: 0, fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8 }] } } }
                 ],
                 {
-                    colors: ['#5ccdde', '#454e59', '#9b59b6'],
+                    colors: ['#5ccdde', '#454e59', '#9b59b6', '#f39c12'],
                     legend: { show: true, position: 'nw', backgroundOpacity: 0 },
                     grid: { borderWidth: 0, hoverable: true },
                     yaxis: { min: 0, tickColor: '#f5f5f5', tickFormatter: function(v) { return v; } },
