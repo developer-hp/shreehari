@@ -36,6 +36,7 @@ class IssueEntry extends CActiveRecord
 	{
 		return array(
 			array('issue_date, customer_id, drcr', 'required'),
+			array('issue_date', 'validateNotFutureDate'),
 			array('customer_id, drcr, created_by, is_deleted, is_voucher', 'numerical', 'integerOnly' => true),
 			array('weight, fine_wt, amount', 'numerical'),
 			array('carat', 'length', 'max' => 10),
@@ -46,6 +47,18 @@ class IssueEntry extends CActiveRecord
 			array('remarks', 'required'),
 			array('id, sr_no, issue_date, customer_id, carat, weight, fine_wt, amount, drcr, remarks, created_by, created_at, updated_at, is_deleted, is_voucher, customer_name', 'safe', 'on' => 'search'),
 		);
+	}
+
+	public function validateNotFutureDate($attribute, $params)
+	{
+	    if (!empty($this->$attribute)) {
+	        $inputDate = strtotime($this->$attribute);
+	        $today = strtotime(date('Y-m-d'));
+
+	        if ($inputDate > $today) {
+	            $this->addError($attribute, 'Future date is not allowed.');
+	        }
+	    }
 	}
 
 	public function relations()

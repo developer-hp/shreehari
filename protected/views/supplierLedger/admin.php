@@ -38,6 +38,7 @@
                     array(
                         'class' => 'CCheckBoxColumn',
                         'id' => 'selectedIds',
+                        'selectableRows' => 2,
                         'visible' => LedgerAccess::isAdmin(),
                         'checkBoxHtmlOptions' => array('class' => 'supplier-lock-select'),
                     ),
@@ -96,7 +97,7 @@ function supplierPostWithIds(actionUrl, ids) {
 
 $(function() {
     $('#supplier-delete-selected-locked').on('click', function() {
-        var ids = $.fn.yiiGridView.getSelection('supplier-ledger-grid');
+        var ids = $.fn.yiiGridView.getChecked('supplier-ledger-grid', 'selectedIds');
         if (!ids || ids.length === 0) {
             alert('Please select at least one row.');
             return;

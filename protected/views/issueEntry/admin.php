@@ -60,10 +60,17 @@
                     array(
                         'class' => 'ButtonColumn',
                         'header' => 'Actions',
-                        'htmlOptions' => array('style' => 'width: 150px; text-align: center;'),
-                        'template' => '{pdf} {print} {update} {delete}',
+                        'htmlOptions' => array('style' => 'width: 190px; text-align: center;'),
+                        'template' => '{view} {pdf} {print} {update} {delete}',
                         'deleteConfirmation' => 'Are you sure you want to delete this issue entry?',
                         'buttons' => array(
+                            'view' => array(
+                                'label' => '<i class="fa fa-eye"></i>',
+                                'imageUrl' => false,
+                                'options' => array('class' => 'btn btn-effect-ripple btn-sm btn-warning', 'rel' => 'tooltip', 'data-toggle' => 'tooltip', 'title' => 'View'),
+                                'type' => 'raw',
+                                'url' => 'Yii::app()->createUrl("issueEntry/view", array("id" => $data->id))',
+                            ),
                             'pdf' => array(
                                 'label' => '<i class="fa fa-file-pdf-o"></i>',
                                 'imageUrl' => false,

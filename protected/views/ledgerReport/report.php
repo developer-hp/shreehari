@@ -260,7 +260,7 @@ if (!function_exists('ledgerReportBalanceWords')) {
                     } elseif ($kj) {
                         $particularsCell = CHtml::link(CHtml::encode($particularsText), array('karigarJama/view', 'id' => $kj->id),array('target'=>'_blank'));
                     } else {
-                        $particularsCell = CHtml::encode($particularsText);
+                        $particularsCell = CHtml::link(CHtml::encode($particularsText), array('issueEntry/view', 'id' => $iss->id), array('target' => '_blank'));
                     }
                 ?>
                 <tr>
